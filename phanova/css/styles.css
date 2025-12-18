@@ -613,6 +613,8 @@ main {
     /* Performance optimizations */
     contain: layout style paint;
     content-visibility: auto;
+    /* Parallax scroll optimization */
+    will-change: background-position;
 }
 
 .hero--home::before {
@@ -2104,9 +2106,10 @@ main {
         inset 0 -1px 0 rgba(255, 255, 255, 0.1);
     text-align: left;
     animation: glassCardEntrance 0.8s ease-out;
-    /* Parallax optimization */
+    /* Scroll animation optimization */
     will-change: transform, opacity, filter;
     transform-origin: center top;
+    transform-style: preserve-3d;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
@@ -2148,6 +2151,8 @@ main {
     color: #ffffff !important;
     margin-bottom: 20px;
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+    /* Scroll animation optimization */
+    will-change: transform, opacity;
 }
 
 .hero-glass-subtitle {
@@ -2158,6 +2163,8 @@ main {
     margin: 0 0 52px 0;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
     opacity: 0.95;
+    /* Scroll animation optimization */
+    will-change: transform, opacity;
 }
 
 .hero-glass-buttons {
@@ -2167,6 +2174,8 @@ main {
     flex-wrap: wrap;
     margin-top: 20px;
     padding-top: 16px;
+    /* Scroll animation optimization */
+    will-change: transform, opacity;
 }
 
 .hero-glass-buttons .btn-primary {
@@ -2206,6 +2215,8 @@ main {
         linear-gradient(135deg, rgba(10, 22, 40, 0.92) 0%, rgba(20, 40, 60, 0.85) 50%, rgba(30, 60, 80, 0.78) 100%),
         linear-gradient(180deg, rgba(107, 139, 181, 0.15) 0%, rgba(107, 139, 181, 0.05) 100%);
     background-color: #0a1628;
+    /* Parallax scroll optimization */
+    will-change: background-position;
 }
 
 .hero-glass-card--about {
@@ -2277,6 +2288,11 @@ main {
     margin-bottom: 20px;
     line-height: 1.2;
     color: #ffffff !important;
+    /* Override gradient text from .hero h1 */
+    background: none !important;
+    -webkit-text-fill-color: #ffffff !important;
+    -webkit-background-clip: initial !important;
+    background-clip: border-box !important;
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
 }
 

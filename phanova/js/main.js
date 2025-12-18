@@ -92,37 +92,83 @@
         }
     }
 
-    // Apple-style parallax and scroll effects
+    // Clean parallax scroll effects for hero sections (Home + About pages)
     if (!prefersReducedMotion) {
+        // Select hero elements for both home and about pages
         const heroGlassCard = document.querySelector('.hero-glass-card');
+        const heroSection = document.querySelector('.hero--home') || document.querySelector('.hero--about');
         const heroContent = document.querySelector('.hero-content');
         const heroDecorations = document.querySelector('.hero-decorations');
         const featureCards = document.querySelectorAll('.feature-card');
         const sections = document.querySelectorAll('.section');
 
+        // Smooth lerp for buttery animations
+        const lerp = (start, end, factor) => start + (end - start) * factor;
+
+        // Animation state
+        const state = {
+            current: { cardY: 0, bgY: 0, opacity: 1 },
+            target: { cardY: 0, bgY: 0, opacity: 1 }
+        };
+
+        let animating = false;
         let scrollTicking2 = false;
+
+        // Easing function
+        const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+        const animate = () => {
+            // Smooth lerp all values
+            state.current.cardY = lerp(state.current.cardY, state.target.cardY, 0.12);
+            state.current.bgY = lerp(state.current.bgY, state.target.bgY, 0.08);
+            state.current.opacity = lerp(state.current.opacity, state.target.opacity, 0.1);
+
+            // Apply card transform - moves WITH the background parallax (clean look)
+            if (heroGlassCard) {
+                heroGlassCard.style.transform = `translateY(${state.current.cardY}px)`;
+                heroGlassCard.style.opacity = state.current.opacity;
+            }
+
+            // Parallax background - moves slower than scroll for depth
+            if (heroSection) {
+                heroSection.style.backgroundPositionY = `${state.current.bgY}px`;
+            }
+
+            // Check if still animating
+            const stillMoving = Math.abs(state.current.cardY - state.target.cardY) > 0.5 ||
+                               Math.abs(state.current.opacity - state.target.opacity) > 0.01;
+
+            if (stillMoving) {
+                requestAnimationFrame(animate);
+            } else {
+                animating = false;
+            }
+        };
 
         const handleParallaxScroll = () => {
             const scrolled = window.scrollY;
             const windowHeight = window.innerHeight;
 
-            // Hero glass card - Apple-style parallax with scale, blur and fade
-            if (heroGlassCard && scrolled < windowHeight * 1.2) {
-                const scrollProgress = scrolled / (windowHeight * 0.6);
+            if (heroGlassCard && heroSection) {
+                // Calculate scroll progress
+                const scrollProgress = Math.min(1, scrolled / (windowHeight * 0.8));
+                const fadeProgress = easeOutCubic(Math.min(1, scrolled / (windowHeight * 0.5)));
 
-                // Smooth easing
-                const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-                const easedProgress = easeOut(Math.min(1, scrollProgress));
+                // Card moves up slower than scroll - creates parallax with background
+                // This makes card and background feel connected and clean
+                state.target.cardY = scrolled * 0.35;
 
-                // Transform values
-                const translateY = scrolled * 0.4;
-                const scale = Math.max(0.85, 1 - easedProgress * 0.15);
-                const opacity = Math.max(0, 1 - easedProgress * 1.2);
-                const blur = Math.min(8, easedProgress * 10);
+                // Background moves even slower - creates depth
+                state.target.bgY = scrolled * 0.5;
 
-                heroGlassCard.style.transform = `translateY(${translateY}px) scale(${scale})`;
-                heroGlassCard.style.opacity = opacity;
-                heroGlassCard.style.filter = `blur(${blur}px)`;
+                // Smooth fade out as you scroll
+                state.target.opacity = Math.max(0, 1 - fadeProgress * 1.2);
+            }
+
+            // Start animation loop if not running
+            if (!animating) {
+                animating = true;
+                requestAnimationFrame(animate);
             }
 
             // Hero content fallback for other pages
@@ -130,12 +176,8 @@
                 const parallaxSpeed = 0.5;
                 const opacity = Math.max(0, 1 - scrolled / (windowHeight * 0.8));
                 const translateY = scrolled * parallaxSpeed;
-                const isHomeHero = heroContent.closest('.hero--home') !== null;
-                const baseScale = isHomeHero ? 1 : 0.8;
-                const scrollScale = Math.max(0.95, 1 - scrolled / (windowHeight * 2));
-                const finalScale = baseScale * scrollScale;
 
-                heroContent.style.transform = `translateY(${translateY}px) scale(${finalScale})`;
+                heroContent.style.transform = `translateY(${translateY}px)`;
                 heroContent.style.opacity = opacity;
             }
 
