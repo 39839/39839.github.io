@@ -610,6 +610,9 @@ main {
     background-repeat: no-repeat;
     isolation: isolate;
     color: #ffffff;
+    /* Performance optimizations */
+    contain: layout style paint;
+    content-visibility: auto;
 }
 
 .hero--home::before {
