@@ -92,6 +92,109 @@
         }
     }
 
+    // Apple-style parallax and scroll effects
+    if (!prefersReducedMotion) {
+        const heroContent = document.querySelector('.hero-content');
+        const heroDecorations = document.querySelector('.hero-decorations');
+        const featureCards = document.querySelectorAll('.feature-card');
+        const sections = document.querySelectorAll('.section');
+
+        let scrollTicking2 = false;
+
+        const handleParallaxScroll = () => {
+            const scrolled = window.scrollY;
+            const windowHeight = window.innerHeight;
+
+            // Hero parallax - content moves slower than scroll
+            if (heroContent && scrolled < windowHeight) {
+                const parallaxSpeed = 0.5;
+                const opacity = Math.max(0, 1 - scrolled / (windowHeight * 0.8));
+                const translateY = scrolled * parallaxSpeed;
+                const baseScale = 0.8; // Base scale from CSS
+                const scrollScale = Math.max(0.95, 1 - scrolled / (windowHeight * 2));
+                const finalScale = baseScale * scrollScale;
+
+                heroContent.style.transform = `translateY(${translateY}px) scale(${finalScale})`;
+                heroContent.style.opacity = opacity;
+            }
+
+            // Hero decorations - move faster for depth effect
+            if (heroDecorations && scrolled < windowHeight) {
+                const parallaxSpeed = 0.3;
+                const translateY = scrolled * parallaxSpeed;
+                heroDecorations.style.transform = `translateY(${translateY}px)`;
+            }
+
+            // Feature cards - staggered reveal with scale
+            featureCards.forEach((card, index) => {
+                const rect = card.getBoundingClientRect();
+                const cardTop = rect.top;
+                const cardHeight = rect.height;
+                const triggerPoint = windowHeight * 0.75;
+
+                if (cardTop < triggerPoint && cardTop > -cardHeight) {
+                    const progress = Math.min(1, Math.max(0, (triggerPoint - cardTop) / (windowHeight * 0.5)));
+                    const delay = index * 0.1;
+                    const adjustedProgress = Math.max(0, progress - delay);
+
+                    const scale = 0.9 + (adjustedProgress * 0.1);
+                    const opacity = Math.min(1, adjustedProgress * 1.5);
+                    const translateY = (1 - adjustedProgress) * 30;
+
+                    card.style.transform = `translateY(${translateY}px) scale(${scale})`;
+                    card.style.opacity = opacity;
+                }
+            });
+
+            // Sections - smooth fade and slide
+            sections.forEach((section) => {
+                const rect = section.getBoundingClientRect();
+                const sectionTop = rect.top;
+                const sectionHeight = rect.height;
+                const triggerPoint = windowHeight * 0.8;
+
+                if (sectionTop < triggerPoint && sectionTop > -sectionHeight) {
+                    const progress = Math.min(1, Math.max(0, (triggerPoint - sectionTop) / (windowHeight * 0.3)));
+                    const translateY = (1 - progress) * 20;
+
+                    section.style.transform = `translateY(${translateY}px)`;
+                    section.style.opacity = Math.min(1, progress * 1.2);
+                }
+            });
+        };
+
+        // Initial run
+        handleParallaxScroll();
+
+        // Smooth scroll handling
+        window.addEventListener('scroll', () => {
+            if (scrollTicking2) return;
+            scrollTicking2 = true;
+            window.requestAnimationFrame(() => {
+                handleParallaxScroll();
+                scrollTicking2 = false;
+            });
+        }, { passive: true });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    const targetPosition = target.getBoundingClientRect().top + window.scrollY - 80;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    }
+
     const contactForm = document.getElementById('contact-form');
     if (contactForm instanceof HTMLFormElement) {
         const status = document.getElementById('form-status');
