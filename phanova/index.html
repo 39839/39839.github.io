@@ -31,8 +31,8 @@
 
             <ul class="nav-menu" id="nav-menu">
                 <li><a href="./" class="nav-link">Home</a></li>
+                <li><a href="./physicians/" class="nav-link">For Physicians</a></li>
                 <li><a href="./about/" class="nav-link">About</a></li>
-                <li><a href="./features/" class="nav-link">Features</a></li>
                 <li><a href="./contact/" class="nav-link">Contact</a></li>
                 <li><a href="https://ccm.phanova.com/" class="cta-button" target="_blank" rel="noopener noreferrer">Clinic Login</a></li>
             </ul>
@@ -48,59 +48,23 @@
     <main id="main" tabindex="-1">
         <!-- Hero Section -->
         <section class="hero hero--home">
-            <div class="hero-decorations">
-                <div class="hero-orb hero-orb--1"></div>
-                <div class="hero-orb hero-orb--2"></div>
-                <div class="hero-orb hero-orb--3"></div>
-                <div class="hero-shape hero-shape--1"></div>
-                <div class="hero-shape hero-shape--2"></div>
-                <div class="hero-grid-bg"></div>
-                <div class="hero-particles">
-                    <span class="particle"></span>
-                    <span class="particle"></span>
-                    <span class="particle"></span>
-                    <span class="particle"></span>
-                    <span class="particle"></span>
-                    <span class="particle"></span>
-                </div>
-            </div>
-            <div class="hero-content">
-                <h1>
-                    <span class="hero-title-line">Scale chronic care enrollment</span>
-                    <span class="hero-title-line">with AI—not headcount.</span>
-                </h1>
-                <p class="subtitle hero-lede">Text and voice AI agents automate patient outreach, care plan generation, and billing for CCM and RPM programs—no EHR integration required.</p>
-                <div class="hero-buttons">
-                    <a href="./contact/" class="btn-primary">
-                        <span>Register your organization</span>
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
-                    <a href="./features/" class="btn-secondary">Learn more</a>
-                </div>
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <div class="hero-stat-value">100%</div>
-                        <div class="hero-stat-label">Automated Outreach</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value">24/7</div>
-                        <div class="hero-stat-label">Patient Monitoring</div>
-                    </div>
-                    <div class="hero-stat">
-                        <div class="hero-stat-value">0</div>
-                        <div class="hero-stat-label">EHR Integration Needed</div>
+            <div class="container hero-shell">
+                <div class="hero-glass-card">
+                    <h1>Your Health Doesn't Stop When You Leave the Doctor's Office.</h1>
+                    <p class="hero-glass-subtitle">Phanova bridges the gap with daily check-ins. No apps to download, no complicated tech. Just continuous care from the comfort of home.</p>
+                    <div class="hero-glass-buttons">
+                        <a href="./contact/" class="btn-primary">Get Started</a>
+                        <a href="./physicians/" class="btn-secondary">For Physicians</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Features Section -->
-        <section class="section" id="features">
+        <!-- How It Works Section -->
+        <section class="section" id="how-it-works">
             <div class="container">
-                <h2 class="section-title">Expand enrollment without increasing staff labor</h2>
-                <p class="section-subtitle">Phanova automates patient outreach, care plan generation, and billing tracking for your CCM and RPM programs.</p>
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-subtitle">Three simple steps to better care between appointments.</p>
 
                 <div class="features-grid">
                     <div class="feature-card">
@@ -109,14 +73,9 @@
                                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="feature-label">Patient Outreach</div>
-                        <h3>Text and voice AI agents</h3>
-                        <p>Phanova reaches out to your patients via text and voice calls to collect vital signs and medication adherence at the cadence you define.</p>
-                        <ul class="feature-list">
-                            <li>Patients respond via text or call—no apps required</li>
-                            <li>Customized to your clinic's protocols and preferences</li>
-                            <li>Automated reminders and check-ins</li>
-                        </ul>
+                        <div class="feature-label">Step 1</div>
+                        <h3>We Check In</h3>
+                        <p>You'll receive a friendly text or call from our system asking simple questions: How's your blood pressure today? Did you take your medication? How are you feeling?</p>
                     </div>
 
                     <div class="feature-card">
@@ -126,14 +85,9 @@
                                 <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="feature-label">Care Plans</div>
-                        <h3>Automatically generate care plans</h3>
-                        <p>Phanova automatically generates individualized care plans for your patients' CCM program, customized to each patient's needs.</p>
-                        <ul class="feature-list">
-                            <li>Reflects your clinic's protocol and preferences</li>
-                            <li>Shared with patients over HIPAA-compliant channels</li>
-                            <li>Updates automatically based on patient data</li>
-                        </ul>
+                        <div class="feature-label">Step 2</div>
+                        <h3>You Respond</h3>
+                        <p>Reply with a simple text or tell us over the phone. It takes seconds. No apps to install, no complicated forms to fill out—just you and your phone.</p>
                     </div>
 
                     <div class="feature-card">
@@ -143,14 +97,40 @@
                                 <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="feature-label">Billing</div>
-                        <h3>Automated tracking and billing</h3>
-                        <p>Phanova tracks all interactions with each patient and time spent. Monthly billing reports enable CCM code billing.</p>
-                        <ul class="feature-list">
-                            <li>Total time spent per patient calculated automatically</li>
-                            <li>Monthly billing reports ready for CCM codes</li>
-                            <li>Complete audit trails for compliance</li>
-                        </ul>
+                        <div class="feature-label">Step 3</div>
+                        <h3>Your Doctor Knows</h3>
+                        <p>Your responses are instantly organized into a report for your doctor. If something looks off, they know immediately—not three months from now at your next appointment.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Patients Love Phanova Section -->
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">Why Patients Love Phanova</h2>
+                <p class="section-subtitle">Support that works for you, not the other way around.</p>
+
+                <div class="value-grid">
+                    <div class="value-card reveal">
+                        <div class="value-label">Insurance</div>
+                        <h3>Covered by Insurance</h3>
+                        <p>Phanova services are typically covered under Chronic Care Management (CCM) by most insurance plans, including Medicare. That means there's usually no extra cost to you.</p>
+                    </div>
+                    <div class="value-card reveal">
+                        <div class="value-label">Support</div>
+                        <h3>Peace of Mind</h3>
+                        <p>Know that someone is looking at your numbers and monitoring your health between visits. You're not alone in this.</p>
+                    </div>
+                    <div class="value-card reveal">
+                        <div class="value-label">Adherence</div>
+                        <h3>Stay on Track</h3>
+                        <p>Gentle daily reminders help you stick to your medication schedule and health goals without feeling nagged. Think of us as a friendly accountability partner.</p>
+                    </div>
+                    <div class="value-card reveal">
+                        <div class="value-label">Technology</div>
+                        <h3>No Technology Headaches</h3>
+                        <p>No apps to download. No passwords to remember. No learning curve. It works on the phone you already have, the way you already use it.</p>
                     </div>
                 </div>
             </div>
@@ -160,11 +140,11 @@
         <section class="cta-band">
             <div class="container">
                 <div class="cta-card reveal">
-                    <h2 class="section-title">Start engaging with your patients</h2>
-                    <p>Phanova automatically imports your CCM/RPM candidates, generates individualized care plans, and reaches out to patients routinely. No setup or installation needed for providers or patients.</p>
+                    <h2 class="section-title">Ask Your Doctor About Phanova</h2>
+                    <p>If you're managing a chronic condition, ask your doctor if Phanova is right for you. We're here to help you stay healthy between appointments.</p>
                     <div class="cta-actions">
-                        <a href="./contact/" class="btn-primary">Register your organization</a>
-                        <a href="./features/" class="btn-secondary">Learn more</a>
+                        <a href="./contact/" class="btn-primary">Contact Us</a>
+                        <a href="./physicians/" class="btn-secondary">For Physicians</a>
                     </div>
                 </div>
             </div>
@@ -176,13 +156,13 @@
         <div class="container footer-top">
             <div class="footer-cta">
                 <div>
-                    <p class="footer-cta-kicker">Clinical teams first</p>
-                    <h2>Partner with Phanova</h2>
-                    <p class="footer-cta-sub">Give patients personal, compliant touchpoints while your team focuses on care—not manual follow-ups.</p>
+                    <p class="footer-cta-kicker">Healthcare that cares</p>
+                    <h2>Better Care Between Appointments</h2>
+                    <p class="footer-cta-sub">Your health matters every day, not just during doctor visits. Phanova keeps you connected to your care team.</p>
                 </div>
                 <div class="footer-cta-actions">
-                    <a href="./contact/" class="btn-primary">Talk with us</a>
-                    <a href="./features/" class="btn-secondary">See features</a>
+                    <a href="./contact/" class="btn-primary">Learn More</a>
+                    <a href="./physicians/" class="btn-secondary">For Physicians</a>
                 </div>
             </div>
 
@@ -204,8 +184,8 @@
                     <h2 class="footer-title">Navigate</h2>
                     <ul class="footer-links">
                         <li><a href="./">Home</a></li>
+                        <li><a href="./physicians/">For Physicians</a></li>
                         <li><a href="./about/">About</a></li>
-                        <li><a href="./features/">Features</a></li>
                         <li><a href="./contact/">Contact</a></li>
                         <li><a href="https://ccm.phanova.com/" target="_blank" rel="noopener noreferrer">Clinic Login</a></li>
                     </ul>

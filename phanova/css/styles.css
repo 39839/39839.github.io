@@ -593,50 +593,90 @@ main {
 }
 
 .hero--home {
-    padding: 40px 0 110px;
-    text-align: center;
+    padding: clamp(72px, 10vh, 110px) 0 clamp(90px, 12vh, 130px);
     position: relative;
     overflow: hidden;
-    background: linear-gradient(180deg,
-        rgba(244, 248, 253, 0.4) 0%,
-        rgba(255, 255, 255, 0.6) 50%,
-        rgba(250, 252, 254, 0.8) 100%);
     width: 100%;
     max-width: 100%;
+    min-height: 56vh;
+    display: flex;
+    align-items: center;
+    background-image:
+        linear-gradient(120deg, rgba(10, 22, 40, 0.88) 0%, rgba(10, 22, 40, 0.72) 45%, rgba(20, 66, 82, 0.62) 70%),
+        linear-gradient(180deg, rgba(148, 198, 208, 0.28) 0%, rgba(148, 198, 208, 0.08) 70%),
+        url('../images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    isolation: isolate;
+    color: #ffffff;
 }
 
 .hero--home::before {
     content: '';
     position: absolute;
-    top: -40%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 160%;
-    height: 180%;
-    background: radial-gradient(ellipse at center,
-        rgba(107, 139, 181, 0.18) 0%,
-        rgba(136, 189, 242, 0.12) 35%,
-        rgba(164, 188, 224, 0.08) 60%,
-        transparent 80%);
+    inset: 0;
+    background: radial-gradient(120% 120% at 20% 25%, rgba(255, 255, 255, 0.12), transparent 48%),
+                radial-gradient(110% 90% at 78% 18%, rgba(148, 198, 208, 0.25), transparent 55%);
+    mix-blend-mode: screen;
     pointer-events: none;
     z-index: 0;
-    animation: heroGlow 12s ease-in-out infinite;
-    filter: blur(40px);
 }
 
-@keyframes heroGlow {
-    0%, 100% {
-        transform: translateX(-50%) scale(1) rotate(0deg);
-        opacity: 0.6;
-    }
-    33% {
-        transform: translateX(-50%) scale(1.08) rotate(2deg);
-        opacity: 0.8;
-    }
-    66% {
-        transform: translateX(-50%) scale(0.95) rotate(-2deg);
-        opacity: 0.7;
-    }
+.hero-shell {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.hero-copy-card {
+    position: relative;
+    padding: 48px;
+    display: flex;
+    overflow: visible;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 580px;
+    width: 100%;
+    color: #ffffff;
+    margin: 0;
+    text-align: left;
+    border-radius: var(--radius-2xl);
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+        0 24px 80px rgba(5, 10, 20, 0.45),
+        0 10px 30px rgba(10, 26, 46, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transform: translateY(0) scale(1) !important;
+    opacity: 1 !important;
+    box-sizing: border-box;
+}
+
+.hero-copy-card::before {
+    display: none;
+}
+
+.hero-copy-card h1 {
+    line-height: 1.05;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+    width: 100%;
+}
+
+.hero-copy-card .subtitle {
+    margin-bottom: 0;
+    max-width: 48ch;
+    line-height: 1.58;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
 }
 
 
@@ -689,8 +729,11 @@ main {
 
 .hero--home .hero-content {
     text-align: center;
-    transform: scale(0.8);
-    transform-origin: center top;
+    transform: scale(1) !important;
+    transform-origin: center;
+    margin: 0;
+    padding: 0;
+    max-width: 820px;
 }
 
 .hero-grid {
@@ -793,6 +836,14 @@ main {
     margin-left: 0;
     margin-right: 0;
     text-align: left;
+    font-size: clamp(2.3rem, 4.6vw, 3.5rem);
+    background: none;
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
+    text-shadow: 0 16px 60px rgba(0, 0, 0, 0.35);
+    max-width: 18ch;
+    filter: drop-shadow(0 6px 30px rgba(0, 0, 0, 0.25));
+    margin: 0;
 }
 
 .hero .subtitle {
@@ -812,6 +863,26 @@ main {
     margin-left: 0;
     margin-right: 0;
     text-align: left;
+    font-size: clamp(1.02rem, 2.2vw, 1.22rem);
+    margin: 0;
+}
+
+.hero--home .subtitle,
+.hero--home .hero-lede,
+.hero--home p {
+    color: rgba(255, 255, 255, 0.88);
+    max-width: 48ch;
+    line-height: 1.7;
+}
+
+.hero--home p {
+    margin: 0;
+    font-size: clamp(1.05rem, 2.2vw, 1.22rem);
+}
+
+.hero.hero--home .subtitle,
+.hero.hero--home .hero-lede {
+    margin-bottom: 0;
 }
 
 @keyframes subtitleFadeIn {
@@ -1952,13 +2023,14 @@ main {
 }
 
 .hero-buttons {
-    margin-top: 48px;
+    margin-top: 32px;
     display: flex;
-    gap: 20px;
+    gap: 16px;
     flex-wrap: wrap;
     justify-content: center;
-    opacity: 0;
-    animation: buttonsEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    align-items: center;
+    opacity: 1;
+    animation: none;
     position: relative;
 }
 
@@ -1997,7 +2069,176 @@ main {
 }
 
 .hero--home .hero-buttons {
-    justify-content: center;
+    justify-content: flex-start;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.hero--home .hero-buttons::before {
+    display: none;
+}
+
+/* Hero Glass Card - Glassmorphism Container */
+.hero-glass-card {
+    position: relative;
+    max-width: 620px;
+    margin: 0;
+    padding: 52px 48px;
+    border-radius: 28px;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+    text-align: left;
+    animation: glassCardEntrance 0.8s ease-out;
+}
+
+.hero-glass-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        transparent 100%
+    );
+    border-radius: 1px;
+}
+
+.hero-glass-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 28px;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 40%
+    );
+    pointer-events: none;
+}
+
+.hero-glass-card h1 {
+    font-size: clamp(1.85rem, 4.5vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: #ffffff !important;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+}
+
+.hero-glass-subtitle {
+    font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+    line-height: 1.7;
+    color: #ffffff !important;
+    max-width: 540px;
+    margin: 0 0 52px 0;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0.95;
+}
+
+.hero-glass-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 16px;
+}
+
+.hero-glass-buttons .btn-primary {
+    padding: 16px 32px;
+    font-size: 1rem;
+}
+
+.hero-glass-buttons .btn-secondary {
+    padding: 16px 32px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    backdrop-filter: blur(8px);
+}
+
+.hero-glass-buttons .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px);
+}
+
+@keyframes glassCardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Responsive adjustments for glass card */
+@media (max-width: 768px) {
+    .hero-glass-card {
+        padding: 40px 28px;
+        margin: 0 16px;
+        border-radius: 24px;
+    }
+
+    .hero-glass-card h1 {
+        font-size: clamp(1.5rem, 6vw, 2rem);
+        margin-bottom: 16px;
+    }
+
+    .hero-glass-subtitle {
+        font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+        margin-bottom: 28px;
+    }
+
+    .hero-glass-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .hero-glass-buttons .btn-primary,
+    .hero-glass-buttons .btn-secondary {
+        width: 100%;
+        padding: 14px 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-glass-card {
+        padding: 32px 24px;
+        margin: 0 12px;
+        border-radius: 20px;
+    }
+
+    .hero-glass-card h1 {
+        font-size: clamp(1.35rem, 7vw, 1.75rem);
+        margin-bottom: 14px;
+    }
+
+    .hero-glass-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 24px;
+        line-height: 1.6;
+    }
 }
 
 @keyframes buttonsEntrance {
@@ -3628,36 +3869,44 @@ main {
 
     .nav-menu {
         position: fixed;
-        inset: var(--nav-height) 0 auto 0;
-        padding: 28px 24px 32px;
+        top: calc(var(--nav-height) + 10px);
+        left: 16px;
+        right: 16px;
+        width: auto;
+        max-width: 540px;
+        margin: 0 auto;
+        padding: 18px 16px 22px;
         flex-direction: column;
         align-items: stretch;
-        gap: 12px;
-        background: linear-gradient(180deg,
+        gap: 10px;
+        background: linear-gradient(160deg,
             rgba(255, 255, 255, 0.98) 0%,
             rgba(248, 252, 255, 0.96) 100%);
         backdrop-filter: blur(32px) saturate(180%);
         -webkit-backdrop-filter: blur(32px) saturate(180%);
-        transform: translateY(-20px);
+        border-radius: var(--radius-lg);
+        transform: translateY(-14px) scale(0.98);
         opacity: 0;
         visibility: hidden;
         pointer-events: none;
-        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        border-top: 1px solid rgba(107, 139, 181, 0.2);
-        border-bottom: 1px solid rgba(107, 139, 181, 0.1);
-        box-shadow: 0 8px 32px rgba(15, 26, 46, 0.12),
-                    0 2px 8px rgba(15, 26, 46, 0.08),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.35s ease, visibility 0.35s ease, box-shadow 0.35s ease;
+        border: 1px solid rgba(107, 139, 181, 0.22);
+        box-shadow: 0 16px 48px rgba(15, 26, 46, 0.14),
+                    0 6px 18px rgba(15, 26, 46, 0.08),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.95);
         z-index: 999;
-        overflow-y: visible;
-        height: auto;
+        overflow-y: auto;
+        max-height: calc(100vh - var(--nav-height) - 28px);
     }
 
     .nav-menu.active {
         opacity: 1;
         visibility: visible;
         pointer-events: auto;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
+        box-shadow: 0 22px 60px rgba(15, 26, 46, 0.18),
+                    0 10px 24px rgba(15, 26, 46, 0.12),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
 
     .nav-menu li {
@@ -3665,25 +3914,26 @@ main {
     }
 
     .nav-link {
-        padding: 18px 24px;
+        padding: 16px 16px;
         border-radius: 14px;
         border: 1.5px solid rgba(107, 139, 181, 0.15);
         background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.95) 0%,
-            rgba(250, 252, 254, 0.9) 100%);
+            rgba(255, 255, 255, 0.96) 0%,
+            rgba(248, 252, 255, 0.92) 100%);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         font-size: 1.05rem;
-        font-weight: 500;
+        font-weight: 520;
         letter-spacing: -0.01em;
         min-height: 56px;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         color: var(--text-primary);
+        text-align: left;
         text-decoration: none;
         transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        box-shadow: 0 2px 8px rgba(107, 139, 181, 0.08),
+        box-shadow: 0 2px 10px rgba(107, 139, 181, 0.12),
                     inset 0 1px 0 rgba(255, 255, 255, 1);
     }
 
@@ -3709,34 +3959,58 @@ main {
         border-color: var(--primary-600);
     }
 
-    .cta-button {
+    .nav-menu .cta-button {
+        display: flex;
+        align-items: center;
         width: 100%;
         text-align: center;
         justify-content: center;
-        margin-top: 8px;
+        align-self: stretch;
+        margin-top: 20px;
+        margin-bottom: 6px;
         min-height: 56px;
         padding: 18px 24px;
         font-size: 1.05rem;
         font-weight: 600;
+        letter-spacing: -0.01em;
         border-radius: 14px;
-        box-shadow: 0 6px 20px rgba(107, 139, 181, 0.25),
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: var(--gradient-hero);
+        color: #ffffff;
+        box-shadow: 0 6px 20px rgba(107, 139, 181, 0.3),
                     0 2px 8px rgba(107, 139, 181, 0.15),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+                    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    .cta-button:hover {
+    .nav-menu .cta-button:hover {
+        background: linear-gradient(135deg,
+            var(--primary-600) 0%,
+            var(--primary-700) 100%);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #ffffff;
         transform: translateY(-2px);
-        box-shadow: 0 8px 28px rgba(107, 139, 181, 0.3),
+        box-shadow: 0 8px 28px rgba(107, 139, 181, 0.35),
                     0 4px 12px rgba(107, 139, 181, 0.2),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+                    inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
 
     .hero--home {
-        padding: 90px 0 70px;
+        padding: 68px 0 96px;
+        min-height: 58vh;
     }
 
     .hero-content {
         padding: 0 24px;
+    }
+
+    .hero--home .hero-content {
+        padding: 0;
+    }
+
+    .hero-copy-card {
+        padding: 40px;
+        max-width: 92vw;
     }
 
     .hero-grid--split {
@@ -3779,7 +4053,9 @@ main {
     }
 
     .hero--home .hero-buttons {
-        justify-content: center;
+        justify-content: flex-start;
+        gap: 14px;
+        width: 100%;
     }
 
     .hero h1 {
@@ -3930,9 +4206,9 @@ main {
     .hero--home h1,
     .hero--home .subtitle,
     .hero--home .hero-lede {
-        text-align: center;
-        margin-left: auto;
-        margin-right: auto;
+        text-align: left;
+        margin-left: 0;
+        margin-right: 0;
     }
 
     .hero h1 {
@@ -3945,6 +4221,11 @@ main {
     .hero-lede {
         font-size: clamp(1rem, 4vw, 1.15rem);
         line-height: 1.6;
+    }
+
+    .hero-copy-card {
+        padding: 36px;
+        max-width: 94vw;
     }
 
     .hero-buttons {
@@ -4045,6 +4326,11 @@ main {
         padding: 60px 0 60px;
     }
 
+    .hero-copy-card {
+        padding: 32px;
+        max-width: 96vw;
+    }
+
     .hero h1 {
         font-size: clamp(1.75rem, 9vw, 2.5rem) !important;
         margin-bottom: 20px;
@@ -4060,6 +4346,10 @@ main {
     .hero-buttons {
         gap: 10px;
         margin-top: 24px;
+    }
+
+    .hero--home .hero-buttons {
+        margin-top: 8px;
     }
 
     .btn-primary,
@@ -4223,6 +4513,16 @@ main {
         padding: 0 16px;
     }
 
+    .hero--home .hero-content {
+        padding: 0;
+    }
+
+    .hero-copy-card {
+        padding: 28px;
+        max-width: 95vw;
+        gap: 16px;
+    }
+
     .hero h1 {
         font-size: clamp(1.6rem, 10vw, 2.2rem) !important;
         margin-bottom: 16px;
@@ -4239,6 +4539,10 @@ main {
     .hero-buttons {
         gap: 8px;
         margin-top: 20px;
+    }
+
+    .hero--home .hero-buttons {
+        margin-top: 6px;
     }
 
     .btn-primary,
@@ -4490,6 +4794,16 @@ main {
         padding: 0 12px;
     }
 
+    .hero--home .hero-content {
+        padding: 0;
+    }
+
+    .hero-copy-card {
+        padding: 24px;
+        max-width: 96vw;
+        gap: 14px;
+    }
+
     .hero h1 {
         font-size: clamp(1.5rem, 11vw, 2rem) !important;
         margin-bottom: 14px;
@@ -4505,6 +4819,10 @@ main {
     .btn-secondary {
         padding: 12px 20px;
         font-size: 0.85rem;
+    }
+
+    .hero--home .hero-buttons {
+        margin-top: 6px;
     }
 
     .hero-badge {

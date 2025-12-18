@@ -110,7 +110,9 @@
                 const parallaxSpeed = 0.5;
                 const opacity = Math.max(0, 1 - scrolled / (windowHeight * 0.8));
                 const translateY = scrolled * parallaxSpeed;
-                const baseScale = 0.8; // Base scale from CSS
+                // Use scale(1) for home hero, 0.8 for compact heroes
+                const isHomeHero = heroContent.closest('.hero--home') !== null;
+                const baseScale = isHomeHero ? 1 : 0.8;
                 const scrollScale = Math.max(0.95, 1 - scrolled / (windowHeight * 2));
                 const finalScale = baseScale * scrollScale;
 
