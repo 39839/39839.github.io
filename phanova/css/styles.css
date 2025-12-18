@@ -604,7 +604,7 @@ main {
     background-image:
         linear-gradient(120deg, rgba(10, 22, 40, 0.88) 0%, rgba(10, 22, 40, 0.72) 45%, rgba(20, 66, 82, 0.62) 70%),
         linear-gradient(180deg, rgba(148, 198, 208, 0.28) 0%, rgba(148, 198, 208, 0.08) 70%),
-        url('../images/hero-bg.jpg');
+        url('../images/hero-bg.webp');
     background-size: cover;
     background-position: center 40%;
     background-repeat: no-repeat;
@@ -2101,6 +2101,11 @@ main {
         inset 0 -1px 0 rgba(255, 255, 255, 0.1);
     text-align: left;
     animation: glassCardEntrance 0.8s ease-out;
+    /* Parallax optimization */
+    will-change: transform, opacity, filter;
+    transform-origin: center top;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .hero-glass-card::before {
@@ -2192,6 +2197,59 @@ main {
     }
 }
 
+/* About Page Hero Glass Card */
+.hero--about {
+    background-image:
+        linear-gradient(135deg, rgba(10, 22, 40, 0.92) 0%, rgba(20, 40, 60, 0.85) 50%, rgba(30, 60, 80, 0.78) 100%),
+        linear-gradient(180deg, rgba(107, 139, 181, 0.15) 0%, rgba(107, 139, 181, 0.05) 100%);
+    background-color: #0a1628;
+}
+
+.hero-glass-card--about {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 60px 56px;
+}
+
+.hero-glass-eyebrow {
+    display: inline-block;
+    padding: 10px 24px;
+    margin-bottom: 24px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(135deg,
+        rgba(107, 139, 181, 0.4) 0%,
+        rgba(107, 139, 181, 0.2) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+}
+
+.hero-glass-card--about h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 28px;
+    line-height: 1.2;
+    color: #ffffff !important;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+}
+
+.hero-glass-card--about .hero-glass-subtitle {
+    max-width: 680px;
+    margin: 0 auto 20px;
+    text-align: center;
+    font-size: clamp(1rem, 2vw, 1.1rem);
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.hero-glass-card--about .hero-glass-subtitle:last-child {
+    margin-bottom: 0;
+}
+
 /* Responsive adjustments for glass card */
 @media (max-width: 768px) {
     .hero-glass-card {
@@ -2220,6 +2278,22 @@ main {
         width: 100%;
         padding: 14px 28px;
     }
+
+    .hero-glass-card--about {
+        padding: 40px 28px;
+        margin: 0 auto;
+    }
+
+    .hero-glass-card--about h1 {
+        font-size: clamp(1.6rem, 5vw, 2.2rem);
+        margin-bottom: 20px;
+    }
+
+    .hero-glass-eyebrow {
+        padding: 8px 20px;
+        font-size: 0.7rem;
+        margin-bottom: 20px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -2238,6 +2312,19 @@ main {
         font-size: 0.95rem;
         margin-bottom: 24px;
         line-height: 1.6;
+    }
+
+    .hero-glass-card--about {
+        padding: 32px 24px;
+    }
+
+    .hero-glass-card--about h1 {
+        font-size: clamp(1.4rem, 6vw, 1.8rem);
+    }
+
+    .hero-glass-card--about .hero-glass-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 16px;
     }
 }
 
@@ -2524,114 +2611,92 @@ main {
 /* Feature + Value Cards */
 .value-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
     margin-bottom: 28px;
 }
 
 .value-card {
-    background: var(--surface-glass-strong);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-2xl);
-    padding: 52px 44px;
-    box-shadow: var(--shadow-md),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(24px) saturate(120%);
-    -webkit-backdrop-filter: blur(24px) saturate(120%);
-    transition: all var(--transition-smooth);
+    background: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 40px 36px;
+    box-shadow:
+        0 4px 24px rgba(0, 0, 0, 0.06),
+        0 1px 4px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .value-card::before {
     content: '';
     position: absolute;
     top: 0;
-    right: 0;
-    width: 280px;
-    height: 280px;
-    background: radial-gradient(
-        circle at center,
-        rgba(164, 188, 224, 0.12) 0%,
-        rgba(138, 174, 216, 0.06) 40%,
-        transparent 70%
-    );
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg,
+        var(--primary-500) 0%,
+        var(--primary-600) 100%);
+    border-radius: 4px 0 0 4px;
     opacity: 0;
-    transition: all var(--transition-slow);
-    pointer-events: none;
-    border-radius: 50%;
-    filter: blur(40px);
-}
-
-.value-card::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: var(--radius-2xl);
-    padding: 1px;
-    background: linear-gradient(135deg,
-        rgba(164, 188, 224, 0.4) 0%,
-        rgba(107, 139, 181, 0.3) 50%,
-        rgba(79, 124, 173, 0.2) 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-    opacity: 0;
-    transition: var(--transition-smooth);
+    transition: opacity 0.3s ease;
 }
 
 .value-card:hover {
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-xl),
-                0 0 0 1px rgba(107, 139, 181, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    border-color: var(--border-medium);
+    transform: translateY(-6px);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.1),
+        0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .value-card:hover::before {
     opacity: 1;
-    transform: translate(-20px, -20px) scale(1.2);
-}
-
-.value-card:hover::after {
-    opacity: 1;
 }
 
 .value-label {
-    display: inline-flex;
-    align-items: center;
-    padding: 9px 20px;
-    border-radius: 100px;
-    background: linear-gradient(135deg,
-        rgba(164, 188, 224, 0.25) 0%,
-        rgba(138, 174, 216, 0.18) 100%);
-    border: 1px solid var(--border-medium);
-    font-weight: 650;
-    letter-spacing: 0.8px;
+    display: inline-block;
+    padding: 0;
+    background: none;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    color: var(--primary-700);
-    font-size: 0.72rem;
-    margin-bottom: 26px;
-    backdrop-filter: blur(12px);
-    box-shadow: var(--shadow-sm),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    color: var(--primary-600);
+    font-size: 0.7rem;
+    margin-bottom: 12px;
     position: relative;
     z-index: 1;
 }
 
 .value-card h3 {
-    font-size: 1.75rem;
+    font-size: 1.4rem;
     color: var(--text-primary);
     margin-bottom: 14px;
     font-weight: 700;
     letter-spacing: -0.02em;
+    line-height: 1.3;
 }
 
 .value-card p {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     line-height: 1.7;
-    font-size: 1.05rem;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .value-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .value-card {
+        padding: 32px 28px;
+    }
 }
 
 .value-list {

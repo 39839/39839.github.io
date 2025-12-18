@@ -94,6 +94,7 @@
 
     // Apple-style parallax and scroll effects
     if (!prefersReducedMotion) {
+        const heroGlassCard = document.querySelector('.hero-glass-card');
         const heroContent = document.querySelector('.hero-content');
         const heroDecorations = document.querySelector('.hero-decorations');
         const featureCards = document.querySelectorAll('.feature-card');
@@ -105,12 +106,30 @@
             const scrolled = window.scrollY;
             const windowHeight = window.innerHeight;
 
-            // Hero parallax - content moves slower than scroll
-            if (heroContent && scrolled < windowHeight) {
+            // Hero glass card - Apple-style parallax with scale, blur and fade
+            if (heroGlassCard && scrolled < windowHeight * 1.2) {
+                const scrollProgress = scrolled / (windowHeight * 0.6);
+
+                // Smooth easing
+                const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+                const easedProgress = easeOut(Math.min(1, scrollProgress));
+
+                // Transform values
+                const translateY = scrolled * 0.4;
+                const scale = Math.max(0.85, 1 - easedProgress * 0.15);
+                const opacity = Math.max(0, 1 - easedProgress * 1.2);
+                const blur = Math.min(8, easedProgress * 10);
+
+                heroGlassCard.style.transform = `translateY(${translateY}px) scale(${scale})`;
+                heroGlassCard.style.opacity = opacity;
+                heroGlassCard.style.filter = `blur(${blur}px)`;
+            }
+
+            // Hero content fallback for other pages
+            if (heroContent && !heroGlassCard && scrolled < windowHeight) {
                 const parallaxSpeed = 0.5;
                 const opacity = Math.max(0, 1 - scrolled / (windowHeight * 0.8));
                 const translateY = scrolled * parallaxSpeed;
-                // Use scale(1) for home hero, 0.8 for compact heroes
                 const isHomeHero = heroContent.closest('.hero--home') !== null;
                 const baseScale = isHomeHero ? 1 : 0.8;
                 const scrollScale = Math.max(0.95, 1 - scrolled / (windowHeight * 2));
@@ -132,35 +151,40 @@
                 const rect = card.getBoundingClientRect();
                 const cardTop = rect.top;
                 const cardHeight = rect.height;
-                const triggerPoint = windowHeight * 0.75;
+                const triggerPoint = windowHeight * 0.85;
 
                 if (cardTop < triggerPoint && cardTop > -cardHeight) {
-                    const progress = Math.min(1, Math.max(0, (triggerPoint - cardTop) / (windowHeight * 0.5)));
-                    const delay = index * 0.1;
-                    const adjustedProgress = Math.max(0, progress - delay);
+                    const progress = Math.min(1, Math.max(0, (triggerPoint - cardTop) / (windowHeight * 0.4)));
+                    const delay = index * 0.08;
+                    const adjustedProgress = Math.max(0, Math.min(1, (progress - delay) / (1 - delay)));
 
-                    const scale = 0.9 + (adjustedProgress * 0.1);
-                    const opacity = Math.min(1, adjustedProgress * 1.5);
-                    const translateY = (1 - adjustedProgress) * 30;
+                    // Smooth easing
+                    const eased = 1 - Math.pow(1 - adjustedProgress, 4);
+
+                    const scale = 0.92 + (eased * 0.08);
+                    const opacity = eased;
+                    const translateY = (1 - eased) * 40;
 
                     card.style.transform = `translateY(${translateY}px) scale(${scale})`;
                     card.style.opacity = opacity;
                 }
             });
 
-            // Sections - smooth fade and slide
+            // Sections - smooth fade and slide with better timing
             sections.forEach((section) => {
                 const rect = section.getBoundingClientRect();
                 const sectionTop = rect.top;
                 const sectionHeight = rect.height;
-                const triggerPoint = windowHeight * 0.8;
+                const triggerPoint = windowHeight * 0.9;
 
                 if (sectionTop < triggerPoint && sectionTop > -sectionHeight) {
-                    const progress = Math.min(1, Math.max(0, (triggerPoint - sectionTop) / (windowHeight * 0.3)));
-                    const translateY = (1 - progress) * 20;
+                    const progress = Math.min(1, Math.max(0, (triggerPoint - sectionTop) / (windowHeight * 0.35)));
+                    // Smooth ease out
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    const translateY = (1 - eased) * 30;
 
                     section.style.transform = `translateY(${translateY}px)`;
-                    section.style.opacity = Math.min(1, progress * 1.2);
+                    section.style.opacity = eased;
                 }
             });
         };
@@ -168,7 +192,7 @@
         // Initial run
         handleParallaxScroll();
 
-        // Smooth scroll handling
+        // Smooth scroll handling with RAF
         window.addEventListener('scroll', () => {
             if (scrollTicking2) return;
             scrollTicking2 = true;
