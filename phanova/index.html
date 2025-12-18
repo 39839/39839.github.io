@@ -15,7 +15,7 @@
 	    <link rel="icon" href="images/logo.png" type="image/png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to main content</a>
@@ -54,6 +54,15 @@
                 <div class="hero-orb hero-orb--3"></div>
                 <div class="hero-shape hero-shape--1"></div>
                 <div class="hero-shape hero-shape--2"></div>
+                <div class="hero-grid-bg"></div>
+                <div class="hero-particles">
+                    <span class="particle"></span>
+                    <span class="particle"></span>
+                    <span class="particle"></span>
+                    <span class="particle"></span>
+                    <span class="particle"></span>
+                    <span class="particle"></span>
+                </div>
             </div>
             <div class="hero-content">
                 <h1>
@@ -62,8 +71,27 @@
                 </h1>
                 <p class="subtitle hero-lede">Text and voice AI agents automate patient outreach, care plan generation, and billing for CCM and RPM programs—no EHR integration required.</p>
                 <div class="hero-buttons">
-                    <a href="./contact/" class="btn-primary">Register your organization</a>
+                    <a href="./contact/" class="btn-primary">
+                        <span>Register your organization</span>
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
                     <a href="./features/" class="btn-secondary">Learn more</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">100%</div>
+                        <div class="hero-stat-label">Automated Outreach</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">24/7</div>
+                        <div class="hero-stat-label">Patient Monitoring</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">0</div>
+                        <div class="hero-stat-label">EHR Integration Needed</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -74,70 +102,56 @@
                 <h2 class="section-title">Expand enrollment without increasing staff labor</h2>
                 <p class="section-subtitle">Phanova automates patient outreach, care plan generation, and billing tracking for your CCM and RPM programs.</p>
 
-                <div class="value-grid">
-                    <div class="value-card reveal">
-                        <div class="value-label">Patient Outreach</div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="feature-label">Patient Outreach</div>
                         <h3>Text and voice AI agents</h3>
                         <p>Phanova reaches out to your patients via text and voice calls to collect vital signs and medication adherence at the cadence you define.</p>
-                        <ul class="value-list">
-                            <li>Patients respond via text or call—no apps required.</li>
-                            <li>Customized to your clinic's protocols and preferences.</li>
+                        <ul class="feature-list">
+                            <li>Patients respond via text or call—no apps required</li>
+                            <li>Customized to your clinic's protocols and preferences</li>
+                            <li>Automated reminders and check-ins</li>
                         </ul>
                     </div>
-                    <div class="value-card reveal">
-                        <div class="value-label">Care Plans</div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="feature-label">Care Plans</div>
                         <h3>Automatically generate care plans</h3>
                         <p>Phanova automatically generates individualized care plans for your patients' CCM program, customized to each patient's needs.</p>
-                        <ul class="value-list">
-                            <li>Reflects your clinic's protocol and preferences.</li>
-                            <li>Shared with patients over compliant channels.</li>
+                        <ul class="feature-list">
+                            <li>Reflects your clinic's protocol and preferences</li>
+                            <li>Shared with patients over HIPAA-compliant channels</li>
+                            <li>Updates automatically based on patient data</li>
                         </ul>
                     </div>
-                    <div class="value-card reveal">
-                        <div class="value-label">Billing</div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="feature-label">Billing</div>
                         <h3>Automated tracking and billing</h3>
                         <p>Phanova tracks all interactions with each patient and time spent. Monthly billing reports enable CCM code billing.</p>
-                        <ul class="value-list">
-                            <li>Total time spent per patient calculated automatically.</li>
-                            <li>Monthly billing reports ready for CCM codes.</li>
+                        <ul class="feature-list">
+                            <li>Total time spent per patient calculated automatically</li>
+                            <li>Monthly billing reports ready for CCM codes</li>
+                            <li>Complete audit trails for compliance</li>
                         </ul>
                     </div>
-                </div>
-
-                <div class="features-grid features-grid--home">
-                    <div class="feature-card reveal">
-                        <span class="feature-chip">Patient Outreach</span>
-                        <h3>Text and voice communication</h3>
-                        <p class="feature-lead">Phanova's AI agents reach out via text messages and phone calls to collect vital signs and medication adherence at your defined cadence.</p>
-                        <ul class="feature-points">
-                            <li>Collect vital signs and medication adherence automatically.</li>
-                            <li>Patients respond via text or call—no apps required.</li>
-                            <li>Customized to your clinic's cadence and protocols.</li>
-                        </ul>
-                    </div>
-
-                    <div class="feature-card reveal">
-                        <span class="feature-chip">Billing</span>
-                        <h3>Automated tracking and reporting</h3>
-                        <p class="feature-lead">Phanova tracks all patient interactions and time spent, producing monthly billing reports for CCM code billing.</p>
-                        <ul class="feature-points">
-                            <li>Tracks all interactions and time per patient.</li>
-                            <li>Monthly billing reports for CCM codes.</li>
-                            <li>Complete audit trails for compliance.</li>
-                        </ul>
-                    </div>
-
-                    <div class="feature-card reveal">
-                        <span class="feature-chip">Care Plans</span>
-                        <h3>Individualized and automatic</h3>
-                        <p class="feature-lead">Automatically generates individualized care plans for each patient's CCM program, reflecting your clinic's protocol and preferences.</p>
-                        <ul class="feature-points">
-                            <li>Customized to each patient's specific needs.</li>
-                            <li>Reflects your clinic's protocol and preferences.</li>
-                            <li>Shared with patients over HIPAA-compliant channels.</li>
-                        </ul>
-                    </div>
-
                 </div>
             </div>
         </section>
