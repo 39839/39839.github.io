@@ -221,6 +221,74 @@
         });
     }
 
+    // Contact page tab switching
+    const contactTabs = document.querySelectorAll('.contact-tab');
+    const contactTabContents = document.querySelectorAll('.contact-tab-content');
+
+    contactTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetTab = tab.dataset.tab;
+
+            // Remove active class from all tabs and contents
+            contactTabs.forEach(t => t.classList.remove('active'));
+            contactTabContents.forEach(content => content.classList.remove('active'));
+
+            // Add active class to clicked tab and corresponding content
+            tab.classList.add('active');
+            const targetContent = document.querySelector(`[data-content="${targetTab}"]`);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+
+    // Handle contact forms (both patient and physician)
+    const contactForms = document.querySelectorAll('.contact-form');
+    contactForms.forEach(form => {
+        const formId = form.id;
+        const statusId = formId.replace('contact-form', 'form-status');
+        const status = document.getElementById(statusId);
+        const submitBtn = form.querySelector('button[type="submit"]');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (!form.checkValidity()) {
+                if (status) {
+                    status.textContent = 'Please complete all required fields.';
+                    status.className = 'form-status error';
+                }
+                return;
+            }
+
+            if (submitBtn instanceof HTMLButtonElement) {
+                submitBtn.disabled = true;
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Sending...';
+
+                if (status) {
+                    status.textContent = '';
+                    status.className = 'form-status';
+                }
+
+                window.setTimeout(() => {
+                    form.reset();
+
+                    if (status) {
+                        status.textContent = 'Message sent! We\'ll get back to you soon.';
+                        status.className = 'form-status success';
+                    }
+
+                    if (submitBtn instanceof HTMLButtonElement) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                }, 800);
+            }
+        });
+    });
+
+    // Legacy contact form support (if exists)
     const contactForm = document.getElementById('contact-form');
     if (contactForm instanceof HTMLFormElement) {
         const status = document.getElementById('form-status');
