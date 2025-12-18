@@ -2234,6 +2234,10 @@ main {
     margin-bottom: 28px;
     line-height: 1.2;
     color: #ffffff !important;
+    background: none;
+    -webkit-text-fill-color: #ffffff;
+    -webkit-background-clip: initial;
+    background-clip: border-box;
     text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
 }
 
