@@ -1,0 +1,63 @@
+Yair Ben-Dor
+Jan 1
+For much of history, electricity and magnetism were viewed as two separate, mysterious forces. One was the stuff of static shocks and lightning; the other was the invisible hand that guided a compass needle. But as scientists dug deeper, they discovered that these phenomena weren't just related, they are fundamentally intertwined, different expressions of a single underlying force: electromagnetism. Understanding this connection is key to appreciating how so much of our modern world actually works.
+
+ 
+Electric Fields: More Than Just Static
+
+The story of electromagnetism begins with a basic property of matter: electric charge. Particles like protons and electrons generate an “electric field” (E) in the space around them, which exerts a force on other charges. We see this field in action in familiar ways. The small zap from a doorknob is simply a static electric field discharging, and lightning is the same principle on a much grander scale. 
+
+
+However, the behavior of a stationary charge is only half the story. The moment that charge begins to move, it generates something new, revealing a deeper aspect of its nature.
+
+ 
+The Magnetic Field: An Effect of Moving Charge
+
+The magnetic field (B) arises directly from moving electric charges. This can be a current flowing through a wire or the coordinated motion of electrons within the atoms of a permanent magnet. This is a crucial distinction. While you can have an isolated positive or negative electric charge, you can never have an isolated north or south magnetic pole. If you cut a magnet in half, you simply get two smaller magnets, each with its own north and south. This is a direct reflection of the fact that magnetism is the product of charges in motion. 
+
+
+For centuries, this connection remained a curiosity. A current could deflect a compass needle, and a moving magnet could create a current. The relationship was there, but it took a unifying vision to see the full picture.
+
+
+Image Credit: Published by Creazilla. Author: helder100. Source: helder100 on Pixabay. License: Public Domain (CC0). Free for editorial, educational, commercial, and personal projects. No attribution required.
+Image Credit: Published by Creazilla. Author: helder100. Source: helder100 on Pixabay. License: Public Domain (CC0). Free for editorial, educational, commercial, and personal projects. No attribution required.
+ 
+Maxwell's Unification
+
+The scattered puzzle pieces of electricity and magnetism were finally assembled in the mid-19th century by physicist James Clerk Maxwell. Through a powerful set of equations, he elegantly described the relationship that we now take for granted. 
+
+
+He built upon the known principle of induction: a changing magnetic field creates an electric field. This is how we generate most of our electricity, by spinning magnets inside coils of wire in power plants. 
+
+
+But Maxwell's crucial insight was discovering the symmetry: a changing electric field also creates a magnetic field. This might seem like a subtle point, but it was the key that unlocked everything. It meant the two fields were locked in a reciprocal relationship, each capable of creating the other.
+
+
+
+
+ 
+Electromagnetic Waves: The Result of Unity
+
+ree
+
+
+This perfect symmetry led Maxwell to a remarkable prediction. If a changing electric field creates a magnetic one, which in turn creates a new electric field, couldn't this interaction travel through space as a self-sustaining wave? 
+
+
+He calculated the speed of such a wave based on his equations and found it to be a very familiar number: the speed of light (c). The implication was staggering: light itself is an electromagnetic wave. The entire spectrum, from radio waves and Wi-Fi to visible light and X-rays, is composed of these electric and magnetic fields, continuously regenerating each other as they travel through space.
+
+ 
+Concluding Thoughts: A Single, Fundamental Force
+
+The relationship between electricity and magnetism is more intimate than a simple partnership. They are two aspects of a single, unified force. A stationary charge gives us a pure electric field, but putting that charge in motion reveals the magnetic facet of that same fundamental interaction. It's a beautiful example of how a change in perspective, in this case, motion, can reveal a deeper truth about the nature of our universe. From the motors that power our homes to the light and data reaching our screens, this unified force is the invisible engine of our world.
+
+
+
+
+
+
+
+
+
+
+
