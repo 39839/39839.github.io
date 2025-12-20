@@ -6,7 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initApp();
 });
 
-function initApp() {
+const ARTICLE_FALLBACK_IMAGE = 'NewsletterHeader1.png';
+let articleData = [];
+let fadeObserver = null;
+const deepClone = (val) => {
+    if (typeof structuredClone === 'function') return structuredClone(val);
+    return JSON.parse(JSON.stringify(val));
+};
+
+async function initApp() {
     setupNavigation();
     setupScrollEffects();
     setupScrollToTop();
@@ -15,12 +23,18 @@ function initApp() {
     // Page-specific initialization
     const page = document.body.dataset.page || detectPage();
 
+    if (page === 'home' || page === 'articles' || page === 'article') {
+        articleData = await loadArticles();
+    }
+
     if (page === 'home') {
-        initHomePage();
+        initHomePage(articleData);
     } else if (page === 'articles') {
-        initArticlesPage();
+        initArticlesPage(articleData);
     } else if (page === 'article') {
-        initArticleDetailPage();
+        initArticleDetailPage(articleData);
+    } else if (page === 'about') {
+        initAboutPage();
     }
 }
 
@@ -78,7 +92,7 @@ function setupScrollEffects() {
     });
 
     // Intersection observer for fade-in
-    const observer = new IntersectionObserver((entries) => {
+    fadeObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
@@ -86,7 +100,7 @@ function setupScrollEffects() {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    document.querySelectorAll('.fade-in').forEach(el => fadeObserver.observe(el));
 }
 
 // ============================================
@@ -112,52 +126,76 @@ function setupScrollToTop() {
 // ============================================
 // HOME PAGE
 // ============================================
-function initHomePage() {
-    initHeroFeatured();
-    initHomeArticles();
+function initHomePage(data) {
+    initHeroFeatured(data);
+    initFeaturedStoriesGrid(data);
+    initHomeArticles(data);
+    initSearch(data);
+    initBrainTeaser();
+    initScrollAnimations();
 }
 
-function initHeroFeatured() {
+function initHeroFeatured(data) {
     const container = document.getElementById('hero-featured');
-    if (!container || typeof articles === 'undefined') return;
+    if (!container || !Array.isArray(data) || data.length === 0) return;
 
-    // Use the first article as featured
-    const featured = articles[0];
+    // Get top 3 articles for hero featured grid (most recent)
+    const featured = data.slice(0, 3);
 
     container.innerHTML = `
-        <div class="featured-card" onclick="viewArticle(${featured.id})">
-            <img src="${featured.image}" alt="${featured.title}" class="featured-card-image">
-            <div class="featured-card-overlay">
-                <span class="featured-card-category">${formatCategory(featured.category)}</span>
-                <h3 class="featured-card-title">${featured.title}</h3>
-                <p class="featured-card-meta">${featured.author} • ${featured.date}</p>
-            </div>
-        </div>
-        <div class="floating-cards">
-            <div class="floating-card">
-                <div class="floating-card-icon" style="font-size: 2.5rem; font-weight: 800; color: var(--accent-primary);">25+</div>
-                <div class="floating-card-text">Articles</div>
-            </div>
-            <div class="floating-card">
-                <div class="floating-card-icon" style="font-size: 2.5rem; font-weight: 800; color: var(--accent-secondary);">15+</div>
-                <div class="floating-card-text">Contributors</div>
-            </div>
-            <div class="floating-card">
-                <div class="floating-card-icon" style="font-size: 2.5rem; font-weight: 800; color: var(--accent-light-blue);">100%</div>
-                <div class="floating-card-text">Free</div>
-            </div>
+        <div class="hero-featured-grid">
+            ${featured.map(article => `
+                <div class="featured-card" onclick="viewArticle(${article.id})">
+                    <img src="${article.image || ARTICLE_FALLBACK_IMAGE}" alt="${article.title}" class="featured-card-image">
+                    <div class="featured-card-overlay">
+                        <span class="featured-card-category">${formatCategory(article.category)}</span>
+                        <h3 class="featured-card-title">${article.title}</h3>
+                        <p class="featured-card-meta">${article.author} • ${article.date}</p>
+                    </div>
+                </div>
+            `).join('')}
         </div>
     `;
 }
 
-function initHomeArticles() {
-    const grid = document.getElementById('home-articles-grid');
-    if (!grid || typeof articles === 'undefined') return;
+// Featured Stories Grid
+function initFeaturedStoriesGrid(data = []) {
+    const grid = document.getElementById('featured-stories-grid');
+    if (!grid || !Array.isArray(data) || !data.length) return;
 
-    // Show first 7 articles (most recent)
-    const homeArticles = articles.slice(0, 7);
+    // Skip the first 3 (already shown in hero), show next 5 articles
+    const featured = data.slice(3, 8);
+
+    grid.innerHTML = featured.map((article, idx) => `
+        <div class="featured-story-card" onclick="viewArticle(${article.id})">
+            <div class="featured-story-image" style="background-image: url('${article.image || ARTICLE_FALLBACK_IMAGE}')"></div>
+            <div class="featured-story-content">
+                <span class="featured-story-badge">${formatCategory(article.category)}</span>
+                <h3 class="featured-story-title">${article.title}</h3>
+                <p class="featured-story-excerpt">${article.excerpt}</p>
+                <div class="featured-story-meta">
+                    <span class="featured-story-author">${article.author}</span>
+                    <span>•</span>
+                    <span>${article.date}</span>
+                    <span>•</span>
+                    <span>${article.readingTime || estimateReadingTime(article)}</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    registerFadeIn(grid);
+}
+
+function initHomeArticles(data) {
+    const grid = document.getElementById('home-articles-grid');
+    if (!grid || !Array.isArray(data)) return;
+
+    // Skip the first 8 (already shown above), show next 12 articles
+    const homeArticles = data.slice(8, 20);
 
     grid.innerHTML = homeArticles.map(article => createArticleCard(article)).join('');
+    registerFadeIn(grid);
 }
 
 // ============================================
@@ -166,21 +204,22 @@ function initHomeArticles() {
 let articlesDisplayed = 9;
 let currentFilter = 'all';
 
-function initArticlesPage() {
-    renderArticles();
-    renderEditorials();
-    setupFilters();
+function initArticlesPage(data) {
+    if (!Array.isArray(data)) return;
+    initMagazineCover(data);
+    initMagazineGrid(data);
+    setupMagazineNav(data);
     setupLoadMore();
 }
 
-function renderArticles(filter = 'all') {
+function renderArticles(filter = 'all', data = articleData) {
     const grid = document.getElementById('articles-grid');
-    if (!grid || typeof articles === 'undefined') return;
+    if (!grid || !Array.isArray(data)) return;
 
     currentFilter = filter;
     const filtered = filter === 'all'
-        ? articles
-        : articles.filter(a => a.category === filter);
+        ? data
+        : data.filter(a => a.category === filter);
 
     const toShow = filtered.slice(0, articlesDisplayed);
 
@@ -191,14 +230,19 @@ function renderArticles(filter = 'all') {
     if (loadMoreBtn) {
         loadMoreBtn.style.display = articlesDisplayed >= filtered.length ? 'none' : 'inline-flex';
     }
+
+    registerFadeIn(grid);
 }
 
 function createArticleCard(article) {
+    const imageSrc = article.image || ARTICLE_FALLBACK_IMAGE;
+    const category = article.category || 'feature';
+    const readingTime = article.readingTime || estimateReadingTime(article);
     return `
         <article class="article-card fade-in" onclick="viewArticle(${article.id})">
             <div class="article-image">
-                <img src="${article.image}" alt="${article.title}" loading="lazy">
-                <span class="article-category ${article.category}">${formatCategory(article.category)}</span>
+                <img src="${imageSrc}" alt="${article.title}" loading="lazy">
+                <span class="article-category ${category}">${formatCategory(category)}</span>
             </div>
             <div class="article-content">
                 <h3 class="article-title">${article.title}</h3>
@@ -206,6 +250,13 @@ function createArticleCard(article) {
                 <div class="article-meta">
                     <span class="article-author">${article.author}</span>
                     <span>${article.date}</span>
+                    <span class="reading-time">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        ${readingTime}
+                    </span>
                 </div>
             </div>
         </article>
@@ -229,6 +280,8 @@ function renderEditorials() {
             </div>
         </article>
     `).join('');
+
+    registerFadeIn(grid);
 }
 
 function setupFilters() {
@@ -248,9 +301,99 @@ function setupLoadMore() {
     if (btn) {
         btn.addEventListener('click', () => {
             articlesDisplayed += 6;
-            renderArticles(currentFilter);
+            renderMagazineGrid(currentFilter, articleData);
         });
     }
+}
+
+// ============================================
+// MAGAZINE STYLE - ARTICLES PAGE
+// ============================================
+function initMagazineCover(data) {
+    const coverContainer = document.getElementById('cover-story');
+    if (!coverContainer || !data.length) return;
+
+    const coverStory = data[0];
+    coverContainer.innerHTML = `
+        <div class="magazine-cover-grid" onclick="viewArticle(${coverStory.id})">
+            <div class="magazine-cover-image" style="background-image: url('${coverStory.image || ARTICLE_FALLBACK_IMAGE}')"></div>
+            <div class="magazine-cover-content">
+                <div class="magazine-cover-label">Cover Story</div>
+                <h2 class="magazine-cover-title">${coverStory.title}</h2>
+                <p class="magazine-cover-excerpt">${coverStory.excerpt}</p>
+                <div class="magazine-cover-meta">${coverStory.author} • ${coverStory.date}</div>
+            </div>
+        </div>
+    `;
+}
+
+function initMagazineGrid(data) {
+    renderMagazineGrid('all', data);
+}
+
+function renderMagazineGrid(filter, data) {
+    const grid = document.getElementById('magazine-grid');
+    if (!grid || !Array.isArray(data)) return;
+
+    currentFilter = filter;
+
+    // Skip the first article (it's the cover story)
+    const filtered = filter === 'all'
+        ? data.slice(1)
+        : data.slice(1).filter(a => {
+            if (filter === 'editorial') {
+                return a.category === 'editorial' || a.category === 'op-ed';
+            }
+            return a.category === filter;
+        });
+
+    const toShow = filtered.slice(0, articlesDisplayed);
+
+    // Create magazine layout with varying sizes
+    grid.innerHTML = toShow.map((article, index) => {
+        let sizeClass = 'small';
+
+        // Create an interesting magazine layout pattern
+        if (index % 7 === 0) sizeClass = 'large';
+        else if (index % 3 === 0) sizeClass = 'medium';
+
+        return createMagazineArticle(article, sizeClass);
+    }).join('');
+
+    // Update load more visibility
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.style.display = articlesDisplayed >= filtered.length ? 'none' : 'inline-flex';
+    }
+}
+
+function createMagazineArticle(article, sizeClass = 'small') {
+    const imageSrc = article.image || ARTICLE_FALLBACK_IMAGE;
+    const category = article.category || 'feature';
+
+    return `
+        <article class="magazine-article ${sizeClass}" onclick="viewArticle(${article.id})">
+            <img src="${imageSrc}" alt="${article.title}" class="magazine-article-image" loading="lazy">
+            <div class="magazine-article-content">
+                <div class="magazine-article-category">${formatCategory(category)}</div>
+                <h3 class="magazine-article-title">${article.title}</h3>
+                <p class="magazine-article-excerpt">${article.excerpt}</p>
+                <div class="magazine-article-meta">${article.author} • ${article.date}</div>
+            </div>
+        </article>
+    `;
+}
+
+function setupMagazineNav(data) {
+    const navItems = document.querySelectorAll('.magazine-nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            articlesDisplayed = 9;
+            renderMagazineGrid(item.dataset.category, data);
+        });
+    });
 }
 
 // ============================================
@@ -345,23 +488,23 @@ function showNotification(message) {
 // ============================================
 // ARTICLE DETAIL PAGE
 // ============================================
-function initArticleDetailPage() {
+function initArticleDetailPage(data) {
     const urlParams = new URLSearchParams(window.location.search);
     const articleId = parseInt(urlParams.get('id'));
 
-    if (!articleId || typeof articles === 'undefined') {
+    if (!articleId || !Array.isArray(data)) {
         window.location.href = 'articles.html';
         return;
     }
 
-    const article = articles.find(a => a.id === articleId);
+    const article = data.find(a => a.id === articleId);
     if (!article) {
         window.location.href = 'articles.html';
         return;
     }
 
     renderArticleDetail(article);
-    renderRelatedArticles(article);
+    renderRelatedArticles(article, data);
 }
 
 function renderArticleDetail(article) {
@@ -371,6 +514,11 @@ function renderArticleDetail(article) {
     // Update page title
     document.title = `${article.title} | The Catalyst Magazine`;
 
+    const contentHtml = article.blocks?.length
+        ? renderContentBlocks(article.blocks)
+        : article.content;
+    const readingTime = article.readingTime || estimateReadingTime(article);
+
     container.innerHTML = `
         <div class="article-detail-header">
             <span class="article-detail-category">${formatCategory(article.category)}</span>
@@ -379,16 +527,23 @@ function renderArticleDetail(article) {
                 <span class="article-detail-author">${article.author}</span>
                 <span>•</span>
                 <span>${article.date}</span>
+                <span class="reading-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    ${readingTime}
+                </span>
             </div>
         </div>
 
         <div class="article-detail-image">
-            <img src="${article.image}" alt="${article.title}">
+            <img src="${article.image || ARTICLE_FALLBACK_IMAGE}" alt="${article.title}">
         </div>
 
         <div class="article-detail-content">
-            ${article.content ? article.content : `
-                <p>${article.excerpt}</p>
+            ${contentHtml ? contentHtml : `
+                <p>${article.excerpt || ''}</p>
                 <p>This article is available on The Catalyst Magazine website.</p>
             `}
             <p style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(0, 0, 0, 0.1);">
@@ -405,19 +560,19 @@ function renderArticleDetail(article) {
     `;
 }
 
-function renderRelatedArticles(currentArticle) {
+function renderRelatedArticles(currentArticle, data = articleData) {
     const container = document.getElementById('related-articles');
-    if (!container || typeof articles === 'undefined') return;
+    if (!container || !Array.isArray(data)) return;
 
     // Get 3 random articles from the same category, excluding current
-    const related = articles
+    const related = data
         .filter(a => a.id !== currentArticle.id && a.category === currentArticle.category)
         .sort(() => Math.random() - 0.5)
         .slice(0, 3);
 
     // If not enough from same category, fill with random articles
     if (related.length < 3) {
-        const additional = articles
+        const additional = data
             .filter(a => a.id !== currentArticle.id && !related.includes(a))
             .sort(() => Math.random() - 0.5)
             .slice(0, 3 - related.length);
@@ -425,6 +580,8 @@ function renderRelatedArticles(currentArticle) {
     }
 
     container.innerHTML = related.map(article => createArticleCard(article)).join('');
+
+    registerFadeIn(container);
 }
 
 function viewArticle(articleId) {
@@ -444,4 +601,718 @@ function formatCategory(category) {
         'editorial': 'Editorial'
     };
     return map[category] || category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+// ============================================
+// DATA LOADER (fallback to /posts text if needed)
+// ============================================
+async function loadArticles() {
+    if (window.__articleCache) return window.__articleCache;
+
+    // Only load from JSON files - no CSV or text files
+    const byKey = new Map();
+    let nextId = 1;
+
+    try {
+        // Pull structured JSON posts ONLY (article1.json - article100.json and beyond)
+        const jsonArticles = await loadFromJsonPosts(1, 100, new Map());
+        jsonArticles.forEach(article => {
+            if (!article || !article.title) return;
+            const key = safeKey(article);
+
+            // Skip if we already have this article (prevent duplicates)
+            if (byKey.has(key)) return;
+
+            byKey.set(key, {
+                id: nextId++,
+                ...article
+            });
+        });
+    } catch (err) {
+        console.error('Article load failed', err);
+    }
+
+    const combined = Array.from(byKey.values()).filter(a => a.title).sort((a, b) => {
+        const dateA = Date.parse(a.date) || 0;
+        const dateB = Date.parse(b.date) || 0;
+        if (dateA !== dateB) return dateB - dateA;
+        return (b.id || 0) - (a.id || 0);
+    });
+
+    window.__articleCache = combined;
+    return combined;
+}
+
+function buildExcerptFromBlocks(blocks = []) {
+    const firstPara = (blocks || []).find(b => (b.type || '').toLowerCase().includes('paragraph'));
+    if (!firstPara?.content) return '';
+    return firstPara.content.replace(/\s+/g, ' ').slice(0, 220).trim();
+}
+
+function paragraphize(raw) {
+    const blocks = raw.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
+    return blocks.map(p => `<p>${p}</p>`).join('');
+}
+
+function extractTextFromRichContent(raw = '') {
+    if (!raw) return '';
+    try {
+        const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        const texts = [];
+        const walk = (node) => {
+            if (!node) return;
+            if (Array.isArray(node)) {
+                node.forEach(walk);
+                return;
+            }
+            if (node.textData && node.textData.text) {
+                texts.push(node.textData.text);
+            }
+            if (Array.isArray(node.nodes)) {
+                node.nodes.forEach(walk);
+            }
+        };
+        walk(data.nodes || data);
+        return texts.join(' ').replace(/\s+/g, ' ').trim();
+    } catch (err) {
+        return '';
+    }
+}
+
+async function loadFromCsv(path) {
+    try {
+        const res = await fetch(path);
+        if (!res.ok) return [];
+        const text = await res.text();
+        return parseCsv(text);
+    } catch (err) {
+        console.warn('CSV fetch failed', path, err);
+        return [];
+    }
+}
+
+function parseCsv(text) {
+    const rows = [];
+    let currentField = '';
+    let currentRow = [];
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (ch === '"') {
+            if (inQuotes && text[i + 1] === '"') {
+                currentField += '"';
+                i++;
+            } else {
+                inQuotes = !inQuotes;
+            }
+        } else if (ch === ',' && !inQuotes) {
+            currentRow.push(currentField);
+            currentField = '';
+        } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+            if (ch === '\r' && text[i + 1] === '\n') i++; // handle CRLF
+            currentRow.push(currentField);
+            rows.push(currentRow);
+            currentRow = [];
+            currentField = '';
+        } else {
+            currentField += ch;
+        }
+    }
+
+    if (currentField.length || currentRow.length) {
+        currentRow.push(currentField);
+        rows.push(currentRow);
+    }
+
+    if (!rows.length) return [];
+
+    const headers = rows.shift().map((h, idx) => normalizeHeaderName(h, idx));
+
+    return rows
+        .filter(r => r.some(cell => (cell || '').trim().length))
+        .map(cols => {
+            const obj = {};
+            headers.forEach((h, idx) => {
+                obj[h] = (cols[idx] || '').replace(/\uFEFF/g, '');
+            });
+            return obj;
+        });
+}
+
+function normalizeHeaderName(header = '', idx = 0) {
+    const cleaned = header.replace(/\uFEFF/g, '').trim();
+    if (cleaned) return cleaned;
+    return `__col_${idx}`;
+}
+
+function normalizeKey(key = '') {
+    return key.replace(/\uFEFF/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function getField(row, key) {
+    if (!row || !key) return '';
+    const target = normalizeKey(key);
+    for (const candidate of Object.keys(row)) {
+        if (normalizeKey(candidate) === target) {
+            return row[candidate];
+        }
+    }
+    return '';
+}
+
+function normalizeWixImage(raw) {
+    if (!raw) return '';
+    const val = raw.trim();
+    // Example: wix:image://v1/11b1c4_abc~mv2.jpg/xyz#originWidth=...
+    const match = val.match(/wix:image:\/\/v1\/([^#]+?)(?:\/|#|$)/);
+    if (match) {
+        return `https://static.wixstatic.com/media/${match[1]}`;
+    }
+    return val;
+}
+
+function stripHtml(str = '') {
+    return str.replace(/<[^>]*>/g, '').replace(/&nbsp;/gi, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function parseAuthor(row) {
+    const nameDateRaw = getField(row, 'Name, Date');
+    const strongMatch = nameDateRaw.match(/<strong[^>]*>([^<]+)<\/strong>/i);
+    if (strongMatch) return strongMatch[1].trim();
+
+    const fromNameDate = stripHtml(nameDateRaw);
+    if (fromNameDate) {
+        const parts = fromNameDate.split(/\s{2,}/);
+        if (parts.length && parts[0].trim()) return parts[0].trim();
+    }
+
+    const authorField = getField(row, 'Author');
+    if (authorField && !/^[0-9a-f-]{8,}$/i.test(authorField.trim())) return authorField.trim();
+    return 'The Catalyst';
+}
+
+function parseDate(row) {
+    const nameDate = stripHtml(getField(row, 'Name, Date'));
+    const dateMatch = nameDate.match(/([A-Za-z]{3,9}\s+\d{1,2},\s*\d{4})/);
+    if (dateMatch) return dateMatch[1];
+
+    const published = getField(row, 'Published Date') || getField(row, 'Last Published Date') || '';
+    const d = published ? new Date(published) : null;
+    if (d && !isNaN(d.getTime())) {
+        return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+    return '';
+}
+
+function normalizeCategory(cat = '') {
+    const val = cat.toLowerCase().replace(/\s+/g, '-');
+    if (['feature', 'profile', 'interview', 'op-ed', 'editorial'].includes(val)) return val;
+    return 'feature';
+}
+
+function normalizeLink(link = '') {
+    if (!link) return '#';
+    if (link.startsWith('http')) return link;
+    if (link.startsWith('/')) return `https://www.catalyst-magazine.com${link}`;
+    const slug = link.replace(/^\/+/, '');
+    return `https://www.catalyst-magazine.com/post/${slug}`;
+}
+
+function safeKey(article) {
+    return `${(article.title || '').toLowerCase().trim()}|${(article.link || '').toLowerCase().trim()}`;
+}
+
+async function loadFromJsonPosts(start = 1, end = 100, baseByTitle = new Map()) {
+    const articles = [];
+    for (let i = start; i <= end; i++) {
+        try {
+            const res = await fetch(`posts/article${i}.json`);
+            if (!res.ok) continue;
+            const text = (await res.text()).replace(/^\uFEFF/, '').trim();
+            if (!text) continue;
+
+            const parsedList = parsePossiblyStackedJson(text);
+            parsedList.forEach(data => {
+                const article = convertJsonToArticle(data, baseByTitle);
+                if (article) {
+                    articles.push(article);
+                }
+            });
+        } catch (err) {
+            console.warn('Unable to load JSON article', i, err);
+        }
+    }
+    return articles;
+}
+
+function parsePossiblyStackedJson(text = '') {
+    const cleaned = text.trim();
+    if (!cleaned) return [];
+
+    try {
+        const parsed = JSON.parse(cleaned);
+        return Array.isArray(parsed) ? parsed : [parsed];
+    } catch (err) {
+        try {
+            const normalized = `[${cleaned.replace(/}\s*{/g, '},{')}]`;
+            const parsed = JSON.parse(normalized);
+            return Array.isArray(parsed) ? parsed : [parsed];
+        } catch (error) {
+            console.warn('Failed to parse JSON', error);
+            return [];
+        }
+    }
+}
+
+function convertJsonToArticle(data = {}, baseByTitle = new Map()) {
+    const meta = data.article_data?.metadata || {};
+    const blocks = Array.isArray(data.article_data?.content_blocks) ? data.article_data.content_blocks : [];
+    const title = (meta.title || '').trim();
+    if (!title) return null;
+
+    const titleKey = title.toLowerCase().trim();
+    const baseMatch = baseByTitle.get(titleKey);
+    const author = (meta.author || '').trim() || baseMatch?.author || 'The Catalyst';
+    const date = formatJsonDate(meta.publish_date) || baseMatch?.date || '';
+    const cover = meta.cover_image_url || baseMatch?.image || ARTICLE_FALLBACK_IMAGE;
+    const excerpt = (meta.excerpt || buildExcerptFromBlocks(blocks) || baseMatch?.excerpt || '').trim();
+    const category = baseMatch?.category || guessCategoryFromTitle(title);
+    const content = blocks?.length ? renderContentBlocks(blocks) : (baseMatch?.content || '');
+    const link = baseMatch?.link || '#';
+    const readingTime = estimateReadingTime({ content, excerpt });
+
+    return {
+        title,
+        author,
+        date,
+        image: cover,
+        link,
+        category,
+        excerpt,
+        content,
+        blocks,
+        readingTime
+    };
+}
+
+function renderContentBlocks(blocks = []) {
+    if (!Array.isArray(blocks) || !blocks.length) return '';
+    const sorted = [...blocks].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+    return sorted.map(block => {
+        const type = (block.type || '').toLowerCase();
+        const content = block.content || '';
+        switch (type) {
+            case 'section_header':
+            case 'section_header_or_caption':
+                return `<h2 class="article-block section-header">${content}</h2>`;
+            case 'section_sub_header':
+                return `<h3 class="article-block section-subheader">${content}</h3>`;
+            case 'pull_quote':
+                return `<blockquote class="article-block pull-quote">${content}</blockquote>`;
+            case 'image_placeholder': {
+                const alt = block.alt_text || 'Image placeholder';
+                const caption = block.caption || block.note || '';
+                return `
+                    <figure class="article-block image-placeholder" aria-label="${alt}">
+                        <div class="image-placeholder-box">
+                            <span>${alt}</span>
+                        </div>
+                        ${caption ? `<figcaption>${caption}</figcaption>` : ''}
+                    </figure>
+                `;
+            }
+            case 'video_placeholder': {
+                const caption = block.caption || block.note || '';
+                return `
+                    <div class="article-block video-placeholder">
+                        <div class="image-placeholder-box">
+                            <span>${caption || 'Video placeholder'}</span>
+                        </div>
+                        ${caption ? `<p class="placeholder-caption">${caption}</p>` : ''}
+                    </div>
+                `;
+            }
+            default:
+                return `<p class="article-block paragraph">${content}</p>`;
+        }
+    }).join('');
+}
+
+function formatJsonDate(raw = '') {
+    if (!raw) return '';
+    const trimmed = raw.trim();
+    const hasYear = /\d{4}/.test(trimmed);
+    const withYear = hasYear ? trimmed : `${trimmed}, ${new Date().getFullYear()}`;
+    const d = new Date(withYear);
+    if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+    }
+    return trimmed;
+}
+
+function guessCategoryFromTitle(title = '') {
+    const normalized = title.toLowerCase();
+    if (normalized.includes('interview')) return 'interview';
+    if (normalized.includes('profile') || normalized.includes('journey')) return 'profile';
+    if (normalized.includes('op-ed') || normalized.includes('op ed')) return 'op-ed';
+    return 'feature';
+}
+
+function estimateReadingTime(article = {}) {
+    const textSource = stripHtml(article.content || '') || article.excerpt || '';
+    const words = textSource.split(/\s+/).filter(Boolean).length;
+    const minutes = Math.max(2, Math.round(words / 225));
+    return `${minutes} min read`;
+}
+
+function registerFadeIn(scope = document) {
+    const elements = scope.querySelectorAll('.fade-in');
+    if (!elements.length) return;
+    if (fadeObserver) {
+        elements.forEach(el => fadeObserver.observe(el));
+    } else {
+        elements.forEach(el => el.classList.add('visible'));
+    }
+}
+
+// ============================================
+// SEARCH FUNCTIONALITY
+// ============================================
+let searchData = [];
+
+function initSearch(data) {
+    searchData = data || [];
+    const searchInput = document.getElementById('search-input');
+    const searchClear = document.getElementById('search-clear');
+    const searchResultsCount = document.getElementById('search-results-count');
+    const articlesGrid = document.getElementById('home-articles-grid');
+
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+
+        if (query.length > 0) {
+            searchClear.style.display = 'flex';
+            performSearch(query, articlesGrid, searchResultsCount);
+        } else {
+            searchClear.style.display = 'none';
+            searchResultsCount.style.display = 'none';
+            initHomeArticles(searchData);
+        }
+    });
+
+    searchClear.addEventListener('click', () => {
+        searchInput.value = '';
+        searchClear.style.display = 'none';
+        searchResultsCount.style.display = 'none';
+        initHomeArticles(searchData);
+        searchInput.focus();
+    });
+}
+
+function performSearch(query, gridElement, countElement) {
+    if (!Array.isArray(searchData) || !gridElement) return;
+
+    const results = searchData.filter(article => {
+        const searchableText = `
+            ${article.title || ''}
+            ${article.author || ''}
+            ${article.excerpt || ''}
+            ${article.content || ''}
+            ${article.category || ''}
+        `.toLowerCase();
+
+        return searchableText.includes(query);
+    });
+
+    gridElement.innerHTML = results.slice(0, 12).map(article => createArticleCard(article)).join('');
+
+    countElement.textContent = results.length === 1
+        ? `Found 1 article matching "${query}"`
+        : `Found ${results.length} articles matching "${query}"`;
+    countElement.style.display = 'block';
+
+    registerFadeIn(gridElement);
+}
+
+// ============================================
+// BRAIN TEASER
+// ============================================
+const brainTeasers = [
+    {
+        question: "A doctor and a bus driver are both in love with the same woman, an attractive girl named Sarah. The bus driver had to go on a long bus trip that would last a week. Before he left, he gave Sarah seven apples. Why?",
+        answer: "An apple a day keeps the doctor away!"
+    },
+    {
+        question: "You see a boat filled with people. It has not sunk, but when you look again you don't see a single person on the boat. Why?",
+        answer: "All the people on the boat are married."
+    },
+    {
+        question: "What can you hold in your left hand but not in your right?",
+        answer: "Your right elbow."
+    },
+    {
+        question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
+        answer: "An echo."
+    },
+    {
+        question: "You walk into a room with a match, a kerosene lamp, a candle, and a fireplace. Which do you light first?",
+        answer: "The match."
+    },
+    {
+        question: "The more you take, the more you leave behind. What are they?",
+        answer: "Footsteps."
+    }
+];
+
+function initBrainTeaser() {
+    const questionElement = document.querySelector('.brain-teaser-question');
+    const revealButton = document.getElementById('reveal-answer');
+    const answerElement = document.getElementById('brain-teaser-answer');
+    const answerContent = document.querySelector('.brain-teaser-answer-content');
+
+    if (!questionElement || !revealButton || !answerElement) return;
+
+    // Select random brain teaser
+    const teaser = brainTeasers[Math.floor(Math.random() * brainTeasers.length)];
+    questionElement.textContent = teaser.question;
+    answerContent.textContent = teaser.answer;
+
+    revealButton.addEventListener('click', () => {
+        if (answerElement.style.display === 'none') {
+            answerElement.style.display = 'block';
+            revealButton.textContent = 'Hide Answer';
+        } else {
+            answerElement.style.display = 'none';
+            revealButton.textContent = 'Reveal Answer';
+        }
+    });
+}
+
+// ============================================
+// SCROLL ANIMATIONS
+// ============================================
+function initScrollAnimations() {
+    const scrollRevealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    // Apply scroll-reveal class to sections
+    const sections = document.querySelectorAll('.section');
+    sections.forEach((section, index) => {
+        // Alternate between different reveal effects
+        if (index % 3 === 0) {
+            section.classList.add('scroll-reveal');
+        } else if (index % 3 === 1) {
+            section.classList.add('scroll-reveal-scale');
+        } else {
+            section.classList.add('scroll-reveal');
+        }
+        scrollRevealObserver.observe(section);
+    });
+
+    // Apply to article cards
+    const articleCards = document.querySelectorAll('.article-card, .featured-story-card, .about-card');
+    articleCards.forEach(card => {
+        card.classList.add('scroll-reveal-scale');
+        scrollRevealObserver.observe(card);
+    });
+
+    // Apply stagger effect to grids
+    const grids = document.querySelectorAll('.articles-grid, .featured-stories-grid, .about-grid');
+    grids.forEach(grid => {
+        grid.classList.add('stagger-children');
+        scrollRevealObserver.observe(grid);
+    });
+}
+
+// ============================================
+// ABOUT PAGE - TEAM SECTION
+// ============================================
+const teamMembers = [
+    {
+        name: "Yair Ben-Dor",
+        role: "Co-Founder, Editor-in-Chief, Website Developer",
+        bio: "Yair is a recent summa cum laude graduate from George Washington University with a B.S. in Cellular and Molecular Biology and a minor in Chemistry. A DMV local, Yair is passionate about using STEM as a unifying force to make research accessible and collaborative across D.C. institutions and universities.",
+        image: "https://static.wixstatic.com/media/11b1c4_0c29ddcee02c4a84a5183b902ad64754~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Aidan Schurr",
+        role: "Co-Founder, Editor-in-Chief",
+        bio: "Aidan is a third year at George Washington University pursuing a B.S. in Biomedical Engineering and Pre-Med Studies. For Aidan, The Catalyst represents the best aspects of DC: cross-disciplinary, impact driven, and far reaching.",
+        image: "https://static.wixstatic.com/media/11b1c4_a45b039185914a64a7b333a51e60505f~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Lori Preci",
+        role: "Managing Editor, Writer",
+        bio: "Lori is pursuing a masters in biotechnology at Johns Hopkins University. Lori views The Catalyst as a bridge between the disconnect in scientific fields, and has the goal of making research more accessible and sparking curiosity in STEM.",
+        image: "https://static.wixstatic.com/media/11b1c4_d1ca129e646f424285a84de442ece5d4~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Naama Ben-Dor",
+        role: "Senior Writer, Editor, Media Specialist",
+        bio: "Naama is a senior at Georgetown University majoring in Neurobiology with minors in Chemistry and Jewish Civilization. As the creative spark behind The Catalyst Magazine, she handles digital content and outreach.",
+        image: "https://static.wixstatic.com/media/11b1c4_2dce7b9e28f54b2c8c06868197e27c26~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Stephanie Solomon",
+        role: "Editor",
+        bio: "Stephanie is a Georgetown University junior studying History, Spanish, and World Affairs. At The Catalyst Magazine, she ensures every piece meets high standards for accuracy and clarity.",
+        image: "https://static.wixstatic.com/media/11b1c4_b2411f7a2295427b84713ed608b339af~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Alex Carter",
+        role: "Writer",
+        bio: "Alex is a PhD student at Princeton University studying developmental biology. His work explores the genetic basis of evolution and adaptation, and excels at making complex genetics approachable.",
+        image: "https://static.wixstatic.com/media/11b1c4_0cb976c90e5c4c87bc8b4b7fdaef5784~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Ginger Taurek",
+        role: "Writer",
+        bio: "Ginger is a third-year student at George Washington University School of Business studying Entrepreneurship and Innovation with a minor in Sustainability, passionate about wildlife conservation and global sustainability.",
+        image: "https://static.wixstatic.com/media/11b1c4_63a6c28d8c134c3483f6f9c8f0f5f0fb~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Aidan Brown",
+        role: "Writer",
+        bio: "Aidan is a senior at George Washington University pursuing a B.S./M.S. in Biology. His academic interests lie at the intersection of environmental science and data analysis.",
+        image: "https://static.wixstatic.com/media/11b1c4_c9d302866f194b8796146ff30753f974~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Azza Uwhubetine",
+        role: "Writer",
+        bio: "Azza is a junior at George Washington University pursuing a degree in English with a minor in Astronomy. At The Catalyst, she hopes to merge her love for science with the journalistic world.",
+        image: "https://static.wixstatic.com/media/11b1c4_8c9669a2a58941cbbe312dcf2a05c00b~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Alexis Tamm",
+        role: "Writer",
+        bio: "Alexis is a senior at Georgetown University majoring in English with minors in Psychology and Spanish. She is passionate about bridging the gap between academic research and the general public through storytelling.",
+        image: "https://static.wixstatic.com/media/11b1c4_67a66f2e76f24ba7871c421b37262440~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Layla Abdoulaye",
+        role: "Writer",
+        bio: "Layla is a sophomore studying Physics at Howard University, with aspirations to earn a Ph.D. Her academic interests specifically narrow on quantum materials and systems.",
+        image: "https://static.wixstatic.com/media/11b1c4_c81a2e40d27a4c15adaf9b52bbe78716~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Le Nguyen",
+        role: "Writer",
+        bio: "Le is a recent George Washington University graduate with a degree in Neuroscience and summa cum laude honors. Currently working as an IR Medical Assistant at Beth Israel Deaconess Medical Center.",
+        image: "https://static.wixstatic.com/media/11b1c4_9574e60e7f404549b5a135c11fb73c54~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Sydney Reiser",
+        role: "Writer",
+        bio: "Sydney is a first-year Chemistry PhD student at Johns Hopkins University. She brings a strong analytical and pedagogical perspective to The Catalyst.",
+        image: "https://static.wixstatic.com/media/11b1c4_5a6992df446642cf90a17ccd49a74359~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Rachel Lee",
+        role: "Photographer, Media Specialist",
+        bio: "Rachel is a junior at George Washington University majoring in Communications and Business. She is passionate about making STEM topics more accessible through creative media.",
+        image: "https://static.wixstatic.com/media/11b1c4_79b209d3517a4712b123bd9f20e6889c~mv2.png",
+        linkedin: "",
+        email: ""
+    },
+    {
+        name: "Skye Schurr",
+        role: "Writer, Media Specialist",
+        bio: "Skye is a senior at Rutgers University pursuing a B.S. in Public Health. She sees The Catalyst as a vehicle to increase health and civic literacy.",
+        image: "https://static.wixstatic.com/media/11b1c4_57ba7cabdca5497fb4ae133f1a621068~mv2.png",
+        linkedin: "",
+        email: ""
+    }
+];
+
+function initAboutPage() {
+    const teamGrid = document.getElementById('team-grid');
+    if (!teamGrid) return;
+
+    teamGrid.innerHTML = teamMembers.map(member => `
+        <div class="team-member-card">
+            <img src="${member.image}" alt="${member.name}" class="team-member-image" onerror="this.src='NewsletterHeader1.png'">
+            <div class="team-member-info">
+                <h3 class="team-member-name">${member.name}</h3>
+                <div class="team-member-role">${member.role}</div>
+                <p class="team-member-bio">${member.bio}</p>
+                ${member.linkedin || member.email ? `
+                    <div class="team-member-social">
+                        ${member.linkedin ? `
+                            <a href="${member.linkedin}" target="_blank" rel="noopener" aria-label="LinkedIn">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                                    <rect x="2" y="9" width="4" height="12"/>
+                                    <circle cx="4" cy="4" r="2"/>
+                                </svg>
+                            </a>
+                        ` : ''}
+                        ${member.email ? `
+                            <a href="${member.email}" aria-label="Email">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                            </a>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        </div>
+    `).join('');
+
+    // Add scroll reveal animation to team cards
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    const teamCards = teamGrid.querySelectorAll('.team-member-card');
+    teamCards.forEach(card => {
+        card.classList.add('scroll-reveal-scale');
+        observer.observe(card);
+    });
 }

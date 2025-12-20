@@ -19,6 +19,8 @@
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
         <div class="blob blob-4"></div>
+        <div class="dc-capitol"></div>
+        <div class="dc-silhouette"></div>
     </div>
 
     <!-- Header -->
@@ -39,7 +41,7 @@
             </nav>
 
             <div class="nav-cta">
-                <a href="collaborate.html" class="btn btn-primary">Submit Article</a>
+                <a href="#newsletter-section" class="btn btn-primary">Subscribe</a>
             </div>
 
             <button class="menu-toggle" aria-label="Toggle menu">
@@ -54,45 +56,71 @@
         <!-- Hero Section -->
         <section class="hero">
             <div class="container hero-container">
-                <!-- Left Content -->
                 <div class="hero-content">
                     <div class="hero-badge">
-                        Based in Washington D.C.
+                        Washington D.C. • Student-Run STEM Magazine
                     </div>
                     <h1 class="hero-title">
-                        Stories That <span class="highlight">Spark</span> Scientific Curiosity
+                        <span class="hero-word hero-word-1">STEM</span>
+                        <span class="hero-word hero-word-2">in</span>
+                        <span class="hero-word hero-word-3">the</span>
+                        <span class="hero-word hero-word-4">Nation's</span>
+                        <span class="hero-word hero-word-5 highlight">Capital</span>
                     </h1>
                     <p class="hero-description">
-                        A student-run STEM magazine empowering the voices of tomorrow's scientists, innovators, and critical thinkers.
+                        Discover groundbreaking research, meet brilliant minds, and explore the innovations shaping our future—all through the lens of student journalists at the forefront of STEM.
                     </p>
                     <div class="hero-actions">
                         <a href="articles.html" class="btn btn-primary">
-                            Explore Articles
+                            Read Latest Stories
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
                         </a>
-                        <a href="about.html" class="btn btn-secondary">About Us</a>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">25+</div>
-                            <div class="stat-label">Articles</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">15+</div>
-                            <div class="stat-label">Contributors</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">100%</div>
-                            <div class="stat-label">Free</div>
-                        </div>
+                        <a href="about.html" class="btn btn-secondary">Our Mission</a>
                     </div>
                 </div>
 
-                <!-- Right Featured Article -->
+                <!-- Featured Articles Grid -->
                 <div class="hero-featured" id="hero-featured">
                     <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Stories Grid -->
+        <section class="section" style="padding-top: 60px;">
+            <div class="container">
+                <div class="section-header">
+                    <span class="eyebrow">Featured Stories</span>
+                    <h2 class="section-title">Latest from Our Newsroom</h2>
+                    <p class="section-subtitle">Exploring groundbreaking research and the brilliant minds driving innovation in D.C. and beyond</p>
+                </div>
+
+                <div class="featured-stories-grid" id="featured-stories-grid">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section class="section" style="padding-top: 40px; padding-bottom: 60px;">
+            <div class="container">
+                <div class="search-container">
+                    <div class="search-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" id="search-input" class="search-input" placeholder="Search articles by title, author, or topic...">
+                        <button id="search-clear" class="search-clear" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="search-results-count" class="search-results-count" style="display: none;"></div>
                 </div>
             </div>
         </section>
@@ -183,8 +211,34 @@
             </div>
         </section>
 
+        <!-- Brain Teaser Section -->
+        <section class="section brain-teaser-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="eyebrow">Challenge Yourself</span>
+                    <h2 class="section-title">Brain Teaser of the Week</h2>
+                    <p class="section-subtitle">Put your critical thinking skills to the test</p>
+                </div>
+
+                <div class="brain-teaser-card" id="brain-teaser-card">
+                    <div class="brain-teaser-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+                            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+                        </svg>
+                    </div>
+                    <h3 class="brain-teaser-question">Loading brain teaser...</h3>
+                    <button class="btn btn-primary brain-teaser-reveal" id="reveal-answer">Reveal Answer</button>
+                    <div class="brain-teaser-answer" id="brain-teaser-answer" style="display: none;">
+                        <div class="brain-teaser-answer-content"></div>
+                    </div>
+                    <a href="articles.html#brainteaser" class="brain-teaser-link">View All Brain Teasers →</a>
+                </div>
+            </div>
+        </section>
+
         <!-- Newsletter Section -->
-        <section class="section">
+        <section class="section" id="newsletter-section">
             <div class="container">
                 <div class="newsletter">
                     <div class="newsletter-content">

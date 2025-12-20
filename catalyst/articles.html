@@ -31,7 +31,7 @@
             </nav>
 
             <div class="nav-cta">
-                <a href="collaborate.html" class="btn btn-primary">Submit Article</a>
+                <a href="index.html#newsletter-section" class="btn btn-primary">Subscribe</a>
             </div>
 
             <button class="menu-toggle" aria-label="Toggle menu">
@@ -43,57 +43,69 @@
     </header>
 
     <main>
-        <!-- Page Hero -->
-        <section class="page-hero">
+        <!-- Page Hero - Magazine Style -->
+        <section class="magazine-hero">
             <div class="container">
-                <h1 class="page-hero-title">All Articles</h1>
-                <p class="page-hero-subtitle">Explore profiles, features, and interviews from our contributors</p>
+                <div class="magazine-hero-content">
+                    <span class="magazine-issue">ISSUE 2025</span>
+                    <h1 class="magazine-hero-title">The Catalyst<br><span class="highlight">Magazine</span></h1>
+                    <p class="magazine-hero-subtitle">Exploring the intersection of science, innovation, and storytelling in the Nation's Capital</p>
+                </div>
             </div>
         </section>
 
-        <!-- D.C. Based Articles -->
-        <section class="section" id="dc-articles">
+        <!-- Featured Story - Magazine Cover -->
+        <section class="section" style="padding-top: 60px;">
             <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">D.C. Based Articles</h2>
-                    <p class="section-subtitle">Stories from the heart of the Capital</p>
-                </div>
-
-                <!-- Category Filters -->
-                <div class="category-filters">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="feature">Features</button>
-                    <button class="filter-btn" data-filter="profile">Profiles</button>
-                    <button class="filter-btn" data-filter="interview">Interviews</button>
-                </div>
-
-                <!-- Articles Grid -->
-                <div class="articles-grid" id="articles-grid">
+                <div class="magazine-cover-story" id="cover-story">
                     <!-- Rendered by JS -->
                 </div>
+            </div>
+        </section>
 
-                <!-- Load More -->
-                <div class="load-more-container">
-                    <button class="btn btn-secondary" id="load-more-btn">
-                        Load More Articles
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 5v14M5 12l7 7 7-7"/>
-                        </svg>
+        <!-- Category Navigation -->
+        <section class="section" style="padding-top: 40px; padding-bottom: 20px;">
+            <div class="container">
+                <div class="magazine-nav">
+                    <button class="magazine-nav-item active" data-category="all">
+                        <span class="magazine-nav-number">01</span>
+                        <span class="magazine-nav-label">All Stories</span>
+                    </button>
+                    <button class="magazine-nav-item" data-category="feature">
+                        <span class="magazine-nav-number">02</span>
+                        <span class="magazine-nav-label">Features</span>
+                    </button>
+                    <button class="magazine-nav-item" data-category="profile">
+                        <span class="magazine-nav-number">03</span>
+                        <span class="magazine-nav-label">Profiles</span>
+                    </button>
+                    <button class="magazine-nav-item" data-category="interview">
+                        <span class="magazine-nav-number">04</span>
+                        <span class="magazine-nav-label">Interviews</span>
+                    </button>
+                    <button class="magazine-nav-item" data-category="editorial">
+                        <span class="magazine-nav-number">05</span>
+                        <span class="magazine-nav-label">Editorials</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <!-- Editorials Section -->
-        <section class="section" id="editorials" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.03) 0%, rgba(118, 75, 162, 0.03) 100%);">
+        <!-- Magazine Grid -->
+        <section class="section">
             <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Editorials & Op-Eds</h2>
-                    <p class="section-subtitle">Perspectives and opinions from our writers</p>
+                <div class="magazine-grid" id="magazine-grid">
+                    <!-- Rendered by JS -->
                 </div>
 
-                <div class="articles-grid" id="editorials-grid">
-                    <!-- Rendered by JS -->
+                <!-- Load More -->
+                <div class="load-more-container">
+                    <button class="btn btn-primary" id="load-more-btn">
+                        Load More Stories
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12l7 7 7-7"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>
