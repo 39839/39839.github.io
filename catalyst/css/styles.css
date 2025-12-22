@@ -83,13 +83,12 @@ img {
   image-rendering: -webkit-optimize-contrast;
 }
 
-/* Lazy background image placeholder */
+/* Lazy background image placeholder - subtle pulse */
 .lazy-bg {
-  background-color: #e5e7eb;
-  background-image: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 50%, #d1d5db 100%);
-  background-size: 200% 200%;
-  animation: shimmer 1.5s ease-in-out infinite;
-  transition: background-image 0.3s ease-out;
+  background-color: #f3f4f6;
+  background-image: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e5e7eb 100%);
+  animation: subtle-pulse 2.5s ease-in-out infinite;
+  transition: background-image 0.4s ease-out;
 }
 
 .lazy-bg.bg-loaded {
@@ -98,9 +97,9 @@ img {
   background-position: center;
 }
 
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
 }
 
 /* Hardware acceleration for image containers */
