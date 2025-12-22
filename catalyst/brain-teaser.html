@@ -60,7 +60,7 @@
     }
 
     /* Main container */
-    .container {
+    .puzzle-container {
       position: relative;
       z-index: 1;
       width: 100%;
@@ -377,7 +377,7 @@
 
     /* Mobile responsive */
     @media (max-width: 768px) {
-      .container {
+      .puzzle-container {
         padding: 30px 25px;
         border-radius: 24px;
       }
@@ -426,7 +426,7 @@
         padding: 15px;
       }
 
-      .container {
+      .puzzle-container {
         padding: 25px 20px;
       }
 
@@ -441,7 +441,7 @@
 
   </style>
 </head>
-<body>
+<body data-page="brain-teaser">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TV2SBHW5"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -450,8 +450,16 @@
   <!-- Header -->
   <header class="header">
     <div class="container nav-container">
+      <button class="mobile-newsletter-btn" id="mobile-newsletter-btn" aria-label="Newsletter">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="4" width="20" height="16" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+      </button>
+
       <a href="index.html" class="brand">
-        <img src="WebLogo.png" alt="The Catalyst Logo" class="brand-logo">
+        <img src="WebLogo.png" alt="The Catalyst Logo" class="brand-logo brand-logo-desktop">
+        <img src="NewLogoShape.png" alt="The Catalyst Logo" class="brand-logo brand-logo-mobile">
         <span class="brand-name">The Catalyst</span>
       </a>
 
@@ -476,6 +484,42 @@
     </div>
   </header>
 
+  <!-- Newsletter Modal -->
+  <div class="newsletter-modal" id="newsletter-modal">
+    <div class="newsletter-modal-overlay" id="newsletter-modal-overlay"></div>
+    <div class="newsletter-modal-content">
+      <button class="newsletter-modal-close" id="newsletter-modal-close" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="newsletter-modal-header">
+        <div class="newsletter-modal-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16v16H4z"/>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+          </svg>
+        </div>
+        <h3 class="newsletter-modal-title">Join the Changemakers</h3>
+        <p class="newsletter-modal-subtitle">Sign up for our newsletter to stay connected with exclusive stories and D.C. STEM spotlights.</p>
+      </div>
+      <form id="newsletter-form" class="newsletter-modal-form">
+        <div class="form-group">
+          <label for="newsletter-email">Email Address</label>
+          <input type="email" id="newsletter-email" name="email" placeholder="you@example.com" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Subscribe
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+        <p class="form-note">By subscribing, you agree to receive updates from The Catalyst Magazine.</p>
+      </form>
+    </div>
+  </div>
+
   <!-- Particle background -->
   <div class="particles" id="particles"></div>
 
@@ -484,34 +528,34 @@
 
   <!-- Main container -->
   <main>
-    <div class="container">
-    <h1 class="title">The Quantum Paradox Challenge</h1>
+    <div class="puzzle-container">
+    <h1 class="title">The Exponential Sequence Challenge</h1>
     <p class="subtitle">Only the sharpest minds will unlock the secret...</p>
 
     <div class="question-content">
-      <h2 class="question-title">The Pattern Puzzle</h2>
+      <h2 class="question-title">The Exponential Pattern</h2>
 
       <p class="question-text">
-        Look at this sequence carefully:
+        Analyze this sequence carefully:
       </p>
 
       <div class="info-box">
         <p class="question-text" style="margin: 0; text-align: center; font-size: 1.5rem; letter-spacing: 0.3em; font-weight: 700; color: #60a5fa;">
-          2, 4, 8, 16, ?
+          3, 7, 15, 31, 63, ?
         </p>
       </div>
 
       <div class="scenario">
         <p class="question-text" style="margin: 0;">
           <strong style="color: #60a5fa;">Your Task:</strong><br>
-          Each number in this pattern follows a simple rule. Can you figure out what the next number should be?
+          Each number in this pattern follows a mathematical rule involving the previous term. Can you determine what the next number should be?
         </p>
       </div>
 
       <div class="scenario">
         <p class="question-text" style="margin: 0;">
           <strong style="color: #60a5fa;">Hint:</strong><br>
-          Look at how each number relates to the one before it. What mathematical operation connects them?
+          Consider how each number transforms into the next. Try testing different operations: multiplication, addition, or perhaps a combination of both?
         </p>
       </div>
 
@@ -613,9 +657,44 @@
 
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="js/emailjs-config.js"></script>
+  <script src="js/mailchimp-handler.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
   <script>
+    // Newsletter Modal Functionality
+    const newsletterModal = document.getElementById('newsletter-modal');
+    const newsletterBtn = document.getElementById('mobile-newsletter-btn');
+    const modalClose = document.getElementById('newsletter-modal-close');
+    const modalOverlay = document.getElementById('newsletter-modal-overlay');
+
+    if (newsletterBtn) {
+      newsletterBtn.addEventListener('click', () => {
+        newsletterModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    if (modalClose) {
+      modalClose.addEventListener('click', () => {
+        newsletterModal.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    }
+
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', () => {
+        newsletterModal.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        newsletterModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+
     // Create floating particles
     const particlesContainer = document.getElementById('particles');
     for (let i = 0; i < 50; i++) {
@@ -634,7 +713,7 @@
     const winnerBtn = document.getElementById('winner-btn');
     const fireworksContainer = document.getElementById('fireworks');
 
-    const correctAnswers = ['32', 'thirty two', 'thirtytwo', 'thirty-two'];
+    const correctAnswers = ['127', 'one hundred twenty seven', 'one hundred twenty-seven', 'onehundredtwentyseven'];
 
     let hasAnswered = localStorage.getItem('quantumPuzzleSolved') === 'true';
 
@@ -645,7 +724,7 @@
       submitBtn.disabled = true;
       feedback.className = 'feedback success';
       feedback.style.display = 'block';
-      feedback.textContent = 'You\'ve already solved this puzzle! The answer was 32.';
+      feedback.textContent = 'You\'ve already solved this puzzle! The answer was 127.';
       winnerBtn.style.display = 'inline-block';
     }
 
@@ -709,7 +788,7 @@
         localStorage.setItem('quantumPuzzleSolved', 'true');
 
         feedback.className = 'feedback success';
-        feedback.innerHTML = '<strong>BRILLIANT!</strong> You cracked the pattern! The answer is 32 (each number doubles). Welcome to the elite Winners\' Lounge!';
+        feedback.innerHTML = '<strong>BRILLIANT!</strong> You cracked the exponential pattern! The answer is 127. The rule: multiply the previous number by 2 and add 1 (e.g., 63 × 2 + 1 = 127). Welcome to the elite Winners\' Lounge!';
 
         answerInput.disabled = true;
         submitBtn.disabled = true;
@@ -721,7 +800,7 @@
 
       } else {
         feedback.className = 'feedback error';
-        feedback.innerHTML = 'Not quite right. Look at the pattern: each number is double the previous one. What is 16 × 2?';
+        feedback.innerHTML = 'Not quite right. Consider the relationship between consecutive numbers. Try multiplying and adding... What operation transforms 3 into 7, or 31 into 63?';
       }
     });
 
