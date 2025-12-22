@@ -35,8 +35,18 @@
     <meta name="twitter:title" content="Article | The Catalyst Magazine" id="meta-twitter-title">
     <meta name="twitter:description" content="The Catalyst Magazine - Read our latest articles" id="meta-twitter-description">
     <meta name="twitter:image" content="" id="meta-twitter-image">
+    <!-- Preconnect to external resources for faster loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://static.wixstatic.com" crossorigin>
+
+    <!-- Preload critical images for instant display -->
+    <link rel="preload" as="image" href="WebLogo.png" fetchpriority="high">
+    <link rel="preload" as="image" href="NewLogoShape.png" fetchpriority="high">
+
+    <!-- DNS prefetch for external image sources -->
+    <link rel="dns-prefetch" href="https://static.wixstatic.com">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -59,7 +69,7 @@
     <!-- Header -->
     <header class="header">
         <div class="container nav-container">
-            <a href="index.html" class="brand">
+            <a href="/" class="brand">
                 <img src="WebLogo.png" alt="The Catalyst Logo" class="brand-logo brand-logo-desktop">
                 <img src="NewLogoShape.png" alt="The Catalyst Logo" class="brand-logo brand-logo-mobile">
                 <span class="brand-name">The Catalyst</span>
@@ -67,10 +77,10 @@
 
             <nav>
                 <ul class="nav-menu">
-                    <li><a href="index.html" class="nav-link">Home</a></li>
-                    <li><a href="articles.html" class="nav-link">Articles</a></li>
-                    <li><a href="collaborate.html" class="nav-link">Collaborate</a></li>
-                    <li><a href="about.html" class="nav-link">About</a></li>
+                    <li><a href="/" class="nav-link">Home</a></li>
+                    <li><a href="articles" class="nav-link">Articles</a></li>
+                    <li><a href="collaborate" class="nav-link">Collaborate</a></li>
+                    <li><a href="about" class="nav-link">About</a></li>
                 </ul>
             </nav>
 
@@ -90,7 +100,7 @@
         <!-- Article Page -->
         <section class="article-page">
             <div class="container">
-                <a href="articles.html" class="back-link">
+                <a href="articles" class="back-link">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M19 12H5M12 19l-7-7 7-7"/>
                     </svg>
@@ -117,7 +127,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <a href="index.html" class="brand">
+                    <a href="/" class="brand">
                         <img src="NewLogoShape.png" alt="The Catalyst Logo" class="brand-logo">
                         <span class="brand-name">The Catalyst</span>
                     </a>
@@ -127,8 +137,8 @@
                 <div class="footer-column">
                     <h4>Navigate</h4>
                     <ul class="footer-links">
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="articles.html">Articles</a></li>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="articles">Articles</a></li>
                         <li><a href="articles.html#editorials">Editorials</a></li>
                     </ul>
                 </div>
@@ -136,7 +146,7 @@
                 <div class="footer-column">
                     <h4>Collaborate</h4>
                     <ul class="footer-links">
-                        <li><a href="collaborate.html">Submit Proposal</a></li>
+                        <li><a href="collaborate">Submit Proposal</a></li>
                         <li><a href="collaborate.html#team">Join Our Team</a></li>
                         <li><a href="collaborate.html#contest">Writing Contest</a></li>
                     </ul>
@@ -145,7 +155,7 @@
                 <div class="footer-column">
                     <h4>About Us</h4>
                     <ul class="footer-links">
-                        <li><a href="about.html">Our Mission</a></li>
+                        <li><a href="about">Our Mission</a></li>
                         <li><a href="about.html#story">Our Story</a></li>
                         <li><a href="about.html#team">Our Team</a></li>
                     </ul>

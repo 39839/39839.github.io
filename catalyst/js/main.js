@@ -9,6 +9,71 @@ document.addEventListener('DOMContentLoaded', () => {
 const ARTICLE_FALLBACK_IMAGE = 'NewsletterHeader1.png';
 let articleData = [];
 let fadeObserver = null;
+let imageObserver = null;
+
+// ============================================
+// IMAGE OPTIMIZATION - Fast Loading System
+// ============================================
+function initImageOptimization() {
+    // Create Intersection Observer for lazy loading background images
+    imageObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const element = entry.target;
+                const bgUrl = element.dataset.bgImage;
+                if (bgUrl) {
+                    // Preload the image before applying
+                    const img = new Image();
+                    img.onload = () => {
+                        element.style.backgroundImage = `url('${bgUrl}')`;
+                        element.classList.add('bg-loaded');
+                    };
+                    img.src = bgUrl;
+                    imageObserver.unobserve(element);
+                }
+            }
+        });
+    }, {
+        rootMargin: '200px 0px', // Start loading 200px before visible
+        threshold: 0.01
+    });
+
+    // Observe all elements with data-bg-image attribute
+    document.querySelectorAll('[data-bg-image]').forEach(el => {
+        imageObserver.observe(el);
+    });
+}
+
+// Optimized image element creation with lazy loading
+function createOptimizedImage(src, alt, className = '', eager = false) {
+    const imgHtml = `<img
+        src="${src}"
+        alt="${alt}"
+        class="${className}"
+        loading="${eager ? 'eager' : 'lazy'}"
+        decoding="async"
+        fetchpriority="${eager ? 'high' : 'auto'}"
+        onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">`;
+    return imgHtml;
+}
+
+// Preload critical images for faster display
+function preloadImage(src) {
+    if (!src || src === ARTICLE_FALLBACK_IMAGE) return;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = src;
+    document.head.appendChild(link);
+}
+
+// Register lazy background images within a scope
+function registerLazyBackgrounds(scope = document) {
+    if (!imageObserver) return;
+    scope.querySelectorAll('[data-bg-image]').forEach(el => {
+        imageObserver.observe(el);
+    });
+}
 const deepClone = (val) => {
     if (typeof structuredClone === 'function') return structuredClone(val);
     return JSON.parse(JSON.stringify(val));
@@ -19,12 +84,17 @@ async function initApp() {
     setupScrollEffects();
     setupScrollToTop();
     setupForms();
+    initImageOptimization();
 
     // Page-specific initialization
     const page = document.body.dataset.page || detectPage();
 
     if (page === 'home' || page === 'articles' || page === 'article') {
         articleData = await loadArticles();
+        // Preload first 3 article images for instant hero display
+        if (articleData.length > 0) {
+            articleData.slice(0, 3).forEach(article => preloadImage(article.image));
+        }
     }
 
     if (page === 'home') {
@@ -40,7 +110,7 @@ async function initApp() {
 
 function detectPage() {
     const path = window.location.pathname;
-    if (path.includes('article.html')) return 'article';
+    if (path.includes('article')) return 'article';
     if (path.includes('articles')) return 'articles';
     if (path.includes('collaborate')) return 'collaborate';
     if (path.includes('about')) return 'about';
@@ -68,10 +138,17 @@ function setupNavigation() {
     }
 
     // Set active nav link
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPath = window.location.pathname;
+    const currentPage = currentPath.split('/').pop() || '';
+
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
-        if (link.getAttribute('href') === currentPage) {
+        const href = link.getAttribute('href');
+
+        // Check if this is the current page
+        if (href === '/' && (currentPath === '/' || currentPath === '' || currentPath.endsWith('index.html'))) {
+            link.classList.add('active');
+        } else if (href !== '/' && currentPath.includes(href)) {
             link.classList.add('active');
         }
     });
@@ -144,9 +221,15 @@ function initHeroFeatured(data) {
 
     container.innerHTML = `
         <div class="hero-featured-grid">
-            ${featured.map(article => `
+            ${featured.map((article, index) => `
                 <div class="featured-card" onclick="viewArticle(${article.id})">
-                    <img src="${article.image || ARTICLE_FALLBACK_IMAGE}" alt="${article.title}" class="featured-card-image">
+                    <img src="${article.image || ARTICLE_FALLBACK_IMAGE}"
+                         alt="${article.title}"
+                         class="featured-card-image"
+                         loading="${index === 0 ? 'eager' : 'lazy'}"
+                         decoding="async"
+                         fetchpriority="${index === 0 ? 'high' : 'auto'}"
+                         onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">
                     <div class="featured-card-overlay">
                         <span class="featured-card-category">${formatCategory(article.category)}</span>
                         <h3 class="featured-card-title">${article.title}</h3>
@@ -168,7 +251,7 @@ function initFeaturedStoriesGrid(data = []) {
 
     grid.innerHTML = featured.map((article, idx) => `
         <div class="featured-story-card" onclick="viewArticle(${article.id})">
-            <div class="featured-story-image" style="background-image: url('${article.image || ARTICLE_FALLBACK_IMAGE}')"></div>
+            <div class="featured-story-image lazy-bg" data-bg-image="${article.image || ARTICLE_FALLBACK_IMAGE}"></div>
             <div class="featured-story-content">
                 <span class="featured-story-badge">${formatCategory(article.category)}</span>
                 <h3 class="featured-story-title">${article.title}</h3>
@@ -184,6 +267,8 @@ function initFeaturedStoriesGrid(data = []) {
         </div>
     `).join('');
 
+    // Register lazy background images for this grid
+    registerLazyBackgrounds(grid);
     registerFadeIn(grid);
 }
 
@@ -241,7 +326,11 @@ function createArticleCard(article) {
     return `
         <article class="article-card fade-in" onclick="viewArticle(${article.id})">
             <div class="article-image">
-                <img src="${imageSrc}" alt="${article.title}" loading="lazy">
+                <img src="${imageSrc}"
+                     alt="${article.title}"
+                     loading="lazy"
+                     decoding="async"
+                     onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">
                 <span class="article-category ${category}">${formatCategory(category)}</span>
             </div>
             <div class="article-content">
@@ -314,9 +403,12 @@ function initMagazineCover(data) {
     if (!coverContainer || !data.length) return;
 
     const coverStory = data[0];
+    // Preload cover image for instant display
+    preloadImage(coverStory.image);
+
     coverContainer.innerHTML = `
         <div class="magazine-cover-grid" onclick="viewArticle(${coverStory.id})">
-            <div class="magazine-cover-image" style="background-image: url('${coverStory.image || ARTICLE_FALLBACK_IMAGE}')"></div>
+            <div class="magazine-cover-image lazy-bg" data-bg-image="${coverStory.image || ARTICLE_FALLBACK_IMAGE}"></div>
             <div class="magazine-cover-content">
                 <div class="magazine-cover-label">Cover Story</div>
                 <h2 class="magazine-cover-title">${coverStory.title}</h2>
@@ -325,6 +417,9 @@ function initMagazineCover(data) {
             </div>
         </div>
     `;
+
+    // Register lazy background for cover
+    registerLazyBackgrounds(coverContainer);
 }
 
 function initMagazineGrid(data) {
@@ -399,7 +494,12 @@ function createMagazineArticle(article, sizeClass = 'small') {
 
     return `
         <article class="magazine-article ${sizeClass}" onclick="viewArticle(${article.id})">
-            <img src="${imageSrc}" alt="${article.title}" class="magazine-article-image" loading="lazy">
+            <img src="${imageSrc}"
+                 alt="${article.title}"
+                 class="magazine-article-image"
+                 loading="lazy"
+                 decoding="async"
+                 onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">
             <div class="magazine-article-content">
                 <div class="magazine-article-category">${formatCategory(category)}</div>
                 <h3 class="magazine-article-title">${article.title}</h3>
@@ -606,13 +706,13 @@ function initArticleDetailPage(data) {
     const articleId = parseInt(urlParams.get('id'));
 
     if (!articleId || !Array.isArray(data)) {
-        window.location.href = 'articles.html';
+        window.location.href = 'articles';
         return;
     }
 
     const article = data.find(a => a.id === articleId);
     if (!article) {
-        window.location.href = 'articles.html';
+        window.location.href = 'articles';
         return;
     }
 
@@ -626,6 +726,21 @@ function renderArticleDetail(article) {
 
     // Update page title
     document.title = `${article.title} | The Catalyst Magazine`;
+
+    // Update Open Graph and Twitter Card meta tags
+    const articleUrl = `https://yairben.com/catalyst/article?id=${article.id}`;
+    const articleImage = article.image || 'https://yairben.com/catalyst/NewLogoShape.png';
+    const articleDescription = article.excerpt || article.description || 'Read this article on The Catalyst Magazine';
+
+    document.getElementById('meta-description')?.setAttribute('content', articleDescription);
+    document.getElementById('meta-og-url')?.setAttribute('content', articleUrl);
+    document.getElementById('meta-og-title')?.setAttribute('content', article.title);
+    document.getElementById('meta-og-description')?.setAttribute('content', articleDescription);
+    document.getElementById('meta-og-image')?.setAttribute('content', articleImage);
+    document.getElementById('meta-twitter-url')?.setAttribute('content', articleUrl);
+    document.getElementById('meta-twitter-title')?.setAttribute('content', article.title);
+    document.getElementById('meta-twitter-description')?.setAttribute('content', articleDescription);
+    document.getElementById('meta-twitter-image')?.setAttribute('content', articleImage);
 
     const contentHtml = article.blocks?.length
         ? renderContentBlocks(article.blocks)
@@ -698,7 +813,7 @@ function renderRelatedArticles(currentArticle, data = articleData) {
 }
 
 function viewArticle(articleId) {
-    window.location.href = `article.html?id=${articleId}`;
+    window.location.href = `article?id=${articleId}`;
 }
 
 // ============================================
