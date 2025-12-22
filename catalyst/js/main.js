@@ -328,7 +328,23 @@ function initMagazineCover(data) {
 }
 
 function initMagazineGrid(data) {
-    renderMagazineGrid('all', data);
+    // Check for URL parameter to set initial filter
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    const initialFilter = categoryParam || 'all';
+
+    // Update active nav button if there's a category parameter
+    if (categoryParam) {
+        const navItems = document.querySelectorAll('.magazine-nav-item');
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.category === categoryParam) {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    renderMagazineGrid(initialFilter, data);
 }
 
 function renderMagazineGrid(filter, data) {
@@ -397,54 +413,140 @@ function setupMagazineNav(data) {
 }
 
 // ============================================
-// FORMS
+// FORMS WITH EMAILJS INTEGRATION
 // ============================================
 function setupForms() {
     // Newsletter form
-    const newsletterForm = document.getElementById('newsletter-form');
-    if (newsletterForm) {
-        newsletterForm.addEventListener('submit', (e) => {
+    const newsletterForms = document.querySelectorAll('#newsletter-form');
+    newsletterForms.forEach(form => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            showNotification('Thank you for subscribing!');
-            newsletterForm.reset();
+
+            const emailInput = form.querySelector('input[type="email"]');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const email = emailInput.value.trim();
+
+            if (!email) {
+                showErrorMessage('Please enter your email address');
+                return;
+            }
+
+            setButtonLoading(submitButton, true);
+
+            try {
+                await handleNewsletterSubmit(email);
+                showSuccessMessage('Thank you for subscribing! Check your email for confirmation.');
+                form.reset();
+            } catch (error) {
+                showErrorMessage(error.message || 'Something went wrong. Please try again.');
+                console.error('Newsletter submission error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
+            }
         });
-    }
+    });
 
     // Proposal form
     const proposalForm = document.getElementById('proposal-form');
     if (proposalForm) {
-        proposalForm.addEventListener('submit', (e) => {
+        proposalForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            showNotification('Thank you for your submission! We will review it soon.');
-            proposalForm.reset();
+
+            const submitButton = proposalForm.querySelector('button[type="submit"]');
+            const formInputs = proposalForm.querySelectorAll('input, select, textarea');
+
+            // Collect form data
+            const formData = {
+                firstName: formInputs[0].value.trim(),
+                lastName: formInputs[1].value.trim(),
+                email: formInputs[2].value.trim(),
+                proposalType: formInputs[3].value,
+                title: formInputs[4].value.trim(),
+                description: formInputs[5].value.trim(),
+                link: formInputs[6]?.value.trim() || ''
+            };
+
+            setButtonLoading(submitButton, true);
+
+            try {
+                await handleProposalSubmit(formData);
+                showSuccessMessage('Thank you for your submission! We will review it and get back to you soon.');
+                proposalForm.reset();
+            } catch (error) {
+                showErrorMessage(error.message || 'Something went wrong. Please try again.');
+                console.error('Proposal submission error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
+            }
         });
     }
 
     // Team form
     const teamForm = document.getElementById('team-form');
     if (teamForm) {
-        teamForm.addEventListener('submit', (e) => {
+        teamForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            showNotification('Thank you for your interest! We will be in touch.');
-            teamForm.reset();
+
+            const submitButton = teamForm.querySelector('button[type="submit"]');
+            const formInputs = teamForm.querySelectorAll('input, select');
+
+            // Collect form data
+            const formData = {
+                firstName: formInputs[0].value.trim(),
+                lastName: formInputs[1].value.trim(),
+                email: formInputs[2].value.trim(),
+                phone: formInputs[3].value.trim(),
+                position: formInputs[4].value,
+                cvLink: formInputs[5]?.value.trim() || '',
+                portfolioLink: formInputs[6]?.value.trim() || ''
+            };
+
+            setButtonLoading(submitButton, true);
+
+            try {
+                await handleTeamSubmit(formData);
+                showSuccessMessage('Thank you for your interest! We will review your application and be in touch soon.');
+                teamForm.reset();
+            } catch (error) {
+                showErrorMessage(error.message || 'Something went wrong. Please try again.');
+                console.error('Team submission error:', error);
+            } finally {
+                setButtonLoading(submitButton, false);
+            }
         });
     }
 }
 
-function showNotification(message) {
+function showNotification(message, type = 'success') {
     // Remove existing notification
     const existing = document.querySelector('.notification');
     if (existing) existing.remove();
 
     const notification = document.createElement('div');
     notification.className = 'notification';
-    notification.innerHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+
+    // Choose icon and colors based on type
+    const isError = type === 'error';
+    const icon = isError
+        ? `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+           </svg>`
+        : `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
             <polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-        <span>${message}</span>
-    `;
+           </svg>`;
+
+    const background = isError
+        ? 'linear-gradient(135deg, #D32F2F 0%, #F44336 50%, #E57373 100%)'
+        : 'linear-gradient(135deg, #0D47A1 0%, #1976D2 50%, #42A5F5 100%)';
+
+    const boxShadow = isError
+        ? '0 10px 40px rgba(211, 47, 47, 0.4)'
+        : '0 10px 40px rgba(13, 71, 161, 0.4)';
+
+    notification.innerHTML = `${icon}<span>${message}</span>`;
 
     // Add styles
     notification.style.cssText = `
@@ -452,7 +554,7 @@ function showNotification(message) {
         bottom: 32px;
         left: 50%;
         transform: translateX(-50%) translateY(100px);
-        background: linear-gradient(135deg, #0D47A1 0%, #1976D2 50%, #42A5F5 100%);
+        background: ${background};
         color: white;
         padding: 16px 28px;
         border-radius: 50px;
@@ -460,9 +562,10 @@ function showNotification(message) {
         align-items: center;
         gap: 12px;
         font-weight: 600;
-        box-shadow: 0 10px 40px rgba(13, 71, 161, 0.4);
+        box-shadow: ${boxShadow};
         z-index: 10000;
         animation: slideUp 0.4s ease forwards;
+        max-width: 90%;
     `;
 
     // Add animation keyframes if not exists
