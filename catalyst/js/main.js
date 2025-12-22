@@ -365,13 +365,23 @@ function renderMagazineGrid(filter, data) {
 
     const toShow = filtered.slice(0, articlesDisplayed);
 
-    // Create magazine layout with varying sizes
+    // Create magazine layout with improved pattern for better alignment
+    // Pattern ensures no gaps: Large (2x2), then fill row with smalls, then mediums (2x1)
     grid.innerHTML = toShow.map((article, index) => {
         let sizeClass = 'small';
 
-        // Create an interesting magazine layout pattern
-        if (index % 7 === 0) sizeClass = 'large';
-        else if (index % 3 === 0) sizeClass = 'medium';
+        // Improved pattern for professional magazine layout
+        // Every 6th article is large (2x2)
+        // Every 3rd article (not large) is medium (2x1)
+        // All others are small (1x1)
+
+        if (index % 6 === 0) {
+            sizeClass = 'large';
+        } else if (index % 3 === 0 && index % 6 !== 0) {
+            sizeClass = 'medium';
+        } else {
+            sizeClass = 'small';
+        }
 
         return createMagazineArticle(article, sizeClass);
     }).join('');
@@ -980,7 +990,7 @@ function convertJsonToArticle(data = {}, baseByTitle = new Map()) {
     const date = formatJsonDate(meta.publish_date) || baseMatch?.date || '';
     const cover = meta.cover_image_url || baseMatch?.image || ARTICLE_FALLBACK_IMAGE;
     const excerpt = (meta.excerpt || buildExcerptFromBlocks(blocks) || baseMatch?.excerpt || '').trim();
-    const category = baseMatch?.category || guessCategoryFromTitle(title);
+    const category = normalizeCategory(meta.category || baseMatch?.category || guessCategoryFromTitle(title));
     const content = blocks?.length ? renderContentBlocks(blocks) : (baseMatch?.content || '');
     const link = baseMatch?.link || '#';
     const readingTime = estimateReadingTime({ content, excerpt });
