@@ -81,6 +81,8 @@ const bubbleSpeedValue = document.getElementById('bubble-speed-value');
 const bubbleSizeValue = document.getElementById('bubble-size-value');
 const displayPreview = document.getElementById('display-preview');
 const previewHeader = document.getElementById('preview-header');
+const gradientAnimatedInput = document.getElementById('gradient-animated');
+const gradientPresets = document.querySelectorAll('.gradient-preset');
 
 // Music elements
 const musicForm = document.getElementById('music-form');
@@ -91,6 +93,7 @@ const clearYoutubeBtn = document.getElementById('clear-youtube');
 const musicBtnText = document.getElementById('music-btn-text');
 const musicHistory = document.getElementById('music-history');
 const suggestionItems = document.querySelectorAll('.suggestion-item');
+const musicLoopInput = document.getElementById('music-loop');
 
 // Toast container
 const toastContainer = document.getElementById('toast-container');
@@ -500,8 +503,33 @@ function applySettingsToForm(settings) {
     bgStartInput.value = settings.bgStart || DEFAULT_DISPLAY_SETTINGS.bgStart;
     bgEndInput.value = settings.bgEnd || DEFAULT_DISPLAY_SETTINGS.bgEnd;
 
+    // Load animated gradient setting
+    if (gradientAnimatedInput) {
+        gradientAnimatedInput.value = settings.gradientAnimated || 'false';
+    }
+
+    // Highlight the matching preset
+    updateSelectedPreset(settings.bgStart, settings.bgEnd, settings.gradientAnimated);
+
     updateSliderLabels();
     updateDisplayPreview();
+}
+
+function updateSelectedPreset(bgStart, bgEnd, animated) {
+    gradientPresets.forEach(preset => {
+        preset.classList.remove('selected');
+
+        const presetAnimated = preset.dataset.animated;
+        const presetStart = preset.dataset.start;
+        const presetEnd = preset.dataset.end;
+
+        if (animated && animated !== 'false' && presetAnimated === animated) {
+            preset.classList.add('selected');
+        } else if ((!animated || animated === 'false') &&
+                   presetStart === bgStart && presetEnd === bgEnd) {
+            preset.classList.add('selected');
+        }
+    });
 }
 
 function updateSliderLabels() {
@@ -514,8 +542,19 @@ function updateDisplayPreview() {
     const bgStart = bgStartInput.value;
     const bgEnd = bgEndInput.value;
     const headerText = heroTextInput.value;
+    const animated = gradientAnimatedInput ? gradientAnimatedInput.value : 'false';
 
-    displayPreview.style.background = `linear-gradient(135deg, ${bgStart} 0%, ${bgEnd} 100%)`;
+    // Remove all animated gradient classes
+    displayPreview.classList.remove('gradient-aurora', 'gradient-ocean', 'gradient-sunset');
+
+    if (animated && animated !== 'false') {
+        // Apply animated gradient class
+        displayPreview.classList.add(`gradient-${animated}`);
+        displayPreview.style.background = '';
+    } else {
+        // Apply static gradient
+        displayPreview.style.background = `linear-gradient(135deg, ${bgStart} 0%, ${bgEnd} 100%)`;
+    }
 
     if (headerText) {
         previewHeader.textContent = headerText;
@@ -539,7 +578,8 @@ async function saveDisplaySettings(e) {
         bubbleSpeed: Number(bubbleSpeedInput.value),
         bubbleSize: Number(bubbleSizeInput.value),
         bgStart: bgStartInput.value,
-        bgEnd: bgEndInput.value
+        bgEnd: bgEndInput.value,
+        gradientAnimated: gradientAnimatedInput ? gradientAnimatedInput.value : 'false'
     };
 
     const submitBtn = displaySettingsForm.querySelector('button[type="submit"]');
@@ -570,6 +610,43 @@ function initDisplaySettings() {
     [bgStartInput, bgEndInput, heroTextInput].forEach(input => {
         input.addEventListener('input', updateDisplayPreview);
     });
+
+    // When custom color is changed, clear animated selection
+    [bgStartInput, bgEndInput].forEach(input => {
+        input.addEventListener('input', () => {
+            if (gradientAnimatedInput) {
+                gradientAnimatedInput.value = 'false';
+            }
+            updateSelectedPreset(bgStartInput.value, bgEndInput.value, 'false');
+        });
+    });
+
+    // Gradient preset click handlers
+    gradientPresets.forEach(preset => {
+        preset.addEventListener('click', () => {
+            const animated = preset.dataset.animated;
+            const start = preset.dataset.start;
+            const end = preset.dataset.end;
+
+            // Update hidden input for animated type
+            if (gradientAnimatedInput) {
+                gradientAnimatedInput.value = animated || 'false';
+            }
+
+            // If it's a static gradient, update color inputs
+            if (animated === 'false' && start && end) {
+                bgStartInput.value = start;
+                bgEndInput.value = end;
+            }
+
+            // Update selection state
+            gradientPresets.forEach(p => p.classList.remove('selected'));
+            preset.classList.add('selected');
+
+            // Update preview
+            updateDisplayPreview();
+        });
+    });
 }
 
 // ================================
@@ -581,10 +658,16 @@ function loadMusicSettings() {
 
     musicSettingsRef.get()
         .then(doc => {
-            if (doc.exists && doc.data().youtubeUrl) {
-                const url = doc.data().youtubeUrl;
-                youtubeUrlInput.value = url;
-                showYoutubePreview(url);
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.youtubeUrl) {
+                    youtubeUrlInput.value = data.youtubeUrl;
+                    showYoutubePreview(data.youtubeUrl);
+                }
+                // Load loop setting (default to true if not set)
+                if (musicLoopInput) {
+                    musicLoopInput.checked = data.loop !== false;
+                }
             }
         })
         .catch(error => {
@@ -646,6 +729,8 @@ function loadMusicHistory() {
 }
 
 function extractYoutubeId(url) {
+    if (!url || typeof url !== 'string') return null;
+
     const patterns = [
         /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
         /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
@@ -659,9 +744,14 @@ function extractYoutubeId(url) {
 }
 
 function showYoutubePreview(url) {
+    if (!url) {
+        youtubePreview.classList.add('hidden');
+        return;
+    }
+
     const videoId = extractYoutubeId(url);
     if (videoId) {
-        youtubePreviewFrame.src = `https://www.youtube.com/embed/${videoId}`;
+        youtubePreviewFrame.src = `https://www.youtube.com/embed/${videoId}?autoplay=0`;
         youtubePreview.classList.remove('hidden');
     } else {
         youtubePreview.classList.add('hidden');
@@ -678,6 +768,7 @@ async function saveMusicSettings(e) {
     e.preventDefault();
 
     const url = youtubeUrlInput.value.trim();
+    const loop = musicLoopInput ? musicLoopInput.checked : true;
 
     if (url && !extractYoutubeId(url)) {
         showToast('Please enter a valid YouTube URL', 'error');
@@ -693,27 +784,38 @@ async function saveMusicSettings(e) {
     musicForm.querySelector('button[type="submit"]').disabled = true;
 
     try {
-        // Save current music setting
+        // Save current music setting with loop option
+        const videoId = extractYoutubeId(url) || '';
         await musicSettingsRef.set({
             youtubeUrl: url,
-            youtubeId: extractYoutubeId(url) || '',
+            youtubeId: videoId,
+            loop: loop,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        });
 
         // Add to history if URL is not empty
         if (url && typeof musicHistoryRef !== 'undefined') {
-            await musicHistoryRef.add({
-                url: url,
-                title: 'YouTube Video',
-                usedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            // Check if this URL is already in history to avoid duplicates
+            const existingQuery = await musicHistoryRef.where('url', '==', url).limit(1).get();
+            if (existingQuery.empty) {
+                await musicHistoryRef.add({
+                    url: url,
+                    title: 'YouTube Video',
+                    usedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } else {
+                // Update existing entry's timestamp
+                await existingQuery.docs[0].ref.update({
+                    usedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
             loadMusicHistory();
         }
 
-        showToast(url ? 'Music setting saved' : 'Music cleared', 'success');
+        showToast(url ? 'Music setting saved successfully!' : 'Music cleared', 'success');
     } catch (error) {
         console.error('Error saving music settings:', error);
-        showToast('Error saving music settings', 'error');
+        showToast('Error saving music settings: ' + error.message, 'error');
     } finally {
         musicBtnText.textContent = 'Save Music Setting';
         musicForm.querySelector('button[type="submit"]').disabled = false;

@@ -26,28 +26,18 @@
     <!-- Floating title controlled from Admin -->
     <div id="display-title" class="display-title glass-chip hidden"></div>
 
-    <!-- Main container for floating bubbles -->
-    <div id="bubbles-container"></div>
+    <!-- Main container for slideshow cards -->
+    <div id="slideshow" class="slideshow"></div>
 
     <!-- Clock display -->
     <div id="clock" class="clock"></div>
 
     <!-- YouTube Music Player (hidden iframe) -->
     <div id="youtube-player-container" class="youtube-container">
-        <!--
-            To use YouTube music:
-            1. Find a YouTube video/playlist with relaxing music
-            2. Replace VIDEO_ID below with the actual video ID
-            3. For playlists, use: https://www.youtube.com/embed/videoseries?list=PLAYLIST_ID&autoplay=1&loop=1
-
-            Example relaxing music playlists:
-            - Lofi: PLOzDu-MXXLliO9fBNZOQTBDddoA3FzZUo
-            - Piano: PLMIbmfP_9vb8BCxRoraJpoo4q1yMFg4CE
-        -->
         <iframe
             id="youtube-player"
-            src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&loop=1&playlist=jfKfPfyJRdk&controls=0&showinfo=0&mute=0"
-            allow="autoplay; encrypted-media"
+            src="https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&loop=1&playlist=jfKfPfyJRdk&controls=0&showinfo=0&mute=1&modestbranding=1&rel=0&playsinline=1"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
             title="Background Music"
         ></iframe>
