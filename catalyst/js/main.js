@@ -3,7 +3,13 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    initApp();
+    const layoutPromise = window.layoutReady && typeof window.layoutReady.then === 'function'
+        ? window.layoutReady.catch(error => console.error('[Layout] Load issue', error))
+        : Promise.resolve();
+
+    layoutPromise.finally(() => {
+        initApp();
+    });
 });
 
 const ARTICLE_FALLBACK_IMAGE = 'NewsletterHeader1.png';
@@ -295,6 +301,7 @@ const deepClone = (val) => {
 
 async function initApp() {
     setupNavigation();
+    setupNewsletterModal();
     setupScrollEffects();
     setupScrollToTop();
     setupForms();
@@ -490,6 +497,41 @@ function setupNavigation() {
             link.classList.add('active');
         } else if (href !== '/' && currentPath.includes(href)) {
             link.classList.add('active');
+        }
+    });
+}
+
+// ============================================
+// NEWSLETTER MODAL
+// ============================================
+function setupNewsletterModal() {
+    const newsletterModal = document.getElementById('newsletter-modal');
+    if (!newsletterModal) return;
+
+    const mobileNewsletterBtn = document.getElementById('mobile-newsletter-btn');
+    const desktopSubscribeBtn = document.getElementById('desktop-subscribe-btn');
+    const modalClose = document.getElementById('newsletter-modal-close');
+    const modalOverlay = document.getElementById('newsletter-modal-overlay');
+
+    const openModal = () => {
+        newsletterModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeModal = () => {
+        newsletterModal.classList.remove('active');
+        document.body.style.overflow = '';
+    };
+
+    // Both mobile mail icon and desktop subscribe button open the modal
+    mobileNewsletterBtn?.addEventListener('click', openModal);
+    desktopSubscribeBtn?.addEventListener('click', openModal);
+    modalClose?.addEventListener('click', closeModal);
+    modalOverlay?.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && newsletterModal.classList.contains('active')) {
+            closeModal();
         }
     });
 }

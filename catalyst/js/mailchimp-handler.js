@@ -2,14 +2,35 @@
 // Prevents page redirect and shows inline success/error messages
 
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('mc-embedded-subscribe-form');
+    // Wait for layout to load (header.html contains the modal form)
+    const layoutPromise = window.layoutReady && typeof window.layoutReady.then === 'function'
+        ? window.layoutReady.catch(error => console.error('[Mailchimp] Layout load issue', error))
+        : Promise.resolve();
 
-    if (!form) return;
+    layoutPromise.finally(() => {
+        initMailchimpForms();
+    });
+});
 
+function initMailchimpForms() {
+    // Handle both the main page form and the modal form
+    const mainForm = document.getElementById('mc-embedded-subscribe-form');
+    const modalForm = document.getElementById('mc-embedded-subscribe-form-modal');
+
+    if (mainForm) {
+        setupMailchimpForm(mainForm, 'mce-response');
+    }
+
+    if (modalForm) {
+        setupMailchimpForm(modalForm, 'mce-response-modal');
+    }
+}
+
+function setupMailchimpForm(form, responseDivId) {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const responseDiv = document.getElementById('mce-response');
+        const responseDiv = document.getElementById(responseDivId);
         const submitButton = form.querySelector('button[type="submit"]');
         const buttonText = submitButton.innerHTML;
 
@@ -21,12 +42,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Basic validation
         if (!email || !firstName || !lastName) {
-            showResponse('Please fill in all fields.', 'error');
+            showResponse(responseDiv, 'Please fill in all fields.', 'error');
             return;
         }
 
         if (!isValidEmail(email)) {
-            showResponse('Please enter a valid email address.', 'error');
+            showResponse(responseDiv, 'Please enter a valid email address.', 'error');
             return;
         }
 
@@ -54,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitButton.innerHTML = buttonText;
 
             if (data.result === 'success') {
-                showResponse('Thank you for subscribing! Check your email for confirmation.', 'success');
+                showResponse(responseDiv, 'Thank you for subscribing! Check your email for confirmation.', 'success');
                 form.reset();
 
                 // Hide success message after 5 seconds
@@ -66,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let errorMessage = data.msg || 'An error occurred. Please try again.';
                 // Clean up Mailchimp's error messages
                 errorMessage = errorMessage.replace(/0 - /g, '').replace(/<[^>]*>/g, '');
-                showResponse(errorMessage, 'error');
+                showResponse(responseDiv, errorMessage, 'error');
             }
 
             // Cleanup
@@ -78,18 +99,18 @@ document.addEventListener('DOMContentLoaded', function() {
         script.src = url + '&' + params.toString() + '&c=' + callbackName;
         document.head.appendChild(script);
     });
+}
 
-    function showResponse(message, type) {
-        const responseDiv = document.getElementById('mce-response');
-        responseDiv.textContent = message;
-        responseDiv.className = 'newsletter-response ' + type;
-        responseDiv.style.display = 'block';
-    }
+function showResponse(responseDiv, message, type) {
+    if (!responseDiv) return;
+    responseDiv.textContent = message;
+    responseDiv.className = 'newsletter-response ' + type;
+    responseDiv.style.display = 'block';
+}
 
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-});
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
 
 // Add spinning animation for loading state
 const style = document.createElement('style');
