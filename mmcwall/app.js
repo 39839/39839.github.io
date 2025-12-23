@@ -43,7 +43,10 @@ const DEFAULT_DISPLAY_SETTINGS = {
     bubbleSpeed: 1, // reused as slide speed multiplier
     bubbleSize: 1,  // reused as slide scale
     bgStart: '#d6ebff',
-    bgEnd: '#f3fbff'
+    bgEnd: '#f3fbff',
+    gradientAnimated: 'false',
+    cardsOnScreen: 1,
+    slideColor: '#f6fbff'
 };
 let displaySettings = { ...DEFAULT_DISPLAY_SETTINGS };
 let settingsUnsubscribe = null;
@@ -68,6 +71,14 @@ const soundOffIcon = document.getElementById('sound-off-icon');
 const youtubePlayer = document.getElementById('youtube-player');
 const youtubeContainer = document.getElementById('youtube-player-container');
 const displayTitle = document.getElementById('display-title');
+const fullscreenToggle = document.getElementById('fullscreen-toggle');
+const bodyEl = document.body;
+let controlsHideTimeout = null;
+
+function getCardsOnScreen() {
+    const n = Number(displaySettings.cardsOnScreen || 1);
+    return Math.min(3, Math.max(1, Math.round(n)));
+}
 
 // ================================
 // Clock
@@ -134,6 +145,69 @@ function updateMuteUI() {
 }
 
 // ================================
+// Fullscreen Controls
+// ================================
+function initFullscreen() {
+    if (!fullscreenToggle) return;
+
+    fullscreenToggle.addEventListener('click', toggleFullscreen);
+    document.addEventListener('fullscreenchange', syncFullscreenState);
+    document.addEventListener('webkitfullscreenchange', syncFullscreenState);
+
+    // Hide controls until mouse moves
+    document.addEventListener('mousemove', handleMouseMoveForControls);
+    scheduleHideControls();
+}
+
+function toggleFullscreen() {
+    if (isFullscreen()) {
+        exitFullscreen();
+    } else {
+        requestFullscreen(document.documentElement);
+    }
+}
+
+function isFullscreen() {
+    return document.fullscreenElement || document.webkitFullscreenElement;
+}
+
+function requestFullscreen(el) {
+    if (el.requestFullscreen) return el.requestFullscreen();
+    if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+}
+
+function exitFullscreen() {
+    if (document.exitFullscreen) return document.exitFullscreen();
+    if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
+}
+
+function syncFullscreenState() {
+    const active = Boolean(isFullscreen());
+    fullscreenToggle.classList.toggle('active', active);
+    fullscreenToggle.setAttribute('aria-label', active ? 'Exit fullscreen (Esc)' : 'Enter fullscreen');
+    fullscreenToggle.querySelector('.fs-label').textContent = active ? 'Exit' : 'Fullscreen';
+    fullscreenToggle.querySelector('.fs-icon').textContent = active ? '⤡' : '⤢';
+    // Reset control visibility on state change
+    scheduleHideControls();
+}
+
+function handleMouseMoveForControls() {
+    showControls();
+    scheduleHideControls();
+}
+
+function showControls() {
+    bodyEl.classList.add('controls-visible');
+}
+
+function scheduleHideControls() {
+    clearTimeout(controlsHideTimeout);
+    controlsHideTimeout = setTimeout(() => {
+        bodyEl.classList.remove('controls-visible');
+    }, 1800);
+}
+
+// ================================
 // Display settings (admin controlled)
 // ================================
 function applyDisplaySettings(newSettings) {
@@ -144,17 +218,17 @@ function applyDisplaySettings(newSettings) {
     root.setProperty('--bg2', displaySettings.bgEnd);
     root.setProperty('--slide-text-size', `${displaySettings.textSize}px`);
     root.setProperty('--slide-scale', displaySettings.bubbleSize);
+    root.setProperty('--slide-surface', displaySettings.slideColor || DEFAULT_DISPLAY_SETTINGS.slideColor);
 
     // Handle animated gradients
     const animatedGradient = displaySettings.gradientAnimated;
     const body = document.body;
     const ambientBg = document.querySelector('.ambient-bg');
+    const gradientClasses = ['gradient-aurora', 'gradient-ocean', 'gradient-sunset', 'gradient-aquarium', 'gradient-beach'];
 
     // Remove all animated gradient classes
-    body.classList.remove('gradient-aurora', 'gradient-ocean', 'gradient-sunset');
-    if (ambientBg) {
-        ambientBg.classList.remove('gradient-aurora', 'gradient-ocean', 'gradient-sunset');
-    }
+    body.classList.remove(...gradientClasses);
+    if (ambientBg) ambientBg.classList.remove(...gradientClasses);
 
     if (animatedGradient && animatedGradient !== 'false') {
         // Apply animated gradient class
@@ -162,6 +236,15 @@ function applyDisplaySettings(newSettings) {
         if (ambientBg) {
             ambientBg.classList.add(`gradient-${animatedGradient}`);
         }
+    }
+
+    // Layout helper for multiple cards
+    body.classList.toggle('layout-2', getCardsOnScreen() === 2);
+    body.classList.toggle('layout-3', getCardsOnScreen() === 3);
+
+    // Re-apply layout to visible slides so spacing updates immediately
+    if (slideshowContainer && slideshowContainer.children.length > 0) {
+        showSlide(activeIndex || 0);
     }
 
     if (displayTitle) {
@@ -301,12 +384,19 @@ function showSlide(index) {
     const slides = slideshowContainer.querySelectorAll('.slide');
     if (!slides.length) return;
 
-    slides.forEach(slide => slide.classList.remove('active', 'previous'));
+    slides.forEach(slide => slide.classList.remove('active', 'previous', 'secondary', 'tertiary'));
     const previous = slides[activeIndex];
     if (previous) previous.classList.add('previous');
 
-    const current = slides[index];
-    if (current) current.classList.add('active');
+    const visibleCount = getCardsOnScreen();
+    for (let i = 0; i < Math.min(visibleCount, slides.length); i++) {
+        const idx = (index + i) % slides.length;
+        const current = slides[idx];
+        if (!current) continue;
+        current.classList.add('active');
+        if (i === 1) current.classList.add('secondary');
+        if (i === 2) current.classList.add('tertiary');
+    }
 
     activeIndex = index;
     hideLoading();
@@ -473,6 +563,7 @@ function init() {
     initAudio();
     initDisplaySettingsListener();
     initMusicSettingsListener();
+    initFullscreen();
 
     // Small delay to ensure Firebase is loaded, then fetch real data
     setTimeout(() => {
@@ -482,7 +573,7 @@ function init() {
             console.error('Error initializing Firestore:', e);
             showDummyData();
         }
-    }, 100);
+    }, 0);
 }
 
 if (document.readyState === 'loading') {

@@ -21,7 +21,10 @@ const DEFAULT_DISPLAY_SETTINGS = {
     bubbleSpeed: 1,
     bubbleSize: 1,
     bgStart: '#d6ebff',
-    bgEnd: '#f3fbff'
+    bgEnd: '#f3fbff',
+    gradientAnimated: 'false',
+    cardsOnScreen: 1,
+    slideColor: '#f6fbff'
 };
 
 let currentUser = null;
@@ -74,11 +77,14 @@ const heroTextInput = document.getElementById('hero-text');
 const textSizeInput = document.getElementById('text-size');
 const bubbleSpeedInput = document.getElementById('bubble-speed');
 const bubbleSizeInput = document.getElementById('bubble-size');
+const cardsOnScreenInput = document.getElementById('cards-on-screen');
 const bgStartInput = document.getElementById('bg-start');
 const bgEndInput = document.getElementById('bg-end');
+const slideColorInput = document.getElementById('slide-color');
 const textSizeValue = document.getElementById('text-size-value');
 const bubbleSpeedValue = document.getElementById('bubble-speed-value');
 const bubbleSizeValue = document.getElementById('bubble-size-value');
+const cardsOnScreenValue = document.getElementById('cards-on-screen-value');
 const displayPreview = document.getElementById('display-preview');
 const previewHeader = document.getElementById('preview-header');
 const gradientAnimatedInput = document.getElementById('gradient-animated');
@@ -500,8 +506,10 @@ function applySettingsToForm(settings) {
     textSizeInput.value = settings.textSize || DEFAULT_DISPLAY_SETTINGS.textSize;
     bubbleSpeedInput.value = settings.bubbleSpeed || DEFAULT_DISPLAY_SETTINGS.bubbleSpeed;
     bubbleSizeInput.value = settings.bubbleSize || DEFAULT_DISPLAY_SETTINGS.bubbleSize;
+    cardsOnScreenInput.value = settings.cardsOnScreen || DEFAULT_DISPLAY_SETTINGS.cardsOnScreen;
     bgStartInput.value = settings.bgStart || DEFAULT_DISPLAY_SETTINGS.bgStart;
     bgEndInput.value = settings.bgEnd || DEFAULT_DISPLAY_SETTINGS.bgEnd;
+    slideColorInput.value = settings.slideColor || DEFAULT_DISPLAY_SETTINGS.slideColor;
 
     // Load animated gradient setting
     if (gradientAnimatedInput) {
@@ -536,6 +544,7 @@ function updateSliderLabels() {
     textSizeValue.textContent = `${textSizeInput.value}px`;
     bubbleSpeedValue.textContent = `${Number(bubbleSpeedInput.value).toFixed(1)}x`;
     bubbleSizeValue.textContent = `${Number(bubbleSizeInput.value).toFixed(1)}x`;
+    cardsOnScreenValue.textContent = `${cardsOnScreenInput.value}`;
 }
 
 function updateDisplayPreview() {
@@ -543,9 +552,11 @@ function updateDisplayPreview() {
     const bgEnd = bgEndInput.value;
     const headerText = heroTextInput.value;
     const animated = gradientAnimatedInput ? gradientAnimatedInput.value : 'false';
+    const cardColor = slideColorInput ? slideColorInput.value : DEFAULT_DISPLAY_SETTINGS.slideColor;
+    const gradientClasses = ['gradient-aurora', 'gradient-ocean', 'gradient-sunset', 'gradient-aquarium', 'gradient-beach'];
 
     // Remove all animated gradient classes
-    displayPreview.classList.remove('gradient-aurora', 'gradient-ocean', 'gradient-sunset');
+    displayPreview.classList.remove(...gradientClasses);
 
     if (animated && animated !== 'false') {
         // Apply animated gradient class
@@ -562,6 +573,11 @@ function updateDisplayPreview() {
     } else {
         previewHeader.style.display = 'none';
     }
+
+    // Tint preview bubbles
+    displayPreview.querySelectorAll('.preview-bubble').forEach(bubble => {
+        bubble.style.background = cardColor;
+    });
 }
 
 async function saveDisplaySettings(e) {
@@ -579,7 +595,9 @@ async function saveDisplaySettings(e) {
         bubbleSize: Number(bubbleSizeInput.value),
         bgStart: bgStartInput.value,
         bgEnd: bgEndInput.value,
-        gradientAnimated: gradientAnimatedInput ? gradientAnimatedInput.value : 'false'
+        gradientAnimated: gradientAnimatedInput ? gradientAnimatedInput.value : 'false',
+        cardsOnScreen: Number(cardsOnScreenInput.value),
+        slideColor: slideColorInput.value
     };
 
     const submitBtn = displaySettingsForm.querySelector('button[type="submit"]');
@@ -600,14 +618,14 @@ async function saveDisplaySettings(e) {
 }
 
 function initDisplaySettings() {
-    [textSizeInput, bubbleSpeedInput, bubbleSizeInput].forEach(input => {
+    [textSizeInput, bubbleSpeedInput, bubbleSizeInput, cardsOnScreenInput].forEach(input => {
         input.addEventListener('input', () => {
             updateSliderLabels();
             updateDisplayPreview();
         });
     });
 
-    [bgStartInput, bgEndInput, heroTextInput].forEach(input => {
+    [bgStartInput, bgEndInput, heroTextInput, slideColorInput].forEach(input => {
         input.addEventListener('input', updateDisplayPreview);
     });
 
