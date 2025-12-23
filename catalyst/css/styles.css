@@ -1952,45 +1952,19 @@ img {
 .tag {
   padding: 8px 18px;
   border-radius: var(--radius-full);
-  backdrop-filter: blur(10px);
+  background: rgba(15, 23, 42, 0.06);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--text-muted);
   transition: all var(--transition-fast);
-  border: none;
-}
-
-/* Colorful tag gradients - no purple */
-.tag:nth-child(1) {
-  background: linear-gradient(135deg, rgba(79, 172, 254, 0.15) 0%, rgba(0, 242, 254, 0.15) 100%);
-  color: #4facfe;
-}
-.tag:nth-child(2) {
-  background: linear-gradient(135deg, rgba(250, 112, 154, 0.15) 0%, rgba(254, 225, 64, 0.15) 100%);
-  color: #f5576c;
-}
-.tag:nth-child(3) {
-  background: linear-gradient(135deg, rgba(67, 233, 123, 0.15) 0%, rgba(56, 249, 215, 0.15) 100%);
-  color: #2dd4bf;
-}
-.tag:nth-child(4) {
-  background: linear-gradient(135deg, rgba(255, 184, 108, 0.15) 0%, rgba(255, 224, 130, 0.15) 100%);
-  color: #f59e0b;
-}
-.tag:nth-child(5) {
-  background: linear-gradient(135deg, rgba(129, 236, 236, 0.15) 0%, rgba(85, 239, 196, 0.15) 100%);
-  color: #00cec9;
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .tag:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: rgba(15, 23, 42, 0.1);
+  color: var(--text-dark);
+  transform: translateY(-1px);
 }
-
-.tag:nth-child(1):hover { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
-.tag:nth-child(2):hover { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
-.tag:nth-child(3):hover { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; }
-.tag:nth-child(4):hover { background: linear-gradient(135deg, #ffb86c 0%, #ffe082 100%); color: #333; }
-.tag:nth-child(5):hover { background: linear-gradient(135deg, #81ecec 0%, #55efc4 100%); color: #333; }
 
 /* ============================================
    SEARCH BAR
