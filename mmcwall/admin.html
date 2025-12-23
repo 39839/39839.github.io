@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMCWall - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-view">
+    <!-- Login Screen -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-card">
+            <img src="Logo.png" alt="Montgomery Medical Clinic" class="login-logo">
+            <h1>Admin Panel</h1>
+
+            <!-- Login Form -->
+            <div id="login-view">
+                <p class="login-subtitle">Sign in to manage your digital display</p>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="email-input">Email</label>
+                        <input
+                            type="email"
+                            id="email-input"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                    <div class="input-group">
+                        <label for="password-input">Password</label>
+                        <input
+                            type="password"
+                            id="password-input"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+                        <span id="login-btn-text">Sign In</span>
+                    </button>
+                </form>
+                <p id="login-error" class="error-msg hidden"></p>
+                <button id="forgot-password-link" class="link-btn">Forgot your password?</button>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div id="forgot-view" class="hidden">
+                <p class="login-subtitle">Enter your email to reset your password</p>
+                <form id="forgot-form">
+                    <div class="input-group">
+                        <label for="forgot-email-input">Email</label>
+                        <input
+                            type="email"
+                            id="forgot-email-input"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" id="forgot-btn">
+                        <span id="forgot-btn-text">Send Reset Link</span>
+                    </button>
+                </form>
+                <p id="forgot-message" class="success-msg hidden"></p>
+                <p id="forgot-error" class="error-msg hidden"></p>
+                <button id="back-to-login-link" class="link-btn">Back to Sign In</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Admin Panel -->
+    <div id="admin-panel" class="admin-panel hidden">
+        <!-- Sidebar Navigation -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <img src="Logo.png" alt="Montgomery Medical Clinic" class="sidebar-logo">
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-section="announcements">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span>Announcements</span>
+                </button>
+                <button class="nav-item" data-section="display">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                    <span>Display Settings</span>
+                </button>
+                <button class="nav-item" data-section="music">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18V5l12-2v13"/>
+                        <circle cx="6" cy="18" r="3"/>
+                        <circle cx="18" cy="16" r="3"/>
+                    </svg>
+                    <span>Background Music</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <span id="user-email" class="user-email-text"></span>
+                </div>
+                <button id="logout-btn" class="btn btn-outline btn-small">Sign Out</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="admin-content">
+            <!-- Top Bar -->
+            <header class="content-header">
+                <h1 id="section-title">Announcements</h1>
+                <a href="index.html" target="_blank" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    View Live Display
+                </a>
+            </header>
+
+            <!-- Announcements Section -->
+            <section id="section-announcements" class="content-section active">
+                <div class="section-grid">
+                    <!-- Create Announcement Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Create Announcement</h2>
+                            <p class="card-description">Add a new message to display on the waiting room screen</p>
+                        </div>
+                        <div class="card-body">
+                            <form id="announcement-form">
+                                <div class="input-group">
+                                    <label for="announcement-text">Message</label>
+                                    <textarea
+                                        id="announcement-text"
+                                        placeholder="Type your announcement message here..."
+                                        rows="4"
+                                        required
+                                        maxlength="300"
+                                    ></textarea>
+                                    <div class="input-hint">
+                                        <span id="char-current">0</span> / 300 characters
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="announcement-type">Category</label>
+                                    <div class="type-selector">
+                                        <label class="type-option">
+                                            <input type="radio" name="announcement-type" value="info" checked>
+                                            <span class="type-card type-info">
+                                                <span class="type-color"></span>
+                                                <span class="type-name">Information</span>
+                                            </span>
+                                        </label>
+                                        <label class="type-option">
+                                            <input type="radio" name="announcement-type" value="news">
+                                            <span class="type-card type-news">
+                                                <span class="type-color"></span>
+                                                <span class="type-name">News</span>
+                                            </span>
+                                        </label>
+                                        <label class="type-option">
+                                            <input type="radio" name="announcement-type" value="alert">
+                                            <span class="type-card type-alert">
+                                                <span class="type-color"></span>
+                                                <span class="type-name">Alert</span>
+                                            </span>
+                                        </label>
+                                        <label class="type-option">
+                                            <input type="radio" name="announcement-type" value="health">
+                                            <span class="type-card type-health">
+                                                <span class="type-color"></span>
+                                                <span class="type-name">Health Tip</span>
+                                            </span>
+                                        </label>
+                                        <label class="type-option">
+                                            <input type="radio" name="announcement-type" value="welcome">
+                                            <span class="type-card type-welcome">
+                                                <span class="type-color"></span>
+                                                <span class="type-name">Welcome</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="announcement-active" checked>
+                                        <span class="checkbox-custom"></span>
+                                        <span>Show immediately on display</span>
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-full">
+                                    <span id="form-btn-text">Add Announcement</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Preview Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Preview</h2>
+                            <p class="card-description">See how your announcement will look on the display</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="preview-container">
+                                <div id="bubble-preview" class="bubble-preview type-info">
+                                    <p class="bubble-preview-text">Your message will appear here...</p>
+                                    <span class="bubble-preview-label">Information</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Announcements -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Current Announcements</h2>
+                        <p class="card-description">Manage your existing announcements</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="announcements-list" class="announcements-list">
+                            <div class="loading-state">
+                                <div class="spinner"></div>
+                                <p>Loading announcements...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Display Settings Section -->
+            <section id="section-display" class="content-section">
+                <div class="section-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Display Customization</h2>
+                            <p class="card-description">Customize the look and feel of your waiting room display</p>
+                        </div>
+                        <div class="card-body">
+                            <form id="display-settings-form">
+                                <div class="input-group">
+                                    <label for="hero-text">Header Message</label>
+                                    <input
+                                        type="text"
+                                        id="hero-text"
+                                        placeholder="e.g., Welcome to Montgomery Medical Clinic"
+                                        maxlength="120"
+                                    >
+                                    <div class="input-hint">This text appears at the top of the display. Leave empty to hide.</div>
+                                </div>
+
+                                <div class="settings-row">
+                                    <div class="input-group">
+                                        <label for="text-size">Text Size</label>
+                                        <div class="slider-container">
+                                            <input type="range" id="text-size" min="16" max="32" step="1" value="22">
+                                            <span id="text-size-value" class="slider-value">22px</span>
+                                        </div>
+                                        <div class="input-hint">Adjust how large the text appears in each bubble</div>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <label for="bubble-size">Bubble Size</label>
+                                        <div class="slider-container">
+                                            <input type="range" id="bubble-size" min="0.8" max="1.4" step="0.05" value="1">
+                                            <span id="bubble-size-value" class="slider-value">1.0x</span>
+                                        </div>
+                                        <div class="input-hint">Make the announcement bubbles larger or smaller</div>
+                                    </div>
+                                </div>
+
+                                <div class="settings-row">
+                                    <div class="input-group">
+                                        <label for="bubble-speed">Animation Speed</label>
+                                        <div class="slider-container">
+                                            <input type="range" id="bubble-speed" min="0.6" max="2" step="0.05" value="1">
+                                            <span id="bubble-speed-value" class="slider-value">1.0x</span>
+                                        </div>
+                                        <div class="input-hint">How fast the bubbles float across the screen</div>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>Background Colors</label>
+                                    <div class="color-row">
+                                        <div class="color-input-group">
+                                            <label for="bg-start">Top Color</label>
+                                            <input type="color" id="bg-start" value="#d6ebff">
+                                        </div>
+                                        <div class="color-input-group">
+                                            <label for="bg-end">Bottom Color</label>
+                                            <input type="color" id="bg-end" value="#f3fbff">
+                                        </div>
+                                    </div>
+                                    <div class="input-hint">Choose the gradient colors for the display background</div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">
+                                    Save Display Settings
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Display Preview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Display Preview</h2>
+                            <p class="card-description">A miniature preview of your display settings</p>
+                        </div>
+                        <div class="card-body">
+                            <div id="display-preview" class="display-preview">
+                                <div class="preview-header" id="preview-header">Welcome to Montgomery Medical Clinic</div>
+                                <div class="preview-bubble"></div>
+                                <div class="preview-bubble"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Music Settings Section -->
+            <section id="section-music" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Background Music</h2>
+                        <p class="card-description">Set relaxing background music for your waiting room</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="music-form">
+                            <div class="input-group">
+                                <label for="youtube-url">YouTube Video URL</label>
+                                <input
+                                    type="url"
+                                    id="youtube-url"
+                                    placeholder="Paste a YouTube link here (e.g., https://www.youtube.com/watch?v=...)"
+                                >
+                                <div class="input-hint">
+                                    Paste a YouTube video link. The audio will play in the background on your display.
+                                    <br>Tip: Search for "relaxing waiting room music" or "lofi beats" on YouTube.
+                                </div>
+                            </div>
+
+                            <div id="youtube-preview" class="youtube-preview hidden">
+                                <div class="youtube-preview-header">
+                                    <span>Preview</span>
+                                    <button type="button" id="clear-youtube" class="btn btn-text">Clear</button>
+                                </div>
+                                <iframe id="youtube-preview-frame" width="100%" height="200" frameborder="0" allowfullscreen></iframe>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <span id="music-btn-text">Save Music Setting</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Recently Used -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Recently Used</h2>
+                        <p class="card-description">Quick access to your previously used music</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="music-history" class="music-history">
+                            <div class="empty-state">
+                                <p>No music history yet</p>
+                                <p class="empty-hint">Your recently used YouTube links will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suggested Music -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Suggested Music</h2>
+                        <p class="card-description">Popular choices for medical waiting rooms</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="suggested-music">
+                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=jfKfPfyJRdk">
+                                <div class="suggestion-info">
+                                    <span class="suggestion-title">Lofi Hip Hop Radio</span>
+                                    <span class="suggestion-desc">Relaxing beats, 24/7 stream</span>
+                                </div>
+                                <span class="suggestion-action">Use This</span>
+                            </button>
+                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=lTRiuFIWV54">
+                                <div class="suggestion-info">
+                                    <span class="suggestion-title">Relaxing Piano Music</span>
+                                    <span class="suggestion-desc">Calm piano for waiting rooms</span>
+                                </div>
+                                <span class="suggestion-action">Use This</span>
+                            </button>
+                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=HSOtku1j600">
+                                <div class="suggestion-info">
+                                    <span class="suggestion-title">Jazz Cafe Music</span>
+                                    <span class="suggestion-desc">Smooth jazz background music</span>
+                                </div>
+                                <span class="suggestion-action">Use This</span>
+                            </button>
+                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=5qap5aO4i9A">
+                                <div class="suggestion-info">
+                                    <span class="suggestion-title">Calm Ambient Music</span>
+                                    <span class="suggestion-desc">Peaceful ambient sounds</span>
+                                </div>
+                                <span class="suggestion-action">Use This</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+    <!-- App scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
