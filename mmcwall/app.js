@@ -89,6 +89,7 @@ const displayTitle = document.getElementById('display-title');
 const fullscreenToggle = document.getElementById('fullscreen-toggle');
 const bodyEl = document.body;
 let controlsHideTimeout = null;
+let cursorHideTimeout = null;
 
 function getCardsOnScreen() {
     const n = Number(displaySettings.cardsOnScreen || 1);
@@ -172,6 +173,7 @@ function initFullscreen() {
     // Hide controls until mouse moves
     document.addEventListener('mousemove', handleMouseMoveForControls);
     scheduleHideControls();
+    scheduleHideCursor();
 }
 
 function toggleFullscreen() {
@@ -209,6 +211,7 @@ function syncFullscreenState() {
 function handleMouseMoveForControls() {
     showControls();
     scheduleHideControls();
+    showCursor();
 }
 
 function showControls() {
@@ -220,6 +223,18 @@ function scheduleHideControls() {
     controlsHideTimeout = setTimeout(() => {
         bodyEl.classList.remove('controls-visible');
     }, 1800);
+}
+
+function showCursor() {
+    bodyEl.classList.remove('hide-cursor');
+    scheduleHideCursor();
+}
+
+function scheduleHideCursor() {
+    clearTimeout(cursorHideTimeout);
+    cursorHideTimeout = setTimeout(() => {
+        bodyEl.classList.add('hide-cursor');
+    }, 2000);
 }
 
 // ================================

@@ -101,6 +101,12 @@ body {
     color: var(--color-text);
     line-height: 1.5;
     overflow: hidden;
+    cursor: default;
+}
+
+body.hide-cursor,
+body.hide-cursor * {
+    cursor: none !important;
 }
 
 /* ================================
@@ -579,9 +585,10 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
 
 @keyframes cloud-glide {
     0% { transform: translateX(-140vw) translateY(0); }
-    40% { transform: translateX(-20vw) translateY(6px); }
-    60% { transform: translateX(20vw) translateY(0); }
-    100% { transform: translateX(160vw) translateY(4px); }
+    25% { transform: translateX(-60vw) translateY(5px); }
+    50% { transform: translateX(0vw) translateY(2px); }
+    75% { transform: translateX(60vw) translateY(6px); }
+    100% { transform: translateX(140vw) translateY(4px); }
 }
 
 .wave {
@@ -626,7 +633,7 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
 
 .island {
     position: absolute;
-    left: 6%;
+    left: 16%;
     bottom: 0;
     width: min(32vw, 420px);
     aspect-ratio: 1 / 1;
