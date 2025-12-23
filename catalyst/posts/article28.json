@@ -6,7 +6,11 @@
       "publish_date": "Sep 6",
       "cover_image_url": "postimages/cosmos.webp",
       "excerpt": "From discovering supernovas to studying the birth of galaxies, Dr. Duilia De Mello's journey took her from Brazil to NASA in Washington, D.C. She uses the universe's oldest light to piece together our cosmic origins. But as the climate for science in America shifts, she questions whether the nation that drew her in will remain the best place on Earth to continue reaching for the stars.",
-      "category": "profile"
+      "category": "profile",
+      "image_position": "center",
+      "image_zoom": 1,
+      "image_offset_x": 0,
+      "image_offset_y": 0
     },
     "content_blocks": [
       {

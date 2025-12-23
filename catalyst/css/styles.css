@@ -75,12 +75,96 @@ html {
 }
 
 /* ============================================
-   IMAGE OPTIMIZATION - Fast Loading
+   IMAGE OPTIMIZATION - Fast Loading & Progressive
    ============================================ */
 /* Optimize image rendering for speed */
 img {
   content-visibility: auto;
   image-rendering: -webkit-optimize-contrast;
+}
+
+/* Progressive image wrapper - shows instantly */
+.progressive-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e5e7eb 100%);
+}
+
+/* Skeleton shimmer animation */
+.progressive-image-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.6) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+  z-index: 1;
+}
+
+.progressive-image-wrapper.loaded::before {
+  display: none;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Low quality placeholder - blurred and scaled */
+.progressive-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(20px);
+  transform: scale(1.1);
+  transition: opacity 0.4s ease-out;
+  z-index: 2;
+}
+
+.progressive-placeholder.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Full quality image - fades in on top */
+.progressive-full {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+  z-index: 3;
+}
+
+.progressive-full.loaded {
+  opacity: 1;
+}
+
+/* Instant card skeleton - no image dependency */
+.card-skeleton {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e5e7eb 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
 }
 
 /* Lazy background image placeholder - subtle pulse */
@@ -89,6 +173,21 @@ img {
   background-image: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e5e7eb 100%);
   animation: subtle-pulse 2.5s ease-in-out infinite;
   transition: background-image 0.4s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.lazy-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
 }
 
 .lazy-bg.bg-loaded {
@@ -97,9 +196,18 @@ img {
   background-position: center;
 }
 
+.lazy-bg.bg-loaded::before {
+  display: none;
+}
+
 @keyframes subtle-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.85; }
+}
+
+/* Ensure images inside progressive wrappers behave correctly */
+.progressive-image-wrapper img.progressive-full {
+  display: block;
 }
 
 /* Hardware acceleration for image containers */
@@ -947,6 +1055,28 @@ img {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.75));
 }
 
+/* Progressive image wrapper for featured cards */
+.featured-card-image-wrapper {
+  width: 100%;
+  height: 200px;
+  position: relative;
+}
+
+.featured-card-image-wrapper .progressive-full {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05);
+  transition: filter var(--transition-slow), transform var(--transition-slow), opacity 0.4s ease-out;
+  contain: layout paint;
+}
+
+.featured-card:hover .featured-card-image-wrapper .progressive-full {
+  filter: saturate(1.15) brightness(1.05);
+  transform: scale(1.05);
+}
+
+/* Legacy support for direct img */
 .featured-card-image {
   width: 100%;
   height: 200px;
@@ -1278,7 +1408,8 @@ img {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.75));
 }
 
-.article-card:hover .article-image img {
+.article-card:hover .article-image img,
+.article-card:hover .article-image .progressive-full.loaded {
   transform: scale(1.1);
   filter: brightness(1.05) saturate(1.1);
 }
@@ -1294,7 +1425,18 @@ img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform var(--transition-slow);
+  transition: transform var(--transition-slow), opacity 0.4s ease-out;
+  contain: layout paint;
+}
+
+/* Progressive image support for article cards */
+.article-image.progressive-image-wrapper .progressive-full {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow), opacity 0.4s ease-out;
   contain: layout paint;
 }
 
@@ -3128,6 +3270,39 @@ img {
   grid-column: span 1;
 }
 
+/* Progressive image wrapper for magazine articles */
+.magazine-article-image-wrapper {
+  width: 100%;
+  height: 240px;
+  position: relative;
+  overflow: hidden;
+}
+
+.magazine-article-image-wrapper .progressive-full {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease-out;
+  contain: layout paint;
+}
+
+.magazine-article.large .magazine-article-image-wrapper {
+  height: 100%;
+  min-height: 400px;
+}
+
+.magazine-article.medium .magazine-article-image-wrapper {
+  height: 280px;
+}
+
+.magazine-article:hover .magazine-article-image-wrapper .progressive-full {
+  transform: scale(1.08);
+  filter: brightness(1.05) saturate(1.1);
+}
+
+/* Legacy support */
 .magazine-article-image {
   width: 100%;
   height: 240px;
@@ -3348,7 +3523,8 @@ img {
     grid-column: span 1;
   }
 
-  .magazine-article.large .magazine-article-image {
+  .magazine-article.large .magazine-article-image,
+  .magazine-article.large .magazine-article-image-wrapper {
     height: 320px;
     min-height: 320px;
   }
@@ -3436,12 +3612,15 @@ img {
     grid-row: span 1;
   }
 
-  .magazine-article-image {
+  .magazine-article-image,
+  .magazine-article-image-wrapper {
     height: 220px;
   }
 
   .magazine-article.large .magazine-article-image,
-  .magazine-article.medium .magazine-article-image {
+  .magazine-article.medium .magazine-article-image,
+  .magazine-article.large .magazine-article-image-wrapper,
+  .magazine-article.medium .magazine-article-image-wrapper {
     height: 260px;
     min-height: 260px;
   }
@@ -3994,7 +4173,8 @@ img {
     justify-content: center;
   }
 
-  .featured-card-image {
+  .featured-card-image,
+  .featured-card-image-wrapper {
     height: 300px;
   }
 

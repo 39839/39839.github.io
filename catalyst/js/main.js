@@ -13,7 +13,12 @@ let imageObserver = null;
 
 // ============================================
 // IMAGE OPTIMIZATION - Fast Loading System
+// Progressive Image Loading with Instant Display
 // ============================================
+
+// Progressive image observer for blur-up effect
+let progressiveObserver = null;
+
 function initImageOptimization() {
     // Create Intersection Observer for lazy loading background images
     imageObserver = new IntersectionObserver((entries) => {
@@ -26,6 +31,18 @@ function initImageOptimization() {
                     const img = new Image();
                     img.onload = () => {
                         element.style.backgroundImage = `url('${bgUrl}')`;
+
+                        // Apply custom background position if specified
+                        if (element.dataset.bgPosition) {
+                            element.style.backgroundPosition = element.dataset.bgPosition;
+                        }
+
+                        // Apply custom background size/zoom if specified
+                        if (element.dataset.bgZoom) {
+                            const zoom = parseFloat(element.dataset.bgZoom);
+                            element.style.backgroundSize = `${zoom * 100}%`;
+                        }
+
                         element.classList.add('bg-loaded');
                     };
                     img.src = bgUrl;
@@ -34,7 +51,43 @@ function initImageOptimization() {
             }
         });
     }, {
-        rootMargin: '200px 0px', // Start loading 200px before visible
+        rootMargin: '400px 0px', // Start loading 400px before visible for faster perceived load
+        threshold: 0.01
+    });
+
+    // Create observer for progressive images
+    progressiveObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const wrapper = entry.target;
+                const fullImg = wrapper.querySelector('.progressive-full');
+                const placeholder = wrapper.querySelector('.progressive-placeholder');
+
+                if (fullImg && fullImg.dataset.src) {
+                    const img = new Image();
+                    img.onload = () => {
+                        fullImg.src = img.src;
+                        fullImg.classList.add('loaded');
+                        wrapper.classList.add('loaded');
+                        if (placeholder) {
+                            placeholder.classList.add('hidden');
+                        }
+                    };
+                    img.onerror = () => {
+                        fullImg.src = ARTICLE_FALLBACK_IMAGE;
+                        fullImg.classList.add('loaded');
+                        wrapper.classList.add('loaded');
+                        if (placeholder) {
+                            placeholder.classList.add('hidden');
+                        }
+                    };
+                    img.src = fullImg.dataset.src;
+                    progressiveObserver.unobserve(wrapper);
+                }
+            }
+        });
+    }, {
+        rootMargin: '300px 0px',
         threshold: 0.01
     });
 
@@ -42,9 +95,103 @@ function initImageOptimization() {
     document.querySelectorAll('[data-bg-image]').forEach(el => {
         imageObserver.observe(el);
     });
+
+    // Observe all progressive image wrappers
+    document.querySelectorAll('.progressive-image-wrapper').forEach(el => {
+        progressiveObserver.observe(el);
+    });
 }
 
-// Optimized image element creation with lazy loading
+// Create progressive image HTML with instant placeholder
+// imageSettings: { position, zoom, offsetX, offsetY } - optional per-article image adjustments
+function createProgressiveImage(src, alt, className = '', eager = false, imageSettings = null) {
+    const imageSrc = src || ARTICLE_FALLBACK_IMAGE;
+    // Generate a color-based placeholder from a simple hash of the image URL
+    const placeholderColor = getPlaceholderColor(imageSrc);
+    // Get custom image styles if settings provided
+    const customStyles = getImageStyles(imageSettings);
+
+    if (eager) {
+        // For eager loading (first visible images), load immediately
+        return `<div class="progressive-image-wrapper ${className}" style="background: ${placeholderColor}">
+            <img
+                src="${imageSrc}"
+                alt="${alt}"
+                class="progressive-full loaded"
+                style="${customStyles}"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+                onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">
+        </div>`;
+    }
+
+    // For lazy loading, use placeholder with blur-up effect
+    return `<div class="progressive-image-wrapper ${className}" style="background: ${placeholderColor}">
+        <div class="progressive-placeholder" style="background: ${placeholderColor}"></div>
+        <img
+            data-src="${imageSrc}"
+            alt="${alt}"
+            class="progressive-full"
+            style="${customStyles}"
+            loading="lazy"
+            decoding="async"
+            onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}'; this.classList.add('loaded');">
+    </div>`;
+}
+
+// Generate a pleasant placeholder color based on image URL
+function getPlaceholderColor(src) {
+    if (!src) return 'linear-gradient(135deg, #e5e7eb 0%, #f3f4f6 100%)';
+
+    // Simple hash function to get consistent colors per image
+    let hash = 0;
+    for (let i = 0; i < src.length; i++) {
+        hash = ((hash << 5) - hash) + src.charCodeAt(i);
+        hash = hash & hash;
+    }
+
+    // Generate subtle, pleasant gradient colors
+    const hue = Math.abs(hash % 360);
+    const saturation = 8 + (Math.abs(hash >> 8) % 12); // 8-20% saturation for subtle look
+    const lightness = 88 + (Math.abs(hash >> 16) % 8); // 88-96% lightness
+
+    return `linear-gradient(135deg,
+        hsl(${hue}, ${saturation}%, ${lightness}%) 0%,
+        hsl(${(hue + 30) % 360}, ${saturation - 3}%, ${lightness + 2}%) 100%)`;
+}
+
+// Generate inline styles for image customization
+// Settings: { position, zoom, offsetX, offsetY }
+function getImageStyles(settings) {
+    if (!settings) return '';
+
+    const styles = [];
+
+    // Object position (e.g., "center top", "50% 30%")
+    if (settings.position) {
+        styles.push(`object-position: ${settings.position}`);
+    }
+
+    // Build transform for zoom and offset
+    const transforms = [];
+    if (settings.zoom && settings.zoom !== 1) {
+        transforms.push(`scale(${settings.zoom})`);
+    }
+    if (settings.offsetX || settings.offsetY) {
+        const x = settings.offsetX || 0;
+        const y = settings.offsetY || 0;
+        transforms.push(`translate(${x}px, ${y}px)`);
+    }
+
+    if (transforms.length > 0) {
+        styles.push(`transform: ${transforms.join(' ')}`);
+    }
+
+    return styles.length > 0 ? styles.join('; ') + ';' : '';
+}
+
+// Optimized image element creation with lazy loading (legacy support)
 function createOptimizedImage(src, alt, className = '', eager = false) {
     const imgHtml = `<img
         src="${src}"
@@ -64,6 +211,7 @@ function preloadImage(src) {
     link.rel = 'preload';
     link.as = 'image';
     link.href = src;
+    link.fetchpriority = 'high';
     document.head.appendChild(link);
 }
 
@@ -72,6 +220,14 @@ function registerLazyBackgrounds(scope = document) {
     if (!imageObserver) return;
     scope.querySelectorAll('[data-bg-image]').forEach(el => {
         imageObserver.observe(el);
+    });
+}
+
+// Register progressive images within a scope
+function registerProgressiveImages(scope = document) {
+    if (!progressiveObserver) return;
+    scope.querySelectorAll('.progressive-image-wrapper:not(.loaded)').forEach(el => {
+        progressiveObserver.observe(el);
     });
 }
 const deepClone = (val) => {
@@ -223,13 +379,13 @@ function initHeroFeatured(data) {
         <div class="hero-featured-grid">
             ${featured.map((article, index) => `
                 <div class="featured-card" onclick="viewArticle(${article.id})">
-                    <img src="${article.image || ARTICLE_FALLBACK_IMAGE}"
-                         alt="${article.title}"
-                         class="featured-card-image"
-                         loading="${index === 0 ? 'eager' : 'lazy'}"
-                         decoding="async"
-                         fetchpriority="${index === 0 ? 'high' : 'auto'}"
-                         onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">
+                    ${createProgressiveImage(
+                        article.image || ARTICLE_FALLBACK_IMAGE,
+                        article.title,
+                        'featured-card-image-wrapper',
+                        index === 0, // First image loads eagerly
+                        article.imageSettings // Pass custom image settings
+                    )}
                     <div class="featured-card-overlay">
                         <span class="featured-card-category">${formatCategory(article.category)}</span>
                         <h3 class="featured-card-title">${article.title}</h3>
@@ -239,6 +395,9 @@ function initHeroFeatured(data) {
             `).join('')}
         </div>
     `;
+
+    // Register progressive images for this container
+    registerProgressiveImages(container);
 }
 
 // Featured Stories Grid
@@ -249,9 +408,16 @@ function initFeaturedStoriesGrid(data = []) {
     // Skip the first 3 (already shown in hero), show next 5 articles
     const featured = data.slice(3, 8);
 
-    grid.innerHTML = featured.map((article, idx) => `
+    grid.innerHTML = featured.map((article, idx) => {
+        // Build data attributes for image settings
+        const settings = article.imageSettings || {};
+        const dataAttrs = [];
+        if (settings.position) dataAttrs.push(`data-bg-position="${settings.position}"`);
+        if (settings.zoom) dataAttrs.push(`data-bg-zoom="${settings.zoom}"`);
+
+        return `
         <div class="featured-story-card" onclick="viewArticle(${article.id})">
-            <div class="featured-story-image lazy-bg" data-bg-image="${article.image || ARTICLE_FALLBACK_IMAGE}"></div>
+            <div class="featured-story-image lazy-bg" data-bg-image="${article.image || ARTICLE_FALLBACK_IMAGE}" ${dataAttrs.join(' ')}></div>
             <div class="featured-story-content">
                 <span class="featured-story-badge">${formatCategory(article.category)}</span>
                 <h3 class="featured-story-title">${article.title}</h3>
@@ -265,7 +431,7 @@ function initFeaturedStoriesGrid(data = []) {
                 </div>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     // Register lazy background images for this grid
     registerLazyBackgrounds(grid);
@@ -281,6 +447,7 @@ function initHomeArticles(data) {
 
     grid.innerHTML = homeArticles.map(article => createArticleCard(article)).join('');
     registerFadeIn(grid);
+    registerProgressiveImages(grid);
 }
 
 // ============================================
@@ -317,20 +484,27 @@ function renderArticles(filter = 'all', data = articleData) {
     }
 
     registerFadeIn(grid);
+    registerProgressiveImages(grid);
 }
 
 function createArticleCard(article) {
     const imageSrc = article.image || ARTICLE_FALLBACK_IMAGE;
     const category = article.category || 'feature';
     const readingTime = article.readingTime || estimateReadingTime(article);
+    const placeholderColor = getPlaceholderColor(imageSrc);
+    const customStyles = getImageStyles(article.imageSettings);
+
     return `
         <article class="article-card fade-in" onclick="viewArticle(${article.id})">
-            <div class="article-image">
-                <img src="${imageSrc}"
+            <div class="article-image progressive-image-wrapper" style="background: ${placeholderColor}">
+                <div class="progressive-placeholder" style="background: ${placeholderColor}"></div>
+                <img data-src="${imageSrc}"
                      alt="${article.title}"
+                     class="progressive-full"
+                     style="${customStyles}"
                      loading="lazy"
                      decoding="async"
-                     onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">
+                     onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}'; this.classList.add('loaded');">
                 <span class="article-category ${category}">${formatCategory(category)}</span>
             </div>
             <div class="article-content">
@@ -486,20 +660,29 @@ function renderMagazineGrid(filter, data) {
     if (loadMoreBtn) {
         loadMoreBtn.style.display = articlesDisplayed >= filtered.length ? 'none' : 'inline-flex';
     }
+
+    // Register progressive images for newly rendered articles
+    registerProgressiveImages(grid);
 }
 
 function createMagazineArticle(article, sizeClass = 'small') {
     const imageSrc = article.image || ARTICLE_FALLBACK_IMAGE;
     const category = article.category || 'feature';
+    const placeholderColor = getPlaceholderColor(imageSrc);
+    const customStyles = getImageStyles(article.imageSettings);
 
     return `
         <article class="magazine-article ${sizeClass}" onclick="viewArticle(${article.id})">
-            <img src="${imageSrc}"
-                 alt="${article.title}"
-                 class="magazine-article-image"
-                 loading="lazy"
-                 decoding="async"
-                 onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}';">
+            <div class="magazine-article-image-wrapper progressive-image-wrapper" style="background: ${placeholderColor}">
+                <div class="progressive-placeholder" style="background: ${placeholderColor}"></div>
+                <img data-src="${imageSrc}"
+                     alt="${article.title}"
+                     class="magazine-article-image progressive-full"
+                     style="${customStyles}"
+                     loading="lazy"
+                     decoding="async"
+                     onerror="this.onerror=null; this.src='${ARTICLE_FALLBACK_IMAGE}'; this.classList.add('loaded');">
+            </div>
             <div class="magazine-article-content">
                 <div class="magazine-article-category">${formatCategory(category)}</div>
                 <h3 class="magazine-article-title">${article.title}</h3>
@@ -810,6 +993,7 @@ function renderRelatedArticles(currentArticle, data = articleData) {
     container.innerHTML = related.map(article => createArticleCard(article)).join('');
 
     registerFadeIn(container);
+    registerProgressiveImages(container);
 }
 
 function viewArticle(articleId) {
@@ -1110,11 +1294,24 @@ function convertJsonToArticle(data = {}, baseByTitle = new Map()) {
     const link = baseMatch?.link || '#';
     const readingTime = estimateReadingTime({ content, excerpt });
 
+    // Image display settings (optional)
+    // image_position: CSS object-position, e.g., "center top", "50% 30%", "left center"
+    // image_zoom: scale factor, e.g., 1.0 (default), 1.2 (20% bigger), 0.8 (20% smaller)
+    // image_offset_x: horizontal offset in pixels, e.g., 10, -20
+    // image_offset_y: vertical offset in pixels, e.g., 10, -20
+    const imageSettings = {
+        position: meta.image_position || null,
+        zoom: meta.image_zoom || null,
+        offsetX: meta.image_offset_x || null,
+        offsetY: meta.image_offset_y || null
+    };
+
     return {
         title,
         author,
         date,
         image: cover,
+        imageSettings,
         link,
         category,
         excerpt,
@@ -1264,6 +1461,7 @@ function performSearch(query, gridElement, countElement) {
     countElement.style.display = 'block';
 
     registerFadeIn(gridElement);
+    registerProgressiveImages(gridElement);
 }
 
 // ============================================
