@@ -38,6 +38,9 @@ const musicSettingsRef = db.collection('settings').doc('music');
 // Reference to music history collection
 const musicHistoryRef = db.collection('musicHistory');
 
+// Reference to custom categories
+const categoriesRef = db.collection('settings').doc('categories');
+
 // Export for use in other modules
 window.auth = auth;
 window.db = db;
@@ -45,3 +48,4 @@ window.announcementsRef = announcementsRef;
 window.displaySettingsRef = displaySettingsRef;
 window.musicSettingsRef = musicSettingsRef;
 window.musicHistoryRef = musicHistoryRef;
+window.categoriesRef = categoriesRef;

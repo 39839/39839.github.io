@@ -224,49 +224,170 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
                 radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.04), transparent 30%);
 }
 
+/* Realistic aquarium bubbles */
 .aquarium-scene .bubble {
     position: absolute;
-    bottom: -12vh;
-    width: 22px;
-    height: 22px;
-    background: rgba(255, 255, 255, 0.4);
+    bottom: -5vh;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.06), inset 0 0 12px rgba(255, 255, 255, 0.25);
-    filter: blur(0.2px);
-    --duration: 16s;
-    --delay: 0s;
-    --xdrift: 12px;
-    animation: bubble-rise var(--duration) linear infinite;
-    animation-delay: var(--delay);
+    /* Realistic bubble with gradient highlight */
+    background: radial-gradient(
+        ellipse 30% 30% at 25% 25%,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0.4) 40%,
+        rgba(200, 240, 255, 0.2) 60%,
+        rgba(150, 220, 255, 0.1) 80%,
+        transparent 100%
+    );
+    box-shadow:
+        inset 0 -3px 6px rgba(255, 255, 255, 0.15),
+        inset 2px 2px 4px rgba(255, 255, 255, 0.4),
+        0 0 8px rgba(150, 220, 255, 0.3),
+        0 0 2px rgba(255, 255, 255, 0.5);
+    opacity: 0;
 }
 
-.bubble-1 { left: 12%; --duration: 17s; --delay: 0s; --xdrift: 12px; transform: scale(0.9); }
-.bubble-2 { left: 24%; --duration: 15s; --delay: -2s; --xdrift: -16px; transform: scale(1.08); }
-.bubble-3 { left: 38%; --duration: 21s; --delay: -6s; --xdrift: 18px; transform: scale(1.25); }
-.bubble-4 { left: 56%; --duration: 14s; --delay: -9s; --xdrift: -10px; transform: scale(0.8); }
-.bubble-5 { left: 72%; --duration: 19s; --delay: -12s; --xdrift: 14px; transform: scale(1.05); }
-.bubble-6 { left: 88%; --duration: 16s; --delay: -15s; --xdrift: -18px; transform: scale(0.88); }
+/* Add subtle shimmer to bubbles */
+.aquarium-scene .bubble::after {
+    content: '';
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    width: 35%;
+    height: 25%;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    filter: blur(1px);
+}
 
-@keyframes bubble-rise {
-    0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-    10% { opacity: 0.65; }
-    35% { transform: translateY(-26vh) translateX(calc(var(--xdrift) * -0.4)) scale(1.05); opacity: 0.9; }
-    70% { transform: translateY(-58vh) translateX(calc(var(--xdrift) * 0.25)) scale(1.12); opacity: 0.85; }
-    100% { transform: translateY(-92vh) translateX(calc(var(--xdrift))) scale(1.18); opacity: 0; }
+/* Each bubble has completely unique animation with different timing windows */
+.bubble-1 {
+    left: 12%;
+    width: 14px; height: 14px;
+    animation: bubble-float-1 32s ease-in-out infinite;
+}
+.bubble-2 {
+    left: 28%;
+    width: 18px; height: 18px;
+    animation: bubble-float-2 38s ease-in-out infinite;
+}
+.bubble-3 {
+    left: 42%;
+    width: 15px; height: 15px;
+    animation: bubble-float-3 35s ease-in-out infinite;
+}
+.bubble-4 {
+    left: 55%;
+    width: 12px; height: 12px;
+    animation: bubble-float-4 40s ease-in-out infinite;
+}
+.bubble-5 {
+    left: 68%;
+    width: 20px; height: 20px;
+    animation: bubble-float-5 36s ease-in-out infinite;
+}
+.bubble-6 {
+    left: 82%;
+    width: 16px; height: 16px;
+    animation: bubble-float-6 34s ease-in-out infinite;
+}
+.bubble-7 {
+    left: 22%;
+    width: 22px; height: 22px;
+    animation: bubble-float-7 42s ease-in-out infinite;
+}
+.bubble-8 {
+    left: 75%;
+    width: 13px; height: 13px;
+    animation: bubble-float-8 30s ease-in-out infinite;
+}
+
+/* Each bubble appears at a completely different time in its cycle - only visible for ~15% of cycle */
+@keyframes bubble-float-1 {
+    0%, 3% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    5% { opacity: 0.75; transform: translateY(-15vh) translateX(8px) scale(0.9); }
+    10% { opacity: 0.85; transform: translateY(-50vh) translateX(-5px) scale(1); }
+    14% { opacity: 0.6; transform: translateY(-85vh) translateX(10px) scale(1.1); }
+    16%, 100% { opacity: 0; transform: translateY(-100vh) translateX(3px) scale(1.15); }
+}
+
+@keyframes bubble-float-2 {
+    0%, 25% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    27% { opacity: 0.7; transform: translateY(-12vh) translateX(-10px) scale(0.88); }
+    33% { opacity: 0.82; transform: translateY(-48vh) translateX(6px) scale(1.02); }
+    38% { opacity: 0.55; transform: translateY(-82vh) translateX(-8px) scale(1.08); }
+    40%, 100% { opacity: 0; transform: translateY(-100vh) translateX(4px) scale(1.12); }
+}
+
+@keyframes bubble-float-3 {
+    0%, 52% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    54% { opacity: 0.72; transform: translateY(-18vh) translateX(12px) scale(0.92); }
+    60% { opacity: 0.8; transform: translateY(-52vh) translateX(-7px) scale(1.04); }
+    65% { opacity: 0.58; transform: translateY(-86vh) translateX(9px) scale(1.1); }
+    67%, 100% { opacity: 0; transform: translateY(-100vh) translateX(-3px) scale(1.14); }
+}
+
+@keyframes bubble-float-4 {
+    0%, 72% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    74% { opacity: 0.68; transform: translateY(-14vh) translateX(-6px) scale(0.86); }
+    80% { opacity: 0.78; transform: translateY(-46vh) translateX(8px) scale(0.98); }
+    85% { opacity: 0.52; transform: translateY(-80vh) translateX(-4px) scale(1.06); }
+    87%, 100% { opacity: 0; transform: translateY(-100vh) translateX(5px) scale(1.1); }
+}
+
+@keyframes bubble-float-5 {
+    0%, 38% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    40% { opacity: 0.74; transform: translateY(-16vh) translateX(10px) scale(0.9); }
+    47% { opacity: 0.84; transform: translateY(-44vh) translateX(-9px) scale(1.02); }
+    52% { opacity: 0.6; transform: translateY(-78vh) translateX(7px) scale(1.1); }
+    55%, 100% { opacity: 0; transform: translateY(-100vh) translateX(-2px) scale(1.14); }
+}
+
+@keyframes bubble-float-6 {
+    0%, 12% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    14% { opacity: 0.7; transform: translateY(-20vh) translateX(-8px) scale(0.92); }
+    21% { opacity: 0.8; transform: translateY(-55vh) translateX(11px) scale(1.04); }
+    27% { opacity: 0.56; transform: translateY(-88vh) translateX(-6px) scale(1.1); }
+    29%, 100% { opacity: 0; transform: translateY(-100vh) translateX(4px) scale(1.12); }
+}
+
+@keyframes bubble-float-7 {
+    0%, 82% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    84% { opacity: 0.66; transform: translateY(-10vh) translateX(7px) scale(0.85); }
+    90% { opacity: 0.76; transform: translateY(-42vh) translateX(-10px) scale(0.98); }
+    95% { opacity: 0.5; transform: translateY(-76vh) translateX(5px) scale(1.06); }
+    97%, 100% { opacity: 0; transform: translateY(-100vh) translateX(-3px) scale(1.1); }
+}
+
+@keyframes bubble-float-8 {
+    0%, 60% { opacity: 0; transform: translateY(0) translateX(0) scale(0.8); }
+    62% { opacity: 0.72; transform: translateY(-18vh) translateX(-5px) scale(0.9); }
+    70% { opacity: 0.78; transform: translateY(-50vh) translateX(9px) scale(1); }
+    76% { opacity: 0.54; transform: translateY(-84vh) translateX(-7px) scale(1.08); }
+    78%, 100% { opacity: 0; transform: translateY(-100vh) translateX(6px) scale(1.12); }
 }
 
 .aquarium-scene .fish {
     position: absolute;
     width: 150px;
     height: 90px;
-    background-image: url('fish1.svg');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     opacity: 0.9;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.18));
-    --flip: 1;
     --fish-scale: 1;
+}
+
+/* Fish facing right - swims left to right */
+.aquarium-scene .fish.fish-right {
+    background-image: url('fishlookingright.svg');
+}
+
+/* Fish facing left - swims right to left */
+.aquarium-scene .fish.fish-left {
+    background-image: url('fishlookingleft.svg');
 }
 
 .aquarium-scene .fish::before,
@@ -274,47 +395,115 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
     content: none;
 }
 
+/* Fish swimming right (left to right) */
 .fish-1 {
-    top: 28%;
-    --flip: -1;
+    top: 22%;
+    --fish-scale: 1.1;
     filter: hue-rotate(190deg) saturate(1.2) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));
-    animation: swim-right 32s linear infinite;
+    animation: swim-right 34s linear infinite;
 }
 
 .fish-2 {
-    top: 56%;
-    --fish-scale: 0.9;
-    --flip: -1;
+    top: 48%;
+    --fish-scale: 0.85;
     filter: hue-rotate(110deg) saturate(1.35) brightness(1.05) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));
-    animation: swim-right 26s linear infinite;
-    animation-delay: -8s;
+    animation: swim-right 28s linear infinite;
+    animation-delay: -10s;
 }
 
 .fish-3 {
-    top: 72%;
-    --fish-scale: 0.8;
-    --flip: 1;
+    top: 70%;
+    --fish-scale: 0.95;
+    animation: swim-right 38s linear infinite;
+    animation-delay: -18s;
+    filter: hue-rotate(280deg) saturate(1.3) brightness(1.05) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));
+}
+
+/* Fish swimming left (right to left) */
+.fish-4 {
+    top: 35%;
+    --fish-scale: 0.9;
     filter: hue-rotate(-40deg) saturate(1.5) brightness(1.1) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));
     animation: swim-left 30s linear infinite;
-    animation-delay: -4s;
+    animation-delay: -5s;
+}
+
+.fish-5 {
+    top: 58%;
+    --fish-scale: 1.05;
+    filter: hue-rotate(60deg) saturate(1.3) brightness(1.08) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));
+    animation: swim-left 26s linear infinite;
+    animation-delay: -14s;
+}
+
+.fish-6 {
+    top: 80%;
+    --fish-scale: 0.75;
+    animation: swim-left 32s linear infinite;
+    animation-delay: -22s;
+    filter: hue-rotate(30deg) saturate(1.4) brightness(1.1) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));
+}
+
+/* Rainbow color-changing fish effect - applies cycling hue rotation */
+.aquarium-scene .fish.fish-rainbow {
+    animation-name: swim-right, fish-rainbow-hue !important;
+    animation-duration: 38s, 8s !important;
+    animation-timing-function: linear, ease-in-out !important;
+    animation-iteration-count: infinite, infinite !important;
+}
+
+.aquarium-scene .fish.fish-left.fish-rainbow {
+    animation-name: swim-left, fish-rainbow-hue !important;
+    animation-duration: 32s, 6s !important;
+}
+
+@keyframes fish-rainbow-hue {
+    0% { filter: hue-rotate(0deg) saturate(1.4) brightness(1.1) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2)); }
+    16% { filter: hue-rotate(60deg) saturate(1.5) brightness(1.15) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2)); }
+    33% { filter: hue-rotate(120deg) saturate(1.4) brightness(1.1) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2)); }
+    50% { filter: hue-rotate(180deg) saturate(1.5) brightness(1.12) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2)); }
+    66% { filter: hue-rotate(240deg) saturate(1.4) brightness(1.08) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2)); }
+    83% { filter: hue-rotate(300deg) saturate(1.5) brightness(1.15) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2)); }
+    100% { filter: hue-rotate(360deg) saturate(1.4) brightness(1.1) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2)); }
 }
 
 @keyframes swim-right {
-    0% { transform: translateX(-30vw) translateY(0) scale(var(--fish-scale)) scaleX(var(--flip)); }
-    50% { transform: translateX(40vw) translateY(-12px) scale(var(--fish-scale)) scaleX(var(--flip)); }
-    100% { transform: translateX(130vw) translateY(6px) scale(var(--fish-scale)) scaleX(var(--flip)); }
+    0% { transform: translateX(-25vw) translateY(0) scale(var(--fish-scale)); }
+    25% { transform: translateX(20vw) translateY(-8px) scale(var(--fish-scale)); }
+    50% { transform: translateX(50vw) translateY(5px) scale(var(--fish-scale)); }
+    75% { transform: translateX(85vw) translateY(-6px) scale(var(--fish-scale)); }
+    100% { transform: translateX(125vw) translateY(4px) scale(var(--fish-scale)); }
 }
 
 @keyframes swim-left {
-    0% { transform: translateX(120vw) translateY(0) scale(var(--fish-scale)) scaleX(var(--flip)); }
-    50% { transform: translateX(40vw) translateY(10px) scale(var(--fish-scale)) scaleX(var(--flip)); }
-    100% { transform: translateX(-40vw) translateY(-8px) scale(var(--fish-scale)) scaleX(var(--flip)); }
+    0% { transform: translateX(125vw) translateY(0) scale(var(--fish-scale)); }
+    25% { transform: translateX(80vw) translateY(7px) scale(var(--fish-scale)); }
+    50% { transform: translateX(45vw) translateY(-5px) scale(var(--fish-scale)); }
+    75% { transform: translateX(15vw) translateY(8px) scale(var(--fish-scale)); }
+    100% { transform: translateX(-25vw) translateY(-4px) scale(var(--fish-scale)); }
 }
 
 /* Beach */
 .beach-scene {
     background: radial-gradient(circle at 22% 28%, rgba(255, 255, 255, 0.28), transparent 36%),
                 radial-gradient(circle at 78% 12%, rgba(255, 255, 255, 0.2), transparent 32%);
+}
+
+.beach-scene .stars {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(1px 1px at 12% 20%, rgba(255, 255, 255, 0.8), transparent 50%),
+        radial-gradient(1px 1px at 32% 12%, rgba(255, 255, 255, 0.75), transparent 50%),
+        radial-gradient(1px 1px at 56% 28%, rgba(255, 255, 255, 0.75), transparent 50%),
+        radial-gradient(1px 1px at 74% 14%, rgba(255, 255, 255, 0.8), transparent 50%),
+        radial-gradient(1px 1px at 18% 62%, rgba(255, 255, 255, 0.7), transparent 50%),
+        radial-gradient(1px 1px at 48% 72%, rgba(255, 255, 255, 0.75), transparent 50%),
+        radial-gradient(1px 1px at 78% 66%, rgba(255, 255, 255, 0.8), transparent 50%);
+    opacity: 0;
+    transition: opacity 1.2s ease;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .beach-scene .sun {
@@ -327,11 +516,27 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
     background: radial-gradient(circle, #fff8d6 0%, #ffe27a 45%, #ffb347 80%);
     box-shadow: 0 0 40px rgba(255, 184, 81, 0.6), 0 0 80px rgba(255, 184, 81, 0.35);
     animation: sun-pulse 7s ease-in-out infinite;
+    transition: all 1.2s ease;
 }
 
 @keyframes sun-pulse {
     0%, 100% { transform: scale(1); filter: brightness(1); }
     50% { transform: scale(1.06); filter: brightness(1.08); }
+}
+
+.moon {
+    position: absolute;
+    top: 10%;
+    right: 12%;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff 0%, #f6f9ff 45%, #d4e3ff 70%, #9fb8e6 100%);
+    box-shadow: 0 0 24px rgba(159, 184, 230, 0.4), 0 0 48px rgba(159, 184, 230, 0.2);
+    opacity: 0;
+    transform: translateY(-30px);
+    transition: all 1.2s ease;
+    z-index: 2;
 }
 
 .cloud {
@@ -342,7 +547,8 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 50px;
     filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.1));
-    animation: cloud-drift 60s linear infinite;
+    animation: cloud-glide 70s linear infinite;
+    will-change: transform;
 }
 
 .cloud::before,
@@ -367,14 +573,15 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
     right: 30px;
 }
 
-.cloud-1 { left: 8%; animation-duration: 70s; }
-.cloud-2 { left: 32%; top: 22%; animation-duration: 60s; animation-delay: -14s; transform: scale(0.95); }
-.cloud-3 { left: 62%; top: 18%; animation-duration: 80s; animation-delay: -24s; transform: scale(1.1); }
+.cloud-1 { left: 8%; animation-duration: 75s; }
+.cloud-2 { left: 32%; top: 22%; animation-duration: 68s; animation-delay: -18s; transform: scale(0.95); }
+.cloud-3 { left: 62%; top: 18%; animation-duration: 82s; animation-delay: -28s; transform: scale(1.1); }
 
-@keyframes cloud-drift {
-    0% { transform: translateX(-10vw) translateY(0); }
-    50% { transform: translateX(10vw) translateY(6px); }
-    100% { transform: translateX(30vw) translateY(0); }
+@keyframes cloud-glide {
+    0% { transform: translateX(-140vw) translateY(0); }
+    40% { transform: translateX(-20vw) translateY(6px); }
+    60% { transform: translateX(20vw) translateY(0); }
+    100% { transform: translateX(160vw) translateY(4px); }
 }
 
 .wave {
@@ -427,6 +634,60 @@ body.display-view.gradient-beach .scene-layer.beach-scene {
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.25));
     opacity: 0.95;
     z-index: 2;
+}
+
+/* Beach day phases */
+body.beach-sunset.gradient-beach,
+body.beach-sunset .beach-scene {
+    background: linear-gradient(180deg, #ffddb3 0%, #ffbfa6 32%, #f3a6c8 52%, #8fb2e3 78%, #2d3c5c 100%) !important;
+}
+
+body.beach-night.gradient-beach,
+body.beach-night .beach-scene {
+    background: linear-gradient(180deg, #0c1c3a 0%, #0f2a55 30%, #0c3d63 55%, #0b4a6f 75%, #0a2f52 100%) !important;
+}
+
+body.beach-sunset .sun {
+    top: 14%;
+    filter: brightness(1.1) saturate(1.1);
+    box-shadow: 0 0 60px rgba(255, 140, 66, 0.5), 0 0 120px rgba(255, 140, 66, 0.3);
+}
+
+body.beach-night .sun {
+    opacity: 0;
+    transform: translateY(30px) scale(0.85);
+    box-shadow: none;
+}
+
+body.beach-night .moon {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.beach-night .stars {
+    opacity: 0.85;
+}
+
+body.beach-sunset .cloud {
+    background: rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 8px 20px rgba(255, 153, 102, 0.3));
+}
+
+body.beach-night .cloud {
+    background: rgba(255, 255, 255, 0.7);
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+}
+
+body.beach-night .wave-1 {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.22), rgba(10, 78, 130, 0.35));
+}
+
+body.beach-night .wave-2 {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.18), rgba(6, 66, 116, 0.32));
+}
+
+body.beach-night .wave-3 {
+    background: linear-gradient(180deg, rgba(59, 130, 246, 0.14), rgba(4, 52, 94, 0.28));
 }
 
 .palm-tree {
@@ -1526,7 +1787,204 @@ body.layout-3 .slide.tertiary {
     color: var(--color-text);
 }
 
-/* Bubble Preview */
+/* Full Display Preview - Mini version of actual display */
+.full-display-preview {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.preview-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    transition: background 0.3s ease;
+}
+
+.preview-orbs {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0.6;
+}
+
+.preview-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(30px);
+    opacity: 0.5;
+}
+
+.preview-orb.orb-1 {
+    width: 40%;
+    height: 40%;
+    background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.4), transparent);
+    top: -10%;
+    left: -5%;
+    animation: float-ambient 12s ease-in-out infinite;
+}
+
+.preview-orb.orb-2 {
+    width: 30%;
+    height: 30%;
+    background: radial-gradient(circle at 60% 60%, rgba(139, 92, 246, 0.3), transparent);
+    bottom: -8%;
+    right: -5%;
+    animation: float-ambient 15s ease-in-out infinite reverse;
+}
+
+/* Animated gradient backgrounds for preview */
+.full-display-preview.gradient-aurora .preview-background {
+    background: linear-gradient(-45deg, #a8edea, #7dd3c0, #52b788, #86efac, #67e8f9, #a5b4fc, #c4b5fd) !important;
+    background-size: 400% 400% !important;
+    animation: aurora-dance 12s ease-in-out infinite !important;
+}
+
+.full-display-preview.gradient-ocean .preview-background {
+    background: linear-gradient(-45deg, #caf0f8, #90e0ef, #48cae4, #00b4d8, #0077b6, #00b4d8, #48cae4) !important;
+    background-size: 400% 400% !important;
+    animation: ocean-wave 10s ease-in-out infinite !important;
+}
+
+.full-display-preview.gradient-sunset .preview-background {
+    background: linear-gradient(-45deg, #fef9c3, #fde68a, #fbbf24, #f97316, #f472b6, #ec4899, #c026d3) !important;
+    background-size: 400% 400% !important;
+    animation: sunset-glow 14s ease-in-out infinite !important;
+}
+
+.full-display-preview.gradient-aquarium .preview-background {
+    background: linear-gradient(-45deg, #021a2f, #0b4a6f, #0a6fa1, #0b86b6, #22d3ee, #06b6d4, #0891b2) !important;
+    background-size: 400% 400% !important;
+    animation: aquarium-glow 16s ease-in-out infinite !important;
+}
+
+.full-display-preview.gradient-beach .preview-background {
+    background: linear-gradient(170deg, #7dd3fc, #38bdf8, #67e8f9, #99f6e4, #fef9c3, #fde68a, #fbbf24) !important;
+    background-size: 300% 300% !important;
+    animation: beach-shimmer 18s ease-in-out infinite !important;
+}
+
+.full-display-preview.gradient-northern .preview-background {
+    background: linear-gradient(-45deg, #4fd1c5, #38b2ac, #667eea, #7c3aed, #a78bfa, #c4b5fd) !important;
+    background-size: 400% 400% !important;
+    animation: gradient-shift 20s ease infinite !important;
+}
+
+.full-display-preview.gradient-cosmic .preview-background {
+    background: linear-gradient(-45deg, #1a1a2e, #16213e, #533483, #7952b3, #9c6ade, #c7a4e8) !important;
+    background-size: 400% 400% !important;
+    animation: gradient-shift 22s ease infinite !important;
+}
+
+.full-display-preview.gradient-rainbow .preview-background {
+    background: linear-gradient(-45deg, #ffecd2, #fcb69f, #f0abfc, #a5b4fc, #67e8f9, #6ee7b7, #fde68a) !important;
+    background-size: 500% 500% !important;
+    animation: gradient-shift 25s ease infinite !important;
+}
+
+.preview-clock {
+    position: absolute;
+    bottom: 8%;
+    left: 5%;
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--color-text);
+    opacity: 0.8;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.preview-logo {
+    position: absolute;
+    top: 6%;
+    left: 5%;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-text);
+    opacity: 0.7;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.05em;
+}
+
+/* Bubble/Card Preview inside full display */
+.full-display-preview .bubble-preview {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(145deg, rgba(246, 251, 255, 0.95), rgba(255, 255, 255, 0.85));
+    border-radius: 16px;
+    padding: 14px 18px;
+    width: 70%;
+    max-width: 280px;
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 12px 40px rgba(53, 91, 145, 0.2), 0 4px 12px rgba(53, 91, 145, 0.1);
+    overflow: visible;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.full-display-preview .bubble-preview::before {
+    display: none;
+}
+
+.full-display-preview .bubble-preview-pill {
+    margin-bottom: 8px;
+}
+
+.full-display-preview .bubble-preview-label {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--color-info);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.full-display-preview .bubble-preview-text {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgba(26, 32, 44, 0.9);
+    line-height: 1.5;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+/* Category label colors */
+.full-display-preview .bubble-preview.type-info .bubble-preview-label {
+    background: rgba(59, 130, 246, 0.12);
+    color: #1d4ed8;
+}
+.full-display-preview .bubble-preview.type-news .bubble-preview-label {
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+}
+.full-display-preview .bubble-preview.type-alert .bubble-preview-label {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+}
+.full-display-preview .bubble-preview.type-health .bubble-preview-label {
+    background: rgba(139, 92, 246, 0.12);
+    color: #6d28d9;
+}
+.full-display-preview .bubble-preview.type-welcome .bubble-preview-label {
+    background: rgba(20, 184, 166, 0.12);
+    color: #0d9488;
+}
+
+/* Legacy bubble preview styles for backward compatibility */
 .preview-container {
     background: linear-gradient(135deg, var(--bg1), var(--bg2));
     border-radius: var(--radius-md);
@@ -1859,6 +2317,250 @@ body.layout-3 .slide.tertiary {
     }
 }
 
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: scaleIn 0.2s ease;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--color-bg-dark);
+}
+
+.modal-header h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--color-text-light);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.modal-close:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+.modal-content form {
+    padding: var(--spacing-xl);
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-bg-dark);
+}
+
+.modal-actions .btn {
+    flex: 1;
+}
+
+/* Color Picker Row */
+.color-picker-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.color-picker-large {
+    width: 50px;
+    height: 50px;
+    padding: 3px;
+    border: 2px solid var(--color-bg-dark);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    background: var(--color-white);
+}
+
+.color-picker-large::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.color-picker-large::-webkit-color-swatch {
+    border-radius: 4px;
+    border: none;
+}
+
+.color-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.color-preset {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.color-preset:hover {
+    transform: scale(1.15);
+}
+
+.color-preset.active {
+    border-color: var(--color-text);
+    box-shadow: 0 0 0 2px var(--color-white), 0 0 0 4px var(--color-text);
+}
+
+/* Category Preview */
+.category-preview-box {
+    padding: var(--spacing-md);
+    background: var(--color-bg);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.category-preview-pill {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Add Category Button */
+.add-category-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    font-size: var(--font-size-sm) !important;
+}
+
+.add-category-btn svg {
+    flex-shrink: 0;
+}
+
+/* Type Selector with Custom Categories */
+.type-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.type-option {
+    flex: 0 0 auto;
+}
+
+.type-option input[type="radio"] {
+    display: none;
+}
+
+.type-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--color-bg-dark);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background: var(--color-white);
+}
+
+.type-card:hover {
+    border-color: var(--color-primary-light);
+    background: var(--color-bg);
+}
+
+.type-option input[type="radio"]:checked + .type-card {
+    border-color: var(--color-primary);
+    background: rgba(37, 99, 235, 0.05);
+}
+
+.type-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.type-name {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+    white-space: nowrap;
+}
+
+/* Custom category with delete button */
+.type-card.custom-category {
+    position: relative;
+    padding-right: var(--spacing-lg);
+}
+
+.type-card .delete-category {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--color-text-light);
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: all var(--transition-fast);
+}
+
+.type-card:hover .delete-category {
+    opacity: 1;
+}
+
+.type-card .delete-category:hover {
+    color: var(--color-danger);
+    background: rgba(239, 68, 68, 0.1);
+}
+
 .toast.removing {
     animation: slideOut 0.3s ease forwards;
 }
@@ -1949,6 +2651,140 @@ body.layout-3 .slide.tertiary {
     font-size: var(--font-size-sm);
     color: var(--color-text-light);
     margin-top: var(--spacing-xs);
+}
+
+/* Rich Text Formatting Toolbar */
+.formatting-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg);
+    border: 2px solid var(--color-bg-dark);
+    border-bottom: none;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    flex-wrap: wrap;
+}
+
+.format-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.format-btn:hover {
+    background: var(--color-bg-dark);
+    border-color: var(--color-bg-dark);
+}
+
+.format-btn:active,
+.format-btn.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--color-bg-dark);
+    margin: 0 var(--spacing-xs);
+}
+
+.format-dropdown {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.format-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    white-space: nowrap;
+}
+
+.format-select {
+    padding: 6px 10px;
+    font-size: var(--font-size-sm);
+    border: 1px solid var(--color-bg-dark);
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.format-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.color-picker-small {
+    width: 34px;
+    height: 34px;
+    padding: 2px;
+    border: 1px solid var(--color-bg-dark);
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+    cursor: pointer;
+}
+
+.color-picker-small::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.color-picker-small::-webkit-color-swatch {
+    border-radius: 3px;
+    border: none;
+}
+
+/* Rich Text Editor (contenteditable) */
+.rich-text-editor {
+    width: 100%;
+    min-height: 120px;
+    padding: var(--spacing-md);
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    border: 2px solid var(--color-bg-dark);
+    border-top: 1px solid var(--color-bg-dark);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    background: var(--color-white);
+    transition: border-color var(--transition-base);
+    line-height: 1.6;
+    overflow-y: auto;
+    max-height: 200px;
+}
+
+.rich-text-editor:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.rich-text-editor:empty::before {
+    content: attr(placeholder);
+    color: var(--color-text-light);
+    pointer-events: none;
+}
+
+.rich-text-editor b,
+.rich-text-editor strong {
+    font-weight: 700;
+}
+
+.rich-text-editor i,
+.rich-text-editor em {
+    font-style: italic;
+}
+
+.rich-text-editor u {
+    text-decoration: underline;
 }
 
 /* Button Variants */
@@ -2726,97 +3562,164 @@ body.layout-3 .slide.tertiary {
     }
 }
 
-/* Aurora - Enhanced with purples and teals */
+/* Aurora - Enhanced with purples, teals, and magical colors */
 .gradient-aurora {
     background: linear-gradient(
         -45deg,
         #a8edea,
-        #b8e0d4,
-        #95d5b2,
-        #74c69d,
-        #52b788,
-        #6bcf9e,
         #7dd3c0,
-        #aaf0d1,
-        #b5ead7,
-        #c7f9cc,
-        #d8f3dc
+        #52b788,
+        #74c69d,
+        #86efac,
+        #67e8f9,
+        #a5b4fc,
+        #c4b5fd,
+        #f0abfc,
+        #d8b4fe,
+        #a5b4fc,
+        #67e8f9,
+        #6ee7b7,
+        #95d5b2,
+        #b8e0d4
     );
-    background-size: 600% 600%;
-    animation: gradient-shift 25s ease infinite;
+    background-size: 800% 800%;
+    animation: aurora-dance 18s ease-in-out infinite;
 }
 
-/* Ocean - Deep blues to turquoise */
+@keyframes aurora-dance {
+    0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+    25% { background-position: 50% 100%; filter: hue-rotate(15deg); }
+    50% { background-position: 100% 50%; filter: hue-rotate(0deg); }
+    75% { background-position: 50% 0%; filter: hue-rotate(-15deg); }
+    100% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+}
+
+/* Ocean - Deep blues to turquoise with wave-like motion */
 .gradient-ocean {
     background: linear-gradient(
         -45deg,
-        #e0f7fa,
-        #b2ebf2,
-        #80deea,
-        #4dd0e1,
-        #26c6da,
-        #00bcd4,
-        #00acc1,
-        #0097a7,
-        #00acc1,
-        #00bcd4,
-        #26c6da,
-        #4dd0e1
+        #caf0f8,
+        #90e0ef,
+        #48cae4,
+        #00b4d8,
+        #0077b6,
+        #023e8a,
+        #0077b6,
+        #00b4d8,
+        #48cae4,
+        #90e0ef,
+        #67e8f9,
+        #5eead4,
+        #99f6e4,
+        #a5f3fc
     );
-    background-size: 600% 600%;
-    animation: gradient-shift 20s ease infinite;
+    background-size: 700% 700%;
+    animation: ocean-wave 16s ease-in-out infinite;
 }
 
-/* Sunset - Warm pinks, oranges, and purples */
+@keyframes ocean-wave {
+    0% { background-position: 0% 50%; }
+    20% { background-position: 30% 80%; }
+    40% { background-position: 60% 40%; }
+    60% { background-position: 100% 60%; }
+    80% { background-position: 40% 30%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Sunset - Vibrant pinks, oranges, purples, and golden hues */
 .gradient-sunset {
     background: linear-gradient(
         -45deg,
-        #fff5f5,
-        #fed7e2,
-        #fbb6ce,
-        #f687b3,
-        #ed64a6,
-        #d53f8c,
-        #e879a6,
-        #fc8181,
-        #feb2b2,
-        #feebc8,
-        #fef3c7,
-        #fff5f5
+        #fef9c3,
+        #fde68a,
+        #fcd34d,
+        #fbbf24,
+        #f97316,
+        #fb923c,
+        #f472b6,
+        #ec4899,
+        #db2777,
+        #c026d3,
+        #a855f7,
+        #8b5cf6,
+        #7c3aed,
+        #c084fc,
+        #f0abfc,
+        #fda4af,
+        #fb7185,
+        #fca5a1,
+        #fcd34d
     );
-    background-size: 600% 600%;
-    animation: gradient-shift 22s ease infinite;
+    background-size: 900% 900%;
+    animation: sunset-glow 20s ease-in-out infinite;
 }
 
-/* Aquarium - Deep ocean teal and midnight blues */
+@keyframes sunset-glow {
+    0% { background-position: 0% 50%; filter: saturate(1) brightness(1); }
+    25% { background-position: 50% 100%; filter: saturate(1.1) brightness(1.05); }
+    50% { background-position: 100% 50%; filter: saturate(1.15) brightness(1.08); }
+    75% { background-position: 50% 0%; filter: saturate(1.1) brightness(1.05); }
+    100% { background-position: 0% 50%; filter: saturate(1) brightness(1); }
+}
+
+/* Aquarium - Deep ocean with bioluminescent glow */
 .gradient-aquarium {
     background: linear-gradient(
         -45deg,
+        #021a2f,
         #0b4a6f,
         #0a6fa1,
         #0b86b6,
+        #0d9dc8,
+        #22d3ee,
+        #67e8f9,
+        #06b6d4,
+        #0891b2,
+        #0e7490,
+        #164e63,
+        #083344,
         #0b4a6f,
         #0a6fa1,
-        #0b86b6,
-        #0d8ec2,
-        #0b5a83
+        #0891b2,
+        #14b8a6
     );
-    background-size: 500% 500%;
-    animation: gradient-shift 26s ease infinite;
+    background-size: 600% 600%;
+    animation: aquarium-glow 22s ease-in-out infinite;
 }
 
-/* Beach - Sky to sand blend */
+@keyframes aquarium-glow {
+    0% { background-position: 0% 50%; filter: brightness(1); }
+    25% { background-position: 35% 80%; filter: brightness(1.08); }
+    50% { background-position: 100% 50%; filter: brightness(1.12); }
+    75% { background-position: 65% 20%; filter: brightness(1.05); }
+    100% { background-position: 0% 50%; filter: brightness(1); }
+}
+
+/* Beach - Tropical sky to golden sand with shimmer */
 .gradient-beach {
     background: linear-gradient(
-        180deg,
-        #9ee8ff 0%,
-        #c5f1ff 38%,
-        #ffe7ba 68%,
-        #f7d7a0 90%,
-        #f0c78f 100%
+        170deg,
+        #7dd3fc 0%,
+        #38bdf8 15%,
+        #0ea5e9 30%,
+        #67e8f9 45%,
+        #99f6e4 55%,
+        #fef9c3 65%,
+        #fde68a 75%,
+        #fcd34d 85%,
+        #f59e0b 95%,
+        #fbbf24 100%
     );
-    background-size: 200% 200%;
-    animation: gradient-shift 30s ease infinite;
+    background-size: 300% 300%;
+    animation: beach-shimmer 25s ease-in-out infinite;
+}
+
+@keyframes beach-shimmer {
+    0% { background-position: 0% 0%; filter: saturate(1) brightness(1); }
+    25% { background-position: 50% 50%; filter: saturate(1.1) brightness(1.05); }
+    50% { background-position: 100% 100%; filter: saturate(1.15) brightness(1.1); }
+    75% { background-position: 50% 50%; filter: saturate(1.1) brightness(1.05); }
+    100% { background-position: 0% 0%; filter: saturate(1) brightness(1); }
 }
 
 /* Northern Lights - Vibrant greens, blues, and purples */
@@ -2919,19 +3822,22 @@ body.display-view.gradient-aurora .ambient-bg,
 .display-preview.gradient-aurora {
     background: linear-gradient(
         -45deg,
-        #d8f3dc,
-        #b7e4c7,
-        #95d5b2,
-        #74c69d,
+        #a8edea,
+        #7dd3c0,
         #52b788,
-        #40916c,
-        #52b788,
-        #74c69d,
-        #95d5b2,
-        #b7e4c7
+        #86efac,
+        #67e8f9,
+        #a5b4fc,
+        #c4b5fd,
+        #f0abfc,
+        #d8b4fe,
+        #a5b4fc,
+        #67e8f9,
+        #6ee7b7,
+        #95d5b2
     ) !important;
-    background-size: 400% 400% !important;
-    animation: aurora-shift 20s ease infinite !important;
+    background-size: 600% 600% !important;
+    animation: aurora-dance 18s ease-in-out infinite !important;
 }
 
 body.display-view.gradient-ocean .ambient-bg,
@@ -2939,61 +3845,97 @@ body.display-view.gradient-ocean .ambient-bg,
     background: linear-gradient(
         -45deg,
         #caf0f8,
-        #ade8f4,
         #90e0ef,
         #48cae4,
         #00b4d8,
-        #0096c7,
+        #0077b6,
+        #023e8a,
+        #0077b6,
         #00b4d8,
         #48cae4,
-        #90e0ef,
-        #ade8f4
+        #67e8f9,
+        #5eead4,
+        #99f6e4
     ) !important;
-    background-size: 400% 400% !important;
-    animation: ocean-shift 15s ease infinite !important;
+    background-size: 500% 500% !important;
+    animation: ocean-wave 16s ease-in-out infinite !important;
 }
 
 body.display-view.gradient-sunset .ambient-bg,
 .display-preview.gradient-sunset {
     background: linear-gradient(
         -45deg,
-        #fff1eb,
-        #ffecd2,
-        #fcb69f,
-        #ffecd2,
-        #f8b4b4,
+        #fef9c3,
+        #fde68a,
+        #fbbf24,
+        #f97316,
+        #fb923c,
+        #f472b6,
+        #ec4899,
+        #c026d3,
+        #a855f7,
+        #c084fc,
+        #f0abfc,
         #fda4af,
-        #f8b4b4,
-        #ffecd2,
-        #fcb69f,
-        #ffecd2
+        #fca5a1
     ) !important;
-    background-size: 400% 400% !important;
-    animation: sunset-shift 18s ease infinite !important;
+    background-size: 700% 700% !important;
+    animation: sunset-glow 20s ease-in-out infinite !important;
 }
 
 body.display-view.gradient-aquarium,
 .display-preview.gradient-aquarium {
-    background: linear-gradient(180deg, #021a2f 0%, #05345a 35%, #0c5578 70%, #0a6e90 100%) !important;
-    background-size: 250% 250% !important;
-    animation: aurora-shift 22s ease infinite !important;
+    background: linear-gradient(
+        -45deg,
+        #021a2f,
+        #0b4a6f,
+        #0a6fa1,
+        #0b86b6,
+        #22d3ee,
+        #67e8f9,
+        #06b6d4,
+        #0891b2,
+        #164e63,
+        #083344,
+        #0a6fa1,
+        #14b8a6
+    ) !important;
+    background-size: 500% 500% !important;
+    animation: aquarium-glow 22s ease-in-out infinite !important;
 }
 
 body.display-view.gradient-aquarium .ambient-bg {
-    background: radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.2), transparent 40%),
-                radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.18), transparent 35%),
-                linear-gradient(180deg, rgba(2, 26, 47, 0.6), rgba(12, 85, 120, 0.45));
+    background: radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.25), transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.2), transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15), transparent 50%),
+                linear-gradient(180deg, rgba(2, 26, 47, 0.5), rgba(12, 85, 120, 0.4));
+    animation: ambient-pulse 8s ease-in-out infinite;
+}
+
+@keyframes ambient-pulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
 }
 
 body.display-view.gradient-beach,
 .display-preview.gradient-beach {
-    background: linear-gradient(180deg, #99e3ff 0%, #c4f0ff 40%, #ffe4b3 70%, #f7d6a1 95%) !important;
-    background-size: 220% 220% !important;
-    animation: sunset-shift 26s ease infinite !important;
+    background: linear-gradient(
+        170deg,
+        #7dd3fc 0%,
+        #38bdf8 20%,
+        #67e8f9 40%,
+        #99f6e4 55%,
+        #fef9c3 70%,
+        #fde68a 85%,
+        #fbbf24 100%
+    ) !important;
+    background-size: 280% 280% !important;
+    animation: beach-shimmer 25s ease-in-out infinite !important;
 }
 
 body.display-view.gradient-beach .ambient-bg {
-    background: linear-gradient(180deg, rgba(153, 227, 255, 0.6), rgba(255, 228, 179, 0.85));
+    background: radial-gradient(circle at 80% 15%, rgba(251, 191, 36, 0.3), transparent 40%),
+                linear-gradient(180deg, rgba(125, 211, 252, 0.5), rgba(254, 249, 195, 0.6));
 }
 
 /* Responsive gradient presets */

@@ -7,13 +7,17 @@
 // Configuration
 // ================================
 
-const TYPE_CONFIG = {
-    info: { label: 'Information', color: '#3b82f6' },
-    news: { label: 'News', color: '#10b981' },
-    alert: { label: 'Alert', color: '#f59e0b' },
-    health: { label: 'Health Tip', color: '#8b5cf6' },
-    welcome: { label: 'Welcome', color: '#14b8a6' }
+// Default built-in categories (can be deleted by user)
+const DEFAULT_CATEGORIES = {
+    info: { label: 'Information', color: '#3b82f6', isDefault: true },
+    news: { label: 'News', color: '#10b981', isDefault: true },
+    alert: { label: 'Alert', color: '#f59e0b', isDefault: true },
+    health: { label: 'Health Tip', color: '#8b5cf6', isDefault: true },
+    welcome: { label: 'Welcome', color: '#14b8a6', isDefault: true }
 };
+
+// Dynamic TYPE_CONFIG - will be populated from Firebase
+let TYPE_CONFIG = { ...DEFAULT_CATEGORIES };
 
 const DEFAULT_DISPLAY_SETTINGS = {
     heroText: 'Welcome to Montgomery Medical Clinic',
@@ -350,6 +354,13 @@ function loadAnnouncements() {
                             </div>
                             <div class="announcement-actions">
                                 <button
+                                    class="btn btn-small btn-secondary"
+                                    onclick="openEditAnnouncementModal('${doc.id}')"
+                                    title="Edit announcement"
+                                >
+                                    Edit
+                                </button>
+                                <button
                                     class="btn btn-small ${data.active ? 'btn-outline' : 'btn-primary'}"
                                     onclick="toggleActive('${doc.id}', ${!data.active})"
                                     title="${data.active ? 'Hide from display' : 'Show on display'}"
@@ -385,12 +396,14 @@ function loadAnnouncements() {
 async function addAnnouncement(e) {
     e.preventDefault();
 
-    const text = announcementText.value.trim();
+    // Get plain text (for validation/character count) and formatted HTML
+    const plainText = announcementText.textContent.trim();
+    const formattedText = announcementText.innerHTML.trim();
     const typeRadio = document.querySelector('input[name="announcement-type"]:checked');
     const type = typeRadio ? typeRadio.value : 'info';
     const active = announcementActive.checked;
 
-    if (!text) {
+    if (!plainText) {
         showToast('Please enter a message', 'error');
         return;
     }
@@ -405,7 +418,8 @@ async function addAnnouncement(e) {
 
     try {
         await announcementsRef.add({
-            text: text,
+            text: plainText,
+            formattedText: sanitizeHtml(formattedText),
             type: type,
             active: active,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -413,7 +427,7 @@ async function addAnnouncement(e) {
         });
 
         // Reset form
-        announcementText.value = '';
+        announcementText.innerHTML = '';
         document.querySelector('input[name="announcement-type"][value="info"]').checked = true;
         announcementActive.checked = true;
         charCurrent.textContent = '0';
@@ -427,6 +441,41 @@ async function addAnnouncement(e) {
         formBtnText.textContent = 'Add Announcement';
         announcementForm.querySelector('button[type="submit"]').disabled = false;
     }
+}
+
+// Sanitize HTML to only allow safe formatting tags
+function sanitizeHtml(html) {
+    const allowedTags = ['b', 'strong', 'i', 'em', 'u', 'span', 'br'];
+    const allowedAttributes = ['style'];
+
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+
+    function cleanNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            return;
+        }
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const tagName = node.tagName.toLowerCase();
+            if (!allowedTags.includes(tagName)) {
+                // Replace disallowed tag with its text content
+                const text = document.createTextNode(node.textContent);
+                node.parentNode.replaceChild(text, node);
+                return;
+            }
+            // Remove disallowed attributes
+            Array.from(node.attributes).forEach(attr => {
+                if (!allowedAttributes.includes(attr.name.toLowerCase())) {
+                    node.removeAttribute(attr.name);
+                }
+            });
+            // Clean children
+            Array.from(node.childNodes).forEach(cleanNode);
+        }
+    }
+
+    Array.from(temp.childNodes).forEach(cleanNode);
+    return temp.innerHTML;
 }
 
 async function toggleActive(id, newState) {
@@ -457,19 +506,555 @@ window.toggleActive = toggleActive;
 window.deleteAnnouncement = deleteAnnouncement;
 
 // ================================
+// Edit Announcement Modal
+// ================================
+
+async function openEditAnnouncementModal(announcementId) {
+    const modal = document.getElementById('edit-announcement-modal');
+    const editText = document.getElementById('edit-announcement-text');
+    const editActive = document.getElementById('edit-announcement-active');
+    const editIdInput = document.getElementById('edit-announcement-id');
+    const editCharCurrent = document.getElementById('edit-char-current');
+
+    if (!modal || !editText) return;
+
+    try {
+        // Fetch the announcement data from Firebase
+        const doc = await announcementsRef.doc(announcementId).get();
+        if (!doc.exists) {
+            showToast('Announcement not found', 'error');
+            return;
+        }
+
+        const data = doc.data();
+
+        // Populate the form with existing data
+        editIdInput.value = announcementId;
+        editText.innerHTML = data.formattedText || escapeHtml(data.text);
+        editActive.checked = data.active;
+        editCharCurrent.textContent = editText.textContent.length;
+
+        // Render category selector for edit modal
+        renderEditCategorySelector(data.type);
+
+        // Update preview
+        updateEditPreview();
+
+        // Show modal
+        modal.style.display = 'flex';
+        editText.focus();
+    } catch (error) {
+        console.error('Error loading announcement:', error);
+        showToast('Error loading announcement', 'error');
+    }
+}
+
+function closeEditAnnouncementModal() {
+    const modal = document.getElementById('edit-announcement-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function renderEditCategorySelector(selectedType) {
+    const typeSelector = document.getElementById('edit-type-selector');
+    if (!typeSelector) return;
+
+    let html = '';
+    for (const [key, config] of Object.entries(TYPE_CONFIG)) {
+        html += `
+            <label class="type-option">
+                <input type="radio" name="edit-announcement-type" value="${key}" ${key === selectedType ? 'checked' : ''}>
+                <span class="type-card">
+                    <span class="type-color" style="background-color: ${config.color}"></span>
+                    <span class="type-name">${config.label}</span>
+                </span>
+            </label>
+        `;
+    }
+
+    typeSelector.innerHTML = html;
+
+    // Add change listeners for preview
+    document.querySelectorAll('input[name="edit-announcement-type"]').forEach(radio => {
+        radio.addEventListener('change', updateEditPreview);
+    });
+}
+
+function updateEditPreview() {
+    const editText = document.getElementById('edit-announcement-text');
+    const editBubblePreview = document.getElementById('edit-bubble-preview');
+    if (!editText || !editBubblePreview) return;
+
+    const formattedText = editText.innerHTML.trim();
+    const plainText = editText.textContent.trim();
+    const typeRadio = document.querySelector('input[name="edit-announcement-type"]:checked');
+    const type = typeRadio ? typeRadio.value : 'info';
+    const typeConfig = TYPE_CONFIG[type] || TYPE_CONFIG.info;
+
+    // Update preview bubble
+    editBubblePreview.className = `bubble-preview type-${type}`;
+    const previewTextEl = editBubblePreview.querySelector('.bubble-preview-text');
+    if (plainText) {
+        previewTextEl.innerHTML = formattedText;
+    } else {
+        previewTextEl.textContent = 'Your message will appear here...';
+    }
+    editBubblePreview.querySelector('.bubble-preview-label').textContent = typeConfig.label;
+}
+
+function updateEditCharCount() {
+    const editText = document.getElementById('edit-announcement-text');
+    const editCharCurrent = document.getElementById('edit-char-current');
+    if (editText && editCharCurrent) {
+        editCharCurrent.textContent = editText.textContent.length;
+    }
+}
+
+async function saveEditAnnouncement(e) {
+    e.preventDefault();
+
+    const editText = document.getElementById('edit-announcement-text');
+    const editActive = document.getElementById('edit-announcement-active');
+    const editIdInput = document.getElementById('edit-announcement-id');
+    const saveBtn = document.getElementById('save-edit-btn');
+
+    const announcementId = editIdInput.value;
+    const plainText = editText.textContent.trim();
+    const formattedText = editText.innerHTML.trim();
+    const typeRadio = document.querySelector('input[name="edit-announcement-type"]:checked');
+    const type = typeRadio ? typeRadio.value : 'info';
+    const active = editActive.checked;
+
+    if (!plainText) {
+        showToast('Please enter a message', 'error');
+        return;
+    }
+
+    if (!announcementId) {
+        showToast('Invalid announcement', 'error');
+        return;
+    }
+
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
+
+    try {
+        await announcementsRef.doc(announcementId).update({
+            text: plainText,
+            formattedText: sanitizeHtml(formattedText),
+            type: type,
+            active: active,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: currentUser ? currentUser.email : 'unknown'
+        });
+
+        closeEditAnnouncementModal();
+        showToast('Announcement updated successfully', 'success');
+    } catch (error) {
+        console.error('Error updating announcement:', error);
+        showToast('Error updating announcement', 'error');
+    } finally {
+        saveBtn.textContent = 'Save Changes';
+        saveBtn.disabled = false;
+    }
+}
+
+function initEditAnnouncementModal() {
+    const modal = document.getElementById('edit-announcement-modal');
+    const closeBtn = document.getElementById('close-edit-modal');
+    const cancelBtn = document.getElementById('cancel-edit-btn');
+    const form = document.getElementById('edit-announcement-form');
+    const editText = document.getElementById('edit-announcement-text');
+
+    if (closeBtn) closeBtn.addEventListener('click', closeEditAnnouncementModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeEditAnnouncementModal);
+    if (form) form.addEventListener('submit', saveEditAnnouncement);
+
+    // Character count and preview updates
+    if (editText) {
+        editText.addEventListener('input', () => {
+            updateEditCharCount();
+            updateEditPreview();
+        });
+
+        // Handle paste to strip unwanted formatting
+        editText.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+            document.execCommand('insertText', false, text);
+        });
+    }
+
+    // Format buttons for edit modal
+    const editFormatBtns = document.querySelectorAll('.edit-format-btn');
+    editFormatBtns.forEach(btn => {
+        btn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const command = btn.dataset.command;
+            document.execCommand(command, false, null);
+        });
+    });
+
+    // Font family select for edit modal
+    const editFontSelect = document.getElementById('edit-font-family-select');
+    if (editFontSelect) {
+        editFontSelect.addEventListener('change', () => {
+            const editText = document.getElementById('edit-announcement-text');
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && editText.contains(selection.anchorNode)) {
+                document.execCommand('fontName', false, editFontSelect.value);
+            }
+        });
+    }
+
+    // Text color picker for edit modal
+    const editColorPicker = document.getElementById('edit-text-color-picker');
+    if (editColorPicker) {
+        editColorPicker.addEventListener('input', () => {
+            const editText = document.getElementById('edit-announcement-text');
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && editText.contains(selection.anchorNode)) {
+                document.execCommand('foreColor', false, editColorPicker.value);
+            }
+        });
+    }
+
+    // Close modal on overlay click
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeEditAnnouncementModal();
+        });
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && modal.style.display === 'flex') {
+            closeEditAnnouncementModal();
+        }
+    });
+}
+
+window.openEditAnnouncementModal = openEditAnnouncementModal;
+
+// ================================
+// Category Management
+// ================================
+
+function loadCategories() {
+    // Check if categoriesRef exists (from firebase-config.js)
+    if (typeof categoriesRef === 'undefined') {
+        // Use default categories if Firebase not available
+        TYPE_CONFIG = { ...DEFAULT_CATEGORIES };
+        renderCategorySelector();
+        return;
+    }
+
+    categoriesRef.onSnapshot(
+        (doc) => {
+            if (doc.exists && doc.data().categories) {
+                TYPE_CONFIG = doc.data().categories;
+            } else {
+                // Initialize with defaults if no categories exist
+                TYPE_CONFIG = { ...DEFAULT_CATEGORIES };
+                saveCategoriesToFirebase();
+            }
+            renderCategorySelector();
+        },
+        (error) => {
+            console.error('Error loading categories:', error);
+            TYPE_CONFIG = { ...DEFAULT_CATEGORIES };
+            renderCategorySelector();
+        }
+    );
+}
+
+function renderCategorySelector() {
+    const typeSelector = document.getElementById('type-selector');
+    if (!typeSelector) return;
+
+    let html = '';
+    let firstKey = null;
+
+    for (const [key, config] of Object.entries(TYPE_CONFIG)) {
+        if (!firstKey) firstKey = key;
+
+        const isCustom = !config.isDefault;
+        const deleteBtn = isCustom ? `
+            <button type="button" class="delete-category" onclick="event.preventDefault(); event.stopPropagation(); deleteCategory('${key}')" title="Delete category">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        ` : '';
+
+        html += `
+            <label class="type-option">
+                <input type="radio" name="announcement-type" value="${key}" ${key === firstKey ? 'checked' : ''}>
+                <span class="type-card ${isCustom ? 'custom-category' : ''}">
+                    <span class="type-color" style="background-color: ${config.color}"></span>
+                    <span class="type-name">${config.label}</span>
+                    ${deleteBtn}
+                </span>
+            </label>
+        `;
+    }
+
+    typeSelector.innerHTML = html;
+
+    // Add change listeners for preview
+    document.querySelectorAll('input[name="announcement-type"]').forEach(radio => {
+        radio.addEventListener('change', updatePreview);
+    });
+}
+
+function openCategoryModal(editId = null) {
+    const modal = document.getElementById('category-modal');
+    const title = document.getElementById('category-modal-title');
+    const nameInput = document.getElementById('category-name');
+    const colorInput = document.getElementById('category-color');
+    const editIdInput = document.getElementById('category-edit-id');
+    const saveBtn = document.getElementById('save-category-btn');
+
+    if (editId && TYPE_CONFIG[editId]) {
+        // Edit mode
+        title.textContent = 'Edit Category';
+        nameInput.value = TYPE_CONFIG[editId].label;
+        colorInput.value = TYPE_CONFIG[editId].color;
+        editIdInput.value = editId;
+        saveBtn.textContent = 'Save Changes';
+    } else {
+        // Create mode
+        title.textContent = 'Create Custom Category';
+        nameInput.value = '';
+        colorInput.value = '#3b82f6';
+        editIdInput.value = '';
+        saveBtn.textContent = 'Create Category';
+    }
+
+    updateCategoryPreview();
+    modal.style.display = 'flex';
+    nameInput.focus();
+}
+
+function closeCategoryModal() {
+    const modal = document.getElementById('category-modal');
+    modal.style.display = 'none';
+}
+
+function updateCategoryPreview() {
+    const nameInput = document.getElementById('category-name');
+    const colorInput = document.getElementById('category-color');
+    const previewPill = document.getElementById('category-preview-pill');
+
+    const name = nameInput.value.trim() || 'NEW CATEGORY';
+    const color = colorInput.value;
+
+    previewPill.textContent = name.toUpperCase();
+    previewPill.style.background = hexToRgba(color, 0.15);
+    previewPill.style.color = color;
+}
+
+function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+async function saveCategory(e) {
+    e.preventDefault();
+
+    const nameInput = document.getElementById('category-name');
+    const colorInput = document.getElementById('category-color');
+    const editIdInput = document.getElementById('category-edit-id');
+
+    const name = nameInput.value.trim();
+    const color = colorInput.value;
+    const editId = editIdInput.value;
+
+    if (!name) {
+        showToast('Please enter a category name', 'error');
+        return;
+    }
+
+    // Generate a unique key from the name
+    const key = editId || name.toLowerCase().replace(/[^a-z0-9]/g, '_');
+
+    // Check for duplicate names (excluding current edit)
+    for (const [existingKey, config] of Object.entries(TYPE_CONFIG)) {
+        if (existingKey !== editId && config.label.toLowerCase() === name.toLowerCase()) {
+            showToast('A category with this name already exists', 'error');
+            return;
+        }
+    }
+
+    // Update TYPE_CONFIG
+    if (editId && editId !== key) {
+        // Key changed, remove old entry
+        delete TYPE_CONFIG[editId];
+    }
+
+    TYPE_CONFIG[key] = {
+        label: name,
+        color: color,
+        isDefault: false
+    };
+
+    await saveCategoriesToFirebase();
+    closeCategoryModal();
+    renderCategorySelector();
+    showToast(editId ? 'Category updated' : 'Category created', 'success');
+}
+
+async function deleteCategory(key) {
+    if (!confirm(`Delete the "${TYPE_CONFIG[key]?.label}" category?`)) {
+        return;
+    }
+
+    delete TYPE_CONFIG[key];
+    await saveCategoriesToFirebase();
+    renderCategorySelector();
+    showToast('Category deleted', 'success');
+}
+
+async function saveCategoriesToFirebase() {
+    if (typeof categoriesRef === 'undefined') return;
+
+    try {
+        await categoriesRef.set({ categories: TYPE_CONFIG });
+    } catch (error) {
+        console.error('Error saving categories:', error);
+        showToast('Error saving categories', 'error');
+    }
+}
+
+function initCategoryModal() {
+    const addBtn = document.getElementById('add-category-btn');
+    const closeBtn = document.getElementById('close-category-modal');
+    const cancelBtn = document.getElementById('cancel-category-btn');
+    const form = document.getElementById('category-form');
+    const nameInput = document.getElementById('category-name');
+    const colorInput = document.getElementById('category-color');
+    const modal = document.getElementById('category-modal');
+
+    if (addBtn) addBtn.addEventListener('click', () => openCategoryModal());
+    if (closeBtn) closeBtn.addEventListener('click', closeCategoryModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeCategoryModal);
+    if (form) form.addEventListener('submit', saveCategory);
+
+    // Update preview on input
+    if (nameInput) nameInput.addEventListener('input', updateCategoryPreview);
+    if (colorInput) colorInput.addEventListener('input', updateCategoryPreview);
+
+    // Color presets
+    document.querySelectorAll('.color-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const color = btn.dataset.color;
+            if (colorInput) {
+                colorInput.value = color;
+                updateCategoryPreview();
+            }
+            // Update active state
+            document.querySelectorAll('.color-preset').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // Close modal on overlay click
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeCategoryModal();
+        });
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display === 'flex') {
+            closeCategoryModal();
+        }
+    });
+}
+
+window.deleteCategory = deleteCategory;
+
+// ================================
 // Preview
 // ================================
 
 function updatePreview() {
-    const text = announcementText.value.trim() || 'Your message will appear here...';
+    const formattedText = announcementText.innerHTML.trim();
+    const plainText = announcementText.textContent.trim();
     const typeRadio = document.querySelector('input[name="announcement-type"]:checked');
     const type = typeRadio ? typeRadio.value : 'info';
     const typeConfig = TYPE_CONFIG[type];
 
-    // Update preview bubble
+    // Update preview bubble with formatted text
     bubblePreview.className = `bubble-preview type-${type}`;
-    bubblePreview.querySelector('.bubble-preview-text').textContent = text;
+    const previewTextEl = bubblePreview.querySelector('.bubble-preview-text');
+    if (plainText) {
+        previewTextEl.innerHTML = formattedText;
+    } else {
+        previewTextEl.textContent = 'Your message will appear here...';
+    }
     bubblePreview.querySelector('.bubble-preview-label').textContent = typeConfig.label;
+
+    // Update full display preview with current settings
+    updateFullDisplayPreview();
+}
+
+function updateFullDisplayPreview() {
+    const fullPreview = document.getElementById('full-display-preview');
+    if (!fullPreview) return;
+
+    const previewBg = fullPreview.querySelector('.preview-background');
+    const previewClock = fullPreview.querySelector('.preview-clock');
+
+    // Get current display settings
+    const bgStart = bgStartInput ? bgStartInput.value : DEFAULT_DISPLAY_SETTINGS.bgStart;
+    const bgEnd = bgEndInput ? bgEndInput.value : DEFAULT_DISPLAY_SETTINGS.bgEnd;
+    const cardColor = slideColorInput ? slideColorInput.value : DEFAULT_DISPLAY_SETTINGS.slideColor;
+    const animatedGradient = gradientAnimatedInput ? gradientAnimatedInput.value : 'false';
+
+    // Update background gradient
+    if (previewBg) {
+        // Remove any animated gradient classes
+        fullPreview.classList.remove('gradient-aurora', 'gradient-ocean', 'gradient-sunset',
+            'gradient-aquarium', 'gradient-beach', 'gradient-northern', 'gradient-cosmic', 'gradient-rainbow');
+
+        if (animatedGradient && animatedGradient !== 'false') {
+            fullPreview.classList.add(`gradient-${animatedGradient}`);
+            previewBg.style.background = '';
+        } else {
+            previewBg.style.background = `linear-gradient(135deg, ${bgStart}, ${bgEnd})`;
+        }
+    }
+
+    // Update card color
+    if (bubblePreview) {
+        bubblePreview.style.background = `linear-gradient(145deg, ${cardColor}, ${adjustColor(cardColor, -5)})`;
+    }
+
+    // Update clock with current time
+    if (previewClock) {
+        const now = new Date();
+        previewClock.textContent = now.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+}
+
+// Helper to slightly darken/lighten a color
+function adjustColor(hex, percent) {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.max(0, Math.min(255, (num >> 16) + amt));
+    const G = Math.max(0, Math.min(255, ((num >> 8) & 0x00FF) + amt));
+    const B = Math.max(0, Math.min(255, (num & 0x0000FF) + amt));
+    return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
 }
 
 function initPreview() {
@@ -477,6 +1062,91 @@ function initPreview() {
 
     document.querySelectorAll('input[name="announcement-type"]').forEach(radio => {
         radio.addEventListener('change', updatePreview);
+    });
+
+    // Also update preview when display settings change
+    if (bgStartInput) bgStartInput.addEventListener('input', updateFullDisplayPreview);
+    if (bgEndInput) bgEndInput.addEventListener('input', updateFullDisplayPreview);
+    if (slideColorInput) slideColorInput.addEventListener('input', updateFullDisplayPreview);
+    if (gradientAnimatedInput) gradientAnimatedInput.addEventListener('change', updateFullDisplayPreview);
+
+    // Update clock every minute
+    setInterval(() => {
+        const previewClock = document.querySelector('.preview-clock');
+        if (previewClock) {
+            const now = new Date();
+            previewClock.textContent = now.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+    }, 60000);
+
+    // Initial update
+    setTimeout(updateFullDisplayPreview, 500);
+}
+
+// ================================
+// Rich Text Formatting Toolbar
+// ================================
+
+function initFormattingToolbar() {
+    const formatBtns = document.querySelectorAll('.format-btn');
+    const fontSelect = document.getElementById('font-family-select');
+    const colorPicker = document.getElementById('text-color-picker');
+
+    // Format buttons (bold, italic, underline)
+    formatBtns.forEach(btn => {
+        btn.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent losing focus on the editor
+            const command = btn.dataset.command;
+            document.execCommand(command, false, null);
+            updateFormatButtonStates();
+        });
+    });
+
+    // Font family select
+    if (fontSelect) {
+        fontSelect.addEventListener('change', () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && announcementText.contains(selection.anchorNode)) {
+                document.execCommand('fontName', false, fontSelect.value);
+            }
+        });
+    }
+
+    // Text color picker
+    if (colorPicker) {
+        colorPicker.addEventListener('input', () => {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0 && announcementText.contains(selection.anchorNode)) {
+                document.execCommand('foreColor', false, colorPicker.value);
+            }
+        });
+    }
+
+    // Update button states when selection changes
+    announcementText.addEventListener('keyup', updateFormatButtonStates);
+    announcementText.addEventListener('mouseup', updateFormatButtonStates);
+    announcementText.addEventListener('focus', updateFormatButtonStates);
+
+    // Handle paste to strip unwanted formatting
+    announcementText.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+    });
+}
+
+function updateFormatButtonStates() {
+    document.querySelectorAll('.format-btn').forEach(btn => {
+        const command = btn.dataset.command;
+        if (document.queryCommandState(command)) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
     });
 }
 
@@ -892,7 +1562,7 @@ function formatDate(date) {
 }
 
 function updateCharCount() {
-    const count = announcementText.value.length;
+    const count = announcementText.textContent.length;
     charCurrent.textContent = count;
 }
 
@@ -948,6 +1618,9 @@ function init() {
     initEventListeners();
     initNavigation();
     initPreview();
+    initFormattingToolbar();
+    initCategoryModal();
+    loadCategories();
     initDisplaySettings();
     initMusicSettings();
     initAuth();

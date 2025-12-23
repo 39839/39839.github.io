@@ -26,6 +26,19 @@ const CONFIG = {
     }
 };
 
+// Default categories with colors
+const DEFAULT_CATEGORIES = {
+    info: { label: 'Information', color: '#3b82f6' },
+    news: { label: 'News', color: '#10b981' },
+    alert: { label: 'Alert', color: '#f59e0b' },
+    health: { label: 'Health Tip', color: '#8b5cf6' },
+    welcome: { label: 'Welcome', color: '#14b8a6' }
+};
+
+// Dynamic categories loaded from Firebase
+let categories = { ...DEFAULT_CATEGORIES };
+let categoriesUnsubscribe = null;
+
 // ================================
 // State
 // ================================
@@ -35,6 +48,8 @@ let slideTimer = null;
 let isMuted = true; // Start muted (browsers require this for autoplay)
 let useYouTube = true; // Toggle between YouTube and MP3
 let usingDummyData = false;
+let beachCycleTimer = null;
+const BEACH_PHASES = ['beach-day', 'beach-sunset', 'beach-night'];
 
 // Display styling/settings
 const DEFAULT_DISPLAY_SETTINGS = {
@@ -238,6 +253,12 @@ function applyDisplaySettings(newSettings) {
         }
     }
 
+    if (animatedGradient === 'beach') {
+        startBeachCycle();
+    } else {
+        stopBeachCycle();
+    }
+
     // Layout helper for multiple cards
     body.classList.toggle('layout-2', getCardsOnScreen() === 2);
     body.classList.toggle('layout-3', getCardsOnScreen() === 3);
@@ -255,6 +276,34 @@ function applyDisplaySettings(newSettings) {
             displayTitle.classList.add('hidden');
         }
     }
+}
+
+function getBeachPhase() {
+    const hour = new Date().getHours();
+    if (hour >= 19) return 'beach-night';
+    if (hour >= 18) return 'beach-sunset';
+    return 'beach-day';
+}
+
+function applyBeachPhase(phase) {
+    const body = document.body;
+    BEACH_PHASES.forEach(p => body.classList.remove(p));
+    body.classList.add(phase);
+}
+
+function startBeachCycle() {
+    applyBeachPhase(getBeachPhase());
+    clearInterval(beachCycleTimer);
+    beachCycleTimer = setInterval(() => {
+        applyBeachPhase(getBeachPhase());
+    }, 60000);
+}
+
+function stopBeachCycle() {
+    clearInterval(beachCycleTimer);
+    beachCycleTimer = null;
+    const body = document.body;
+    BEACH_PHASES.forEach(p => body.classList.remove(p));
 }
 
 function initDisplaySettingsListener() {
@@ -347,18 +396,127 @@ function extractYoutubeId(url) {
 }
 
 // ================================
+// Categories (custom colors from admin)
+// ================================
+function loadCategories() {
+    if (typeof categoriesRef === 'undefined') {
+        console.warn('Categories ref not available. Using default categories.');
+        categories = { ...DEFAULT_CATEGORIES };
+        return;
+    }
+
+    categoriesUnsubscribe = categoriesRef.onSnapshot(
+        (doc) => {
+            if (doc.exists && doc.data().categories) {
+                categories = doc.data().categories;
+                console.log('Custom categories loaded:', categories);
+            } else {
+                categories = { ...DEFAULT_CATEGORIES };
+                console.log('No custom categories found, using defaults');
+            }
+            // Re-render slides to apply new category colors
+            if (slidesData.length > 0) {
+                renderSlides();
+            }
+        },
+        (error) => {
+            if (error.code === 'permission-denied') {
+                console.warn('Categories listener skipped (permission denied). Using defaults.');
+            } else {
+                console.error('Categories listener error:', error);
+            }
+            categories = { ...DEFAULT_CATEGORIES };
+        }
+    );
+}
+
+// ================================
 // Slideshow logic
 // ================================
 function createSlideElement(item) {
     const slide = document.createElement('article');
     slide.className = 'slide';
+
+    // Use formatted text if available, otherwise escape plain text
+    const displayText = item.formattedText
+        ? sanitizeDisplayHtml(item.formattedText)
+        : escapeHtml(item.text);
+
+    // Get category info (from dynamic categories or fallback to CONFIG)
+    const category = categories[item.type] || { label: CONFIG.typeLabels[item.type] || 'Update', color: '#3b82f6' };
+    const categoryLabel = category.label || CONFIG.typeLabels[item.type] || 'Update';
+    const categoryColor = category.color || '#3b82f6';
+
+    // Create pill with custom color styling
+    const pillStyle = `background: ${hexToRgba(categoryColor, 0.12)}; color: ${categoryColor}; border-left: 3px solid ${categoryColor};`;
+
     slide.innerHTML = `
         <div class="slide-meta">
-            <span class="slide-pill">${CONFIG.typeLabels[item.type] || 'Update'}</span>
+            <span class="slide-pill" style="${pillStyle}">${categoryLabel}</span>
         </div>
-        <div class="slide-text">${escapeHtml(item.text)}</div>
+        <div class="slide-text">${displayText}</div>
     `;
     return slide;
+}
+
+// Helper to convert hex to rgba
+function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Sanitize HTML for safe display - only allow formatting tags
+function sanitizeDisplayHtml(html) {
+    const allowedTags = ['b', 'strong', 'i', 'em', 'u', 'span', 'br', 'font'];
+    const allowedAttributes = ['style', 'color', 'face'];
+
+    const temp = document.createElement('div');
+    temp.innerHTML = html;
+
+    function cleanNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            return document.createTextNode(node.textContent);
+        }
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const tagName = node.tagName.toLowerCase();
+            if (!allowedTags.includes(tagName)) {
+                // Return text content for disallowed tags
+                const fragment = document.createDocumentFragment();
+                Array.from(node.childNodes).forEach(child => {
+                    const cleaned = cleanNode(child);
+                    if (cleaned) fragment.appendChild(cleaned);
+                });
+                return fragment;
+            }
+
+            // Create clean element with only allowed attributes
+            const cleanEl = document.createElement(tagName);
+            Array.from(node.attributes).forEach(attr => {
+                if (allowedAttributes.includes(attr.name.toLowerCase())) {
+                    cleanEl.setAttribute(attr.name, attr.value);
+                }
+            });
+
+            // Clean children
+            Array.from(node.childNodes).forEach(child => {
+                const cleaned = cleanNode(child);
+                if (cleaned) cleanEl.appendChild(cleaned);
+            });
+
+            return cleanEl;
+        }
+        return null;
+    }
+
+    const result = document.createElement('div');
+    Array.from(temp.childNodes).forEach(child => {
+        const cleaned = cleanNode(child);
+        if (cleaned) result.appendChild(cleaned);
+    });
+
+    return result.innerHTML;
 }
 
 function renderSlides() {
@@ -452,6 +610,7 @@ function initFirestore() {
                     return {
                         id: doc.id,
                         text: item.text,
+                        formattedText: item.formattedText || null,
                         type: item.type || 'info',
                         active: item.active !== false,
                         timestamp: item.timestamp?.toDate?.() || new Date()
@@ -563,6 +722,7 @@ function init() {
     initAudio();
     initDisplaySettingsListener();
     initMusicSettingsListener();
+    loadCategories();
     initFullscreen();
 
     // Small delay to ensure Firebase is loaded, then fetch real data
