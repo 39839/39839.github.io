@@ -147,11 +147,24 @@ img {
   opacity: 1;
 }
 
+.progressive-full.lqip {
+  filter: blur(16px);
+  transform: scale(1.04);
+  opacity: 1;
+  transition: filter 0.4s ease, transform 0.4s ease, opacity 0.4s ease;
+}
+
+.progressive-image-wrapper.loaded .progressive-full {
+  filter: none;
+  transform: none;
+}
+
 /* Instant card skeleton - no image dependency */
 .card-skeleton {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e5e7eb 100%);
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius-lg);
 }
 
 .card-skeleton::after {
@@ -162,6 +175,55 @@ img {
     90deg,
     transparent 0%,
     rgba(255, 255, 255, 0.5) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-card {
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-body {
+  padding: 18px 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton-line,
+.skeleton-pill {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e5e7eb 100%);
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 999px;
+}
+
+.skeleton-line.short { width: 60%; }
+.skeleton-line.tiny { width: 38%; }
+.skeleton-line.long { width: 88%; }
+
+.skeleton-pill {
+  height: 24px;
+  width: 120px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.skeleton-line::after,
+.skeleton-pill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
     transparent 100%
   );
   animation: shimmer 1.5s infinite;
@@ -1632,12 +1694,19 @@ img {
   overflow: hidden;
   margin-bottom: 40px;
   box-shadow: var(--glass-shadow-lg);
+  position: relative;
+  min-height: 360px;
+  aspect-ratio: 16 / 9;
 }
 
-.article-detail-image img {
+.article-detail-image img,
+.article-detail-image .progressive-full {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
 }
 
 .article-detail-content {
