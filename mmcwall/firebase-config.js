@@ -15,8 +15,13 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Initialize Firebase Auth
-const auth = firebase.auth();
+// Initialize Firebase Auth (only when auth SDK is loaded)
+let auth = null;
+if (typeof firebase.auth === 'function') {
+    auth = firebase.auth();
+} else {
+    console.warn('Firebase Auth SDK not loaded on this page; skipping auth init.');
+}
 
 // Initialize Firestore
 const db = firebase.firestore();
