@@ -1,0 +1,26 @@
+[
+    {
+        "id": "bubbles",
+        "name": "Bubbles",
+        "youtubeId": "o-fFwtJNMuU",
+        "description": "Calming bubble animation"
+    },
+    {
+        "id": "goop",
+        "name": "Goop",
+        "youtubeId": "2o-8Xxo2uJA",
+        "description": "Flowing goop animation"
+    },
+    {
+        "id": "gold",
+        "name": "Gold",
+        "youtubeId": "QdkMk2oF3pc",
+        "description": "Golden liquid flow"
+    },
+    {
+        "id": "yellowblue",
+        "name": "Yellow Blue",
+        "youtubeId": "tGaLkpqFdvk",
+        "description": "Yellow and blue abstract"
+    }
+]

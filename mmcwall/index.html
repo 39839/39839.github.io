@@ -11,6 +11,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body class="display-view">
+    <!-- Background Video (YouTube, loops automatically) -->
+    <div id="video-bg-container" class="video-bg-container hidden">
+        <iframe id="background-video-iframe" class="background-video-iframe"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+
     <!-- Background ambient elements -->
     <div class="ambient-bg">
         <div class="gradient-orb orb-1"></div>
@@ -34,6 +43,50 @@
         <div class="fish fish-left fish-4"></div>
         <div class="fish fish-left fish-5"></div>
         <div class="fish fish-left fish-6 fish-rainbow"></div>
+    </div>
+    <div class="scene-layer rain-scene">
+        <!-- Storm clouds -->
+        <div class="storm-clouds"></div>
+        <!-- Rain layers with different depths -->
+        <div class="rain-layer rain-distant"></div>
+        <div class="rain-layer rain-bg"></div>
+        <div class="rain-layer rain-mid"></div>
+        <div class="rain-layer rain-fg"></div>
+        <div class="rain-drops"></div>
+        <!-- Multiple lightning bolts -->
+        <div class="lightning lightning-1"></div>
+        <div class="lightning lightning-2"></div>
+        <div class="lightning lightning-3"></div>
+        <!-- Road with puddles -->
+        <div class="rain-road">
+            <div class="road-surface"></div>
+            <div class="road-markings"></div>
+            <!-- Puddles with ripples -->
+            <div class="puddle puddle-1">
+                <div class="ripple ripple-1"></div>
+                <div class="ripple ripple-2"></div>
+                <div class="ripple ripple-3"></div>
+            </div>
+            <div class="puddle puddle-2">
+                <div class="ripple ripple-1"></div>
+                <div class="ripple ripple-2"></div>
+                <div class="ripple ripple-3"></div>
+            </div>
+            <div class="puddle puddle-3">
+                <div class="ripple ripple-1"></div>
+                <div class="ripple ripple-2"></div>
+                <div class="ripple ripple-3"></div>
+            </div>
+            <div class="puddle puddle-4">
+                <div class="ripple ripple-1"></div>
+                <div class="ripple ripple-2"></div>
+            </div>
+            <div class="puddle puddle-5">
+                <div class="ripple ripple-1"></div>
+                <div class="ripple ripple-2"></div>
+                <div class="ripple ripple-3"></div>
+            </div>
+        </div>
     </div>
     <div class="scene-layer beach-scene">
         <div class="sun"></div>

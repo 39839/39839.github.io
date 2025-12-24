@@ -61,7 +61,9 @@ const DEFAULT_DISPLAY_SETTINGS = {
     bgEnd: '#f3fbff',
     gradientAnimated: 'false',
     cardsOnScreen: 1,
-    slideColor: '#f6fbff'
+    slideColor: '#f6fbff',
+    backgroundVideo: '',
+    displayMode: 'light'
 };
 let displaySettings = { ...DEFAULT_DISPLAY_SETTINGS };
 let settingsUnsubscribe = null;
@@ -88,6 +90,8 @@ const youtubeContainer = document.getElementById('youtube-player-container');
 const displayTitle = document.getElementById('display-title');
 const fullscreenToggle = document.getElementById('fullscreen-toggle');
 const bodyEl = document.body;
+const videoBgContainer = document.getElementById('video-bg-container');
+const backgroundVideoIframe = document.getElementById('background-video-iframe');
 let controlsHideTimeout = null;
 let cursorHideTimeout = null;
 
@@ -254,7 +258,7 @@ function applyDisplaySettings(newSettings) {
     const animatedGradient = displaySettings.gradientAnimated;
     const body = document.body;
     const ambientBg = document.querySelector('.ambient-bg');
-    const gradientClasses = ['gradient-aurora', 'gradient-ocean', 'gradient-sunset', 'gradient-aquarium', 'gradient-beach'];
+    const gradientClasses = ['gradient-aurora', 'gradient-ocean', 'gradient-sunset', 'gradient-aquarium', 'gradient-beach', 'gradient-rain'];
 
     // Remove all animated gradient classes
     body.classList.remove(...gradientClasses);
@@ -290,6 +294,79 @@ function applyDisplaySettings(newSettings) {
         } else {
             displayTitle.classList.add('hidden');
         }
+    }
+
+    // Handle background video
+    applyBackgroundVideo(displaySettings.backgroundVideo);
+
+    // Handle display mode (light/dark text)
+    applyDisplayMode(displaySettings.displayMode);
+}
+
+// ================================
+// Display Mode (Light/Dark Text)
+// ================================
+function applyDisplayMode(mode) {
+    const body = document.body;
+
+    // Remove existing mode classes
+    body.classList.remove('display-mode-light', 'display-mode-dark');
+
+    // Apply the selected mode
+    if (mode === 'dark') {
+        body.classList.add('display-mode-dark');
+    } else {
+        body.classList.add('display-mode-light');
+    }
+
+    console.log('Display mode set to:', mode);
+}
+
+// ================================
+// Background Video (YouTube)
+// ================================
+let currentVideoId = '';
+
+function applyBackgroundVideo(videoId) {
+    if (!videoBgContainer || !backgroundVideoIframe) return;
+
+    const ambientBg = document.querySelector('.ambient-bg');
+
+    if (videoId && videoId.trim() !== '') {
+        // Show YouTube video background
+        if (currentVideoId !== videoId) {
+            currentVideoId = videoId;
+            // YouTube embed URL with autoplay, loop, mute, no controls, high quality
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&vq=hd1080&hd=1&origin=${window.location.origin}`;
+            backgroundVideoIframe.src = embedUrl;
+        }
+
+        videoBgContainer.classList.remove('hidden');
+
+        // Add glass effect class to body for enhanced UI elements
+        document.body.classList.add('video-bg-active');
+
+        // Hide the gradient background when video is playing
+        if (ambientBg) {
+            ambientBg.style.opacity = '0';
+        }
+
+        console.log('Background video enabled (YouTube):', videoId);
+    } else {
+        // Hide video background
+        videoBgContainer.classList.add('hidden');
+        backgroundVideoIframe.src = '';
+        currentVideoId = '';
+
+        // Remove glass effect class from body
+        document.body.classList.remove('video-bg-active');
+
+        // Show the gradient background
+        if (ambientBg) {
+            ambientBg.style.opacity = '1';
+        }
+
+        console.log('Background video disabled, using gradient theme');
     }
 }
 
@@ -729,6 +806,9 @@ function formatRelativeTime(date) {
 function init() {
     updateClock();
     setInterval(updateClock, 1000);
+
+    // Set default display mode immediately (will be overridden by Firebase settings)
+    applyDisplayMode('light');
 
     // IMMEDIATELY show fallback content so screen is never empty
     updateSlidesFromData([]);

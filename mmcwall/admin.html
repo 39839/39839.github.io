@@ -338,8 +338,61 @@
                                 </div>
 
                                 <div class="input-group">
+                                    <label>Background Video</label>
+                                    <div class="input-hint" style="margin-bottom: 12px;">Select a video to play as your background (loops automatically in 4K)</div>
+                                    <div class="video-selector">
+                                        <label class="video-option">
+                                            <input type="radio" name="background-video" value="" checked>
+                                            <span class="video-card">
+                                                <span class="video-icon">
+                                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                                        <line x1="3" y1="9" x2="21" y2="9"/>
+                                                        <line x1="9" y1="21" x2="9" y2="9"/>
+                                                    </svg>
+                                                </span>
+                                                <span class="video-name">No Video (Use Theme)</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div id="video-options" class="video-selector">
+                                        <!-- Video options will be populated dynamically -->
+                                    </div>
+                                    <div id="video-preview-container" class="video-preview-container hidden">
+                                        <iframe id="admin-video-preview" class="admin-video-preview" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
+                                    <label>Text Mode</label>
+                                    <div class="input-hint" style="margin-bottom: 12px;">Choose light or dark text based on your background</div>
+                                    <div class="display-mode-selector">
+                                        <label class="mode-option">
+                                            <input type="radio" name="display-mode" value="light" checked>
+                                            <span class="mode-card mode-light">
+                                                <span class="mode-preview">
+                                                    <span class="mode-text">Aa</span>
+                                                </span>
+                                                <span class="mode-name">Light Mode</span>
+                                                <span class="mode-desc">Dark text for light backgrounds</span>
+                                            </span>
+                                        </label>
+                                        <label class="mode-option">
+                                            <input type="radio" name="display-mode" value="dark">
+                                            <span class="mode-card mode-dark">
+                                                <span class="mode-preview">
+                                                    <span class="mode-text">Aa</span>
+                                                </span>
+                                                <span class="mode-name">Dark Mode</span>
+                                                <span class="mode-desc">White text for dark backgrounds</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="input-group">
                                     <label>Background Theme</label>
-                                    <div class="input-hint" style="margin-bottom: 12px;">Choose a preset theme or create your own custom gradient</div>
+                                    <div class="input-hint" style="margin-bottom: 12px;">Choose a preset theme or create your own custom gradient (used when no video is selected)</div>
 
                                     <div class="gradient-presets">
                                         <!-- Static Gradients -->
@@ -400,6 +453,11 @@
                                         <button type="button" class="gradient-preset gradient-animated" data-animated="beach" title="Beach Day (Animated)">
                                             <div class="gradient-preview gradient-beach"></div>
                                             <span class="gradient-name">Beach Day</span>
+                                            <span class="gradient-badge">Animated</span>
+                                        </button>
+                                        <button type="button" class="gradient-preset gradient-animated" data-animated="rain" title="Rain Storm (Animated)">
+                                            <div class="gradient-preview gradient-rain"></div>
+                                            <span class="gradient-name">Rain Storm</span>
                                             <span class="gradient-badge">Animated</span>
                                         </button>
                                     </div>
@@ -469,6 +527,22 @@
                                     Paste a YouTube video link. The audio will play in the background on your display.
                                     <br>Tip: Search for "relaxing waiting room music" or "lofi beats" on YouTube.
                                 </div>
+                                <div class="youtube-ads-note">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="8" x2="12" y2="12"/>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                    </svg>
+                                    <div>
+                                        <strong>About YouTube Ads:</strong> YouTube may occasionally show ads on embedded videos.
+                                        To avoid ads entirely, we recommend using:
+                                        <ul>
+                                            <li><strong>YouTube Premium</strong> - No ads on any YouTube content</li>
+                                            <li><strong>24/7 Live Streams</strong> - These typically have fewer or no ads (e.g., "lofi hip hop radio")</li>
+                                            <li><strong>Creator-uploaded music</strong> - Some channels don't monetize their videos</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
 
                             <div id="youtube-preview" class="youtube-preview hidden">
@@ -520,29 +594,29 @@
                         <div class="suggested-music">
                             <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=jfKfPfyJRdk">
                                 <div class="suggestion-info">
-                                    <span class="suggestion-title">Lofi Hip Hop Radio</span>
-                                    <span class="suggestion-desc">Relaxing beats, 24/7 stream</span>
+                                    <span class="suggestion-title">Lofi Girl Radio</span>
+                                    <span class="suggestion-desc">24/7 lofi hip hop - No ads</span>
                                 </div>
                                 <span class="suggestion-action">Use This</span>
                             </button>
-                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=lTRiuFIWV54">
+                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=4xDzrJKXOOY">
                                 <div class="suggestion-info">
-                                    <span class="suggestion-title">Relaxing Piano Music</span>
-                                    <span class="suggestion-desc">Calm piano for waiting rooms</span>
+                                    <span class="suggestion-title">Synthwave Radio</span>
+                                    <span class="suggestion-desc">24/7 chill synthwave - No ads</span>
                                 </div>
                                 <span class="suggestion-action">Use This</span>
                             </button>
-                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=HSOtku1j600">
+                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=S_MOd40zlYU">
                                 <div class="suggestion-info">
-                                    <span class="suggestion-title">Jazz Cafe Music</span>
-                                    <span class="suggestion-desc">Smooth jazz background music</span>
+                                    <span class="suggestion-title">Chillhop Radio</span>
+                                    <span class="suggestion-desc">24/7 jazzy beats - No ads</span>
                                 </div>
                                 <span class="suggestion-action">Use This</span>
                             </button>
-                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=5qap5aO4i9A">
+                            <button type="button" class="suggestion-item" data-url="https://www.youtube.com/watch?v=rUxyKA_-grg">
                                 <div class="suggestion-info">
-                                    <span class="suggestion-title">Calm Ambient Music</span>
-                                    <span class="suggestion-desc">Peaceful ambient sounds</span>
+                                    <span class="suggestion-title">Peaceful Piano</span>
+                                    <span class="suggestion-desc">24/7 relaxing piano - No ads</span>
                                 </div>
                                 <span class="suggestion-action">Use This</span>
                             </button>

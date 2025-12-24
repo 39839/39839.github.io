@@ -28,8 +28,13 @@ const DEFAULT_DISPLAY_SETTINGS = {
     bgEnd: '#f3fbff',
     gradientAnimated: 'false',
     cardsOnScreen: 1,
-    slideColor: '#f6fbff'
+    slideColor: '#f6fbff',
+    backgroundVideo: '',
+    displayMode: 'light'
 };
+
+// Available background videos (loaded dynamically from movies/videos.json)
+let AVAILABLE_VIDEOS = [];
 
 let currentUser = null;
 
@@ -1021,7 +1026,7 @@ function updateFullDisplayPreview() {
     if (previewBg) {
         // Remove any animated gradient classes
         fullPreview.classList.remove('gradient-aurora', 'gradient-ocean', 'gradient-sunset',
-            'gradient-aquarium', 'gradient-beach', 'gradient-northern', 'gradient-cosmic', 'gradient-rainbow');
+            'gradient-aquarium', 'gradient-beach', 'gradient-rain', 'gradient-northern', 'gradient-cosmic', 'gradient-rainbow');
 
         if (animatedGradient && animatedGradient !== 'false') {
             fullPreview.classList.add(`gradient-${animatedGradient}`);
@@ -1186,6 +1191,12 @@ function applySettingsToForm(settings) {
         gradientAnimatedInput.value = settings.gradientAnimated || 'false';
     }
 
+    // Load background video setting
+    setSelectedVideo(settings.backgroundVideo || '');
+
+    // Load display mode setting
+    setDisplayMode(settings.displayMode || 'light');
+
     // Highlight the matching preset
     updateSelectedPreset(settings.bgStart, settings.bgEnd, settings.gradientAnimated);
 
@@ -1223,7 +1234,7 @@ function updateDisplayPreview() {
     const headerText = heroTextInput.value;
     const animated = gradientAnimatedInput ? gradientAnimatedInput.value : 'false';
     const cardColor = slideColorInput ? slideColorInput.value : DEFAULT_DISPLAY_SETTINGS.slideColor;
-    const gradientClasses = ['gradient-aurora', 'gradient-ocean', 'gradient-sunset', 'gradient-aquarium', 'gradient-beach'];
+    const gradientClasses = ['gradient-aurora', 'gradient-ocean', 'gradient-sunset', 'gradient-aquarium', 'gradient-beach', 'gradient-rain'];
 
     // Remove all animated gradient classes
     displayPreview.classList.remove(...gradientClasses);
@@ -1267,7 +1278,9 @@ async function saveDisplaySettings(e) {
         bgEnd: bgEndInput.value,
         gradientAnimated: gradientAnimatedInput ? gradientAnimatedInput.value : 'false',
         cardsOnScreen: Number(cardsOnScreenInput.value),
-        slideColor: slideColorInput.value
+        slideColor: slideColorInput.value,
+        backgroundVideo: selectedVideo || '',
+        displayMode: selectedDisplayMode || 'light'
     };
 
     const submitBtn = displaySettingsForm.querySelector('button[type="submit"]');
@@ -1334,6 +1347,149 @@ function initDisplaySettings() {
             // Update preview
             updateDisplayPreview();
         });
+    });
+
+    // Initialize video selector (async - loads from JSON)
+    initVideoSelector().then(() => {
+        // Re-apply video selection after videos are loaded
+        if (selectedVideo) {
+            setSelectedVideo(selectedVideo);
+        }
+    });
+
+    // Initialize display mode selector
+    initDisplayMode();
+}
+
+// ================================
+// Background Video Management
+// ================================
+
+let selectedVideo = '';
+
+async function initVideoSelector() {
+    // Load videos from JSON file
+    await loadVideosFromJson();
+
+    renderVideoOptions();
+
+    // Add change listeners for video selection
+    document.querySelectorAll('input[name="background-video"]').forEach(radio => {
+        radio.addEventListener('change', handleVideoSelection);
+    });
+}
+
+async function loadVideosFromJson() {
+    try {
+        const response = await fetch('movies/videos.json?' + Date.now()); // Cache bust
+        if (response.ok) {
+            const videos = await response.json();
+            AVAILABLE_VIDEOS = videos.map(v => ({
+                id: v.id,
+                name: v.name,
+                youtubeId: v.youtubeId,
+                thumbnail: v.description || v.thumbnail || ''
+            }));
+            console.log('Loaded videos from JSON:', AVAILABLE_VIDEOS);
+        } else {
+            console.warn('Could not load videos.json, using empty list');
+            AVAILABLE_VIDEOS = [];
+        }
+    } catch (error) {
+        console.error('Error loading videos.json:', error);
+        AVAILABLE_VIDEOS = [];
+    }
+}
+
+function renderVideoOptions() {
+    const videoOptionsContainer = document.getElementById('video-options');
+    if (!videoOptionsContainer) return;
+
+    let html = '';
+    AVAILABLE_VIDEOS.forEach(video => {
+        html += `
+            <label class="video-option">
+                <input type="radio" name="background-video" value="${video.youtubeId}">
+                <span class="video-card">
+                    <span class="video-icon">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                    </span>
+                    <span class="video-name">${video.name}</span>
+                    <span class="video-desc">${video.thumbnail}</span>
+                </span>
+            </label>
+        `;
+    });
+
+    videoOptionsContainer.innerHTML = html;
+
+    // Re-add change listeners after rendering
+    document.querySelectorAll('input[name="background-video"]').forEach(radio => {
+        radio.addEventListener('change', handleVideoSelection);
+    });
+}
+
+function handleVideoSelection(e) {
+    selectedVideo = e.target.value;
+    updateVideoPreview(selectedVideo);
+    updateDisplayPreview();
+}
+
+function updateVideoPreview(youtubeId) {
+    const previewContainer = document.getElementById('video-preview-container');
+    const previewIframe = document.getElementById('admin-video-preview');
+
+    if (!previewContainer || !previewIframe) return;
+
+    if (youtubeId) {
+        // Use YouTube embed for preview
+        previewIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0`;
+        previewContainer.classList.remove('hidden');
+    } else {
+        previewIframe.src = '';
+        previewContainer.classList.add('hidden');
+    }
+}
+
+function setSelectedVideo(videoFile) {
+    selectedVideo = videoFile || '';
+
+    // Update radio buttons
+    const radios = document.querySelectorAll('input[name="background-video"]');
+    radios.forEach(radio => {
+        radio.checked = radio.value === selectedVideo;
+    });
+
+    updateVideoPreview(selectedVideo);
+}
+
+// ================================
+// Display Mode Management
+// ================================
+
+let selectedDisplayMode = 'light';
+
+function initDisplayMode() {
+    // Add change listeners for display mode selection
+    document.querySelectorAll('input[name="display-mode"]').forEach(radio => {
+        radio.addEventListener('change', handleDisplayModeChange);
+    });
+}
+
+function handleDisplayModeChange(e) {
+    selectedDisplayMode = e.target.value;
+    updateDisplayPreview();
+}
+
+function setDisplayMode(mode) {
+    selectedDisplayMode = mode || 'light';
+
+    // Update radio buttons
+    const radios = document.querySelectorAll('input[name="display-mode"]');
+    radios.forEach(radio => {
+        radio.checked = radio.value === selectedDisplayMode;
     });
 }
 
@@ -1620,6 +1776,7 @@ function init() {
     initPreview();
     initFormattingToolbar();
     initCategoryModal();
+    initEditAnnouncementModal();
     loadCategories();
     initDisplaySettings();
     initMusicSettings();
