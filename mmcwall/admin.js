@@ -1387,7 +1387,8 @@ async function loadVideosFromJson() {
             AVAILABLE_VIDEOS = videos.map(v => ({
                 id: v.id,
                 name: v.name,
-                youtubeId: v.youtubeId,
+                youtubeId: v.youtubeId || null,
+                mp4Url: v.mp4Url || null,
                 thumbnail: v.description || v.thumbnail || ''
             }));
             console.log('Loaded videos from JSON:', AVAILABLE_VIDEOS);
@@ -1407,16 +1408,18 @@ function renderVideoOptions() {
 
     let html = '';
     AVAILABLE_VIDEOS.forEach(video => {
+        // Show MP4 badge for direct video files (seamless looping)
+        const typeBadge = video.mp4Url ? '<span class="video-type-badge">MP4</span>' : '';
         html += `
             <label class="video-option">
-                <input type="radio" name="background-video" value="${video.youtubeId}">
+                <input type="radio" name="background-video" value="${video.id}">
                 <span class="video-card">
                     <span class="video-icon">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
                             <polygon points="5 3 19 12 5 21 5 3"/>
                         </svg>
                     </span>
-                    <span class="video-name">${video.name}</span>
+                    <span class="video-name">${video.name}${typeBadge}</span>
                     <span class="video-desc">${video.thumbnail}</span>
                 </span>
             </label>
@@ -1437,18 +1440,88 @@ function handleVideoSelection(e) {
     updateDisplayPreview();
 }
 
-function updateVideoPreview(youtubeId) {
+// Find video data by ID
+function getVideoDataById(videoId) {
+    return AVAILABLE_VIDEOS.find(v => v.id === videoId);
+}
+
+function updateVideoPreview(videoId) {
     const previewContainer = document.getElementById('video-preview-container');
     const previewIframe = document.getElementById('admin-video-preview');
+    let previewVideo = document.getElementById('admin-video-preview-mp4');
 
-    if (!previewContainer || !previewIframe) return;
+    if (!previewContainer) return;
 
-    if (youtubeId) {
-        // Use YouTube embed for preview
-        previewIframe.src = `https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0`;
-        previewContainer.classList.remove('hidden');
+    // Create MP4 video element if it doesn't exist
+    if (!previewVideo && previewContainer) {
+        previewVideo = document.createElement('video');
+        previewVideo.id = 'admin-video-preview-mp4';
+        previewVideo.className = 'admin-video-preview-mp4';
+        previewVideo.autoplay = true;
+        previewVideo.muted = true;
+        previewVideo.loop = true;
+        previewVideo.playsInline = true;
+        previewVideo.style.display = 'none';
+        previewContainer.appendChild(previewVideo);
+    }
+
+    if (videoId) {
+        const videoData = getVideoDataById(videoId);
+
+        if (videoData && videoData.mp4Url) {
+            // Use native video for MP4 preview (try 4K first)
+            if (previewVideo) {
+                previewVideo.src = videoData.mp4Url;
+                previewVideo.style.display = 'block';
+
+                // Fallback to 1080p if 4K fails
+                previewVideo.onerror = function() {
+                    if (videoData.mp4UrlFallback && previewVideo.src !== videoData.mp4UrlFallback) {
+                        console.log('Preview: 4K not available, using 1080p');
+                        previewVideo.src = videoData.mp4UrlFallback;
+                        previewVideo.play().catch(e => console.log('Preview fallback blocked:', e));
+                    }
+                };
+
+                previewVideo.play().catch(e => console.log('Preview autoplay blocked:', e));
+            }
+            if (previewIframe) {
+                previewIframe.src = '';
+                previewIframe.style.display = 'none';
+            }
+            previewContainer.classList.remove('hidden');
+        } else if (videoData && videoData.youtubeId) {
+            // Use YouTube embed for preview
+            if (previewIframe) {
+                previewIframe.src = `https://www.youtube.com/embed/${videoData.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${videoData.youtubeId}&controls=0`;
+                previewIframe.style.display = 'block';
+            }
+            if (previewVideo) {
+                previewVideo.src = '';
+                previewVideo.style.display = 'none';
+            }
+            previewContainer.classList.remove('hidden');
+        } else {
+            // Fallback - treat videoId as YouTube ID
+            if (previewIframe) {
+                previewIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0`;
+                previewIframe.style.display = 'block';
+            }
+            if (previewVideo) {
+                previewVideo.src = '';
+                previewVideo.style.display = 'none';
+            }
+            previewContainer.classList.remove('hidden');
+        }
     } else {
-        previewIframe.src = '';
+        if (previewIframe) {
+            previewIframe.src = '';
+            previewIframe.style.display = 'none';
+        }
+        if (previewVideo) {
+            previewVideo.src = '';
+            previewVideo.style.display = 'none';
+        }
         previewContainer.classList.add('hidden');
     }
 }

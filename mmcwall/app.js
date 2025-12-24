@@ -92,7 +92,11 @@ const fullscreenToggle = document.getElementById('fullscreen-toggle');
 const bodyEl = document.body;
 const videoBgContainer = document.getElementById('video-bg-container');
 const backgroundVideoIframe = document.getElementById('background-video-iframe');
+const backgroundVideoMp4 = document.getElementById('background-video-mp4');
 let controlsHideTimeout = null;
+
+// Video data loaded from JSON
+let availableVideos = [];
 let cursorHideTimeout = null;
 
 function getCardsOnScreen() {
@@ -323,22 +327,235 @@ function applyDisplayMode(mode) {
 }
 
 // ================================
-// Background Video (YouTube)
+// Background Video (MP4 + YouTube with Seamless Loop)
 // ================================
 let currentVideoId = '';
+let currentVideoType = ''; // 'mp4' or 'youtube'
+let bgYouTubePlayer = null;
+let youtubeAPIReady = false;
+let pendingVideoId = null;
+let loopCheckInterval = null;
+
+// Load videos data from JSON
+async function loadVideosData() {
+    try {
+        const response = await fetch('movies/videos.json?' + Date.now());
+        if (response.ok) {
+            availableVideos = await response.json();
+            console.log('Videos data loaded:', availableVideos.length, 'videos');
+        }
+    } catch (e) {
+        console.warn('Could not load videos.json:', e);
+        availableVideos = [];
+    }
+}
+
+// Find video data by ID
+function getVideoData(videoId) {
+    return availableVideos.find(v => v.id === videoId || v.youtubeId === videoId);
+}
+
+// Load YouTube IFrame API
+function loadYouTubeAPI() {
+    if (window.YT && window.YT.Player) {
+        youtubeAPIReady = true;
+        onYouTubeAPIReady();
+        return;
+    }
+
+    // Check if script already exists
+    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScript = document.getElementsByTagName('script')[0];
+        firstScript.parentNode.insertBefore(tag, firstScript);
+    }
+}
+
+// Called when YouTube API is ready
+window.onYouTubeIframeAPIReady = function() {
+    youtubeAPIReady = true;
+    onYouTubeAPIReady();
+};
+
+function onYouTubeAPIReady() {
+    if (pendingVideoId) {
+        createYouTubePlayer(pendingVideoId);
+        pendingVideoId = null;
+    }
+}
+
+function createYouTubePlayer(videoId) {
+    // Destroy existing player if any
+    if (bgYouTubePlayer) {
+        try {
+            bgYouTubePlayer.destroy();
+        } catch (e) {}
+        bgYouTubePlayer = null;
+    }
+
+    // Clear any existing loop check
+    if (loopCheckInterval) {
+        clearInterval(loopCheckInterval);
+        loopCheckInterval = null;
+    }
+
+    // Create new player using the API for seamless looping
+    bgYouTubePlayer = new YT.Player('background-video-iframe', {
+        videoId: videoId,
+        playerVars: {
+            autoplay: 1,
+            mute: 1,
+            controls: 0,
+            showinfo: 0,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1,
+            enablejsapi: 1,
+            loop: 1,
+            playlist: videoId,
+            origin: window.location.origin
+        },
+        events: {
+            onReady: function(event) {
+                // Set to highest quality (4K if available)
+                event.target.setPlaybackQuality('hd2160');
+                event.target.playVideo();
+
+                // Start seamless loop check
+                startSeamlessLoopCheck();
+
+                console.log('YouTube player ready (4K):', videoId);
+            },
+            onStateChange: function(event) {
+                // If video ended, seek to beginning immediately
+                if (event.data === YT.PlayerState.ENDED) {
+                    event.target.seekTo(0);
+                    event.target.playVideo();
+                }
+                // Ensure highest quality when playing
+                if (event.data === YT.PlayerState.PLAYING) {
+                    event.target.setPlaybackQuality('hd2160');
+                }
+            },
+            onPlaybackQualityChange: function(event) {
+                console.log('Video quality:', event.data);
+            }
+        }
+    });
+}
+
+// Check video position and loop before it ends to avoid black flash (YouTube only)
+function startSeamlessLoopCheck() {
+    if (loopCheckInterval) {
+        clearInterval(loopCheckInterval);
+    }
+
+    loopCheckInterval = setInterval(() => {
+        if (bgYouTubePlayer && typeof bgYouTubePlayer.getCurrentTime === 'function') {
+            try {
+                const currentTime = bgYouTubePlayer.getCurrentTime();
+                const duration = bgYouTubePlayer.getDuration();
+
+                // If within 0.5 seconds of the end, seek back to start
+                if (duration > 0 && currentTime > 0 && (duration - currentTime) < 0.5) {
+                    bgYouTubePlayer.seekTo(0);
+                    console.log('Seamless loop triggered');
+                }
+            } catch (e) {}
+        }
+    }, 100); // Check every 100ms
+}
+
+// Stop all video playback
+function stopAllVideos() {
+    // Stop MP4 video
+    if (backgroundVideoMp4) {
+        backgroundVideoMp4.pause();
+        backgroundVideoMp4.src = '';
+        backgroundVideoMp4.classList.add('hidden');
+    }
+
+    // Destroy YouTube player
+    if (bgYouTubePlayer) {
+        try {
+            bgYouTubePlayer.destroy();
+        } catch (e) {}
+        bgYouTubePlayer = null;
+    }
+    if (backgroundVideoIframe) {
+        backgroundVideoIframe.classList.add('hidden');
+    }
+
+    // Clear loop check
+    if (loopCheckInterval) {
+        clearInterval(loopCheckInterval);
+        loopCheckInterval = null;
+    }
+}
 
 function applyBackgroundVideo(videoId) {
-    if (!videoBgContainer || !backgroundVideoIframe) return;
+    if (!videoBgContainer) return;
 
     const ambientBg = document.querySelector('.ambient-bg');
 
     if (videoId && videoId.trim() !== '') {
-        // Show YouTube video background
+        // Check if video changed
         if (currentVideoId !== videoId) {
             currentVideoId = videoId;
-            // YouTube embed URL with autoplay, loop, mute, no controls, high quality
-            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&vq=hd1080&hd=1&origin=${window.location.origin}`;
-            backgroundVideoIframe.src = embedUrl;
+
+            // Stop any currently playing videos
+            stopAllVideos();
+
+            // Look up video data to determine type
+            const videoData = getVideoData(videoId);
+
+            if (videoData && videoData.mp4Url) {
+                // Use native MP4 video (seamless looping built-in)
+                currentVideoType = 'mp4';
+
+                if (backgroundVideoMp4) {
+                    // Try 4K first, fallback to 1080p if error
+                    backgroundVideoMp4.src = videoData.mp4Url;
+                    backgroundVideoMp4.classList.remove('hidden');
+
+                    // Handle error - try fallback URL
+                    backgroundVideoMp4.onerror = function() {
+                        if (videoData.mp4UrlFallback && backgroundVideoMp4.src !== videoData.mp4UrlFallback) {
+                            console.log('4K not available, falling back to 1080p');
+                            backgroundVideoMp4.src = videoData.mp4UrlFallback;
+                            backgroundVideoMp4.play().catch(e => console.log('MP4 fallback autoplay blocked:', e));
+                        }
+                    };
+
+                    backgroundVideoMp4.play().catch(e => console.log('MP4 autoplay blocked:', e));
+                    console.log('Background video enabled (MP4 4K, seamless loop):', videoId);
+                }
+
+                if (backgroundVideoIframe) {
+                    backgroundVideoIframe.classList.add('hidden');
+                }
+            } else {
+                // Use YouTube player
+                currentVideoType = 'youtube';
+                const ytId = videoData?.youtubeId || videoId;
+
+                if (backgroundVideoMp4) {
+                    backgroundVideoMp4.classList.add('hidden');
+                }
+                if (backgroundVideoIframe) {
+                    backgroundVideoIframe.classList.remove('hidden');
+                }
+
+                if (youtubeAPIReady) {
+                    createYouTubePlayer(ytId);
+                } else {
+                    pendingVideoId = ytId;
+                    loadYouTubeAPI();
+                }
+
+                console.log('Background video enabled (YouTube 4K):', ytId);
+            }
         }
 
         videoBgContainer.classList.remove('hidden');
@@ -350,13 +567,13 @@ function applyBackgroundVideo(videoId) {
         if (ambientBg) {
             ambientBg.style.opacity = '0';
         }
-
-        console.log('Background video enabled (YouTube):', videoId);
     } else {
         // Hide video background
         videoBgContainer.classList.add('hidden');
-        backgroundVideoIframe.src = '';
+
+        stopAllVideos();
         currentVideoId = '';
+        currentVideoType = '';
 
         // Remove glass effect class from body
         document.body.classList.remove('video-bg-active');
@@ -815,6 +1032,7 @@ function init() {
     hideLoading();
 
     initAudio();
+    loadVideosData(); // Load video data before display settings
     initDisplaySettingsListener();
     initMusicSettingsListener();
     loadCategories();

@@ -2,7 +2,8 @@
     {
         "id": "bubbles",
         "name": "Bubbles",
-        "youtubeId": "o-fFwtJNMuU",
+        "mp4Url": "https://video.wixstatic.com/video/11b1c4_b2e1c6a3a3424ee88d0033a519890518/4k/mp4/file.mp4",
+        "mp4UrlFallback": "https://video.wixstatic.com/video/11b1c4_b2e1c6a3a3424ee88d0033a519890518/1080p/mp4/file.mp4",
         "description": "Calming bubble animation"
     },
     {
@@ -14,13 +15,15 @@
     {
         "id": "gold",
         "name": "Gold",
-        "youtubeId": "QdkMk2oF3pc",
+        "mp4Url": "https://video.wixstatic.com/video/11b1c4_20ad6d61a3b241a59eb60d84acc2adbf/4k/mp4/file.mp4",
+        "mp4UrlFallback": "https://video.wixstatic.com/video/11b1c4_20ad6d61a3b241a59eb60d84acc2adbf/1080p/mp4/file.mp4",
         "description": "Golden liquid flow"
     },
     {
         "id": "yellowblue",
         "name": "Yellow Blue",
-        "youtubeId": "tGaLkpqFdvk",
+        "mp4Url": "https://video.wixstatic.com/video/11b1c4_2a49d3ea4a174f64afa6fd379732b960/4k/mp4/file.mp4",
+        "mp4UrlFallback": "https://video.wixstatic.com/video/11b1c4_2a49d3ea4a174f64afa6fd379732b960/1080p/mp4/file.mp4",
         "description": "Yellow and blue abstract"
     }
 ]
