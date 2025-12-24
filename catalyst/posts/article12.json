@@ -273,6 +273,13 @@
         "order": 53,
         "type": "paragraph",
         "content": "To students currently in the process of determining future plans, let this serve as a reminder to open yourself up to new opportunities and experiences in your academic environment. With that, remember to forge relationships and a network of people, from whom you can learn and receive guidance. Aim to let yourself enjoy the process, but also challenge yourself– embrace the uncertainties and dive into them– and develop your skills and experiences; these will only aid you in your future pursuits. Lastly, take it all in proportion. Some choices are more monumental than others. That said, when one door closes, you can always find a new door to try to unlock."
+      },
+      {
+        "order": 54,
+        "type": "game",
+        "src": "posts/games/article12.html",
+        "title": "Forensics Forge: Kane's Chemistry Quest",
+        "height": "580"
       }
     ]
   }

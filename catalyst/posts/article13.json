@@ -61,7 +61,8 @@
       },
       {
         "order": 11,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1Universeofplasma.webp",
         "alt_text": "Blue glowing multidimensional plasma force field in space",
         "caption": "Image Credit: “Blue glowing multidimensional plasma force field in space” by sakkmesterke. Licensed under an Education License.",
         "note": "Internal image placement indicated in source text"
@@ -103,7 +104,8 @@
       },
       {
         "order": 19,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2universeofplasma.jpeg",
         "alt_text": "Space satellite over the planet Earth",
         "caption": "Image Credit: “Space satellite over the planet Earth” by Andrei Armiagov. Licensed under an Education License.",
         "note": "Internal image placement indicated in source text"
@@ -232,6 +234,13 @@
         "order": 44,
         "type": "paragraph",
         "content": "To all the students currently trying to figure out what field they want to enter, what PhD program to enter, what research lab they want to join, or even what classes they want to take next semester, remember to follow your interests and think of the bigger picture. Nurture your curiosity and water your creativity, and remember that when in doubt, have faith that your dots will connect, even when you can’t see how."
+      },
+      {
+        "order": 45,
+        "type": "game",
+        "src": "posts/games/article13.html",
+        "title": "Plasma Pursuit: Connecting the Dots",
+        "height": "580"
       }
     ]
   }

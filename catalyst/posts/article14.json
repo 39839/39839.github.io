@@ -41,7 +41,8 @@
       },
       {
         "order": 7,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1howcuttingedge.webp",
         "alt_text": "Close-up view on a nanotechnology electronic system 3D rendering",
         "caption": "Close-up view on a nanotechnology electronic system 3D rendering by sdecoret",
         "note": "Internal image placement indicated in source text"
@@ -93,7 +94,8 @@
       },
       {
         "order": 17,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2howcuttingedge.webp",
         "alt_text": "Multiple Sclerosis Illustration",
         "caption": "Image Credit: Multiple Sclerosis by blueringmedia",
         "note": "Internal image placement indicated in source text"
@@ -140,7 +142,8 @@
       },
       {
         "order": 26,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3howcuttingedge.webp",
         "alt_text": "Microscopic view of ductal cell carcinoma",
         "caption": "Image Credit: Microscopic view of ductal cell carcinoma, adenocarcinoma from human breast cancer tissue section stained with H&E, captured at 400X magnification. Image by arcyto, licensed under an Education License.",
         "note": "Internal image placement indicated in source text"
@@ -194,6 +197,13 @@
         "order": 36,
         "type": "paragraph",
         "content": "The groundbreaking research conducted by Dr. Gina Adam, Dr. Jeffrey Huang, and Dr. Barry Hudson reveals the incredible power of innovation that occurs at the intersection of science, technology, and medicine. From advancing neuromorphic computing to pursuing curative therapies for Multiple Sclerosis and aggressive breast cancer, these scientists are at the forefront of paving a future that is more efficient, intelligent, and compassionate. The headquarters of these endeavours at the nation’s capital serves as a reminder that the innovations coming out of Washington, D.C., are not only advancing human knowledge but also offering tangible solutions that will enhance lives, fight disease, and push the boundaries of what’s possible."
+      },
+      {
+        "order": 37,
+        "type": "game",
+        "src": "posts/games/article14.html",
+        "title": "DC Breakthroughs: Shaping Futures",
+        "height": "580"
       }
     ]
   }

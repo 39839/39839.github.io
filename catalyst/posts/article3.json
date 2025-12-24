@@ -36,7 +36,8 @@
       },
       {
         "order": 6,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/Image1Understandingscience.jpg",
         "alt_text": "Brain anatomy illustration",
         "caption": "Photo by Pablo Peiker",
         "note": "Internal image placement indicated in source text"
@@ -85,6 +86,13 @@
         "order": 15,
         "type": "paragraph",
         "content": "There is much more to say about dopamine, and I will leave some great and approachable resources below. To summarize, though, there is no molecule that makes anything easy, and as students with the job to learn, our task will never not be effortful. However, our drive, which pushes us to perform the work we are required to do, has a chemical basis: dopamine. Like everything in life, dopamine is a finite resource, limited by the presence of its precursors and the time of its synthesis. Through quick, mindless, and high dopamine release, you reduce your neurons’ supply, and consequently your drive to perform ambitious tasks, such as studying. Additionally, increasing your baseline levels of dopamine through continuous use of quick sources, will increase your threshold levels necessary to facilitate drive. To leverage this information to enhance your ability to perform rigorous tasks like studying, avoid dopamine-depleting activities like social media and intensely satisfying foods/treats, especially before work, and prevent increased baseline levels through consistent layering or reliance on dopamine sources. I know this information isn’t ‘fun,’ and ‘easy,’ but hopefully a look into the biological mechanisms involved in effort can help you better consider decisions, or at least become more mindful of their stakes and implications."
+      },
+      {
+        "order": 16,
+        "type": "game",
+        "src": "posts/games/article3.html",
+        "title": "Term Targeter: Dopamine & Learning",
+        "height": "580"
       }
     ]
   }

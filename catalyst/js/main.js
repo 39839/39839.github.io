@@ -1182,16 +1182,6 @@ function renderArticleDetail(article) {
                 <p>${article.excerpt || ''}</p>
                 <p>This article is available on The Catalyst Magazine website.</p>
             `}
-            <p style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(0, 0, 0, 0.1);">
-                <a href="${article.link}" target="_blank" class="btn btn-primary" style="display: inline-flex;">
-                    Read on Catalyst Magazine Website
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                        <polyline points="15 3 21 3 21 9"/>
-                        <line x1="10" y1="14" x2="21" y2="3"/>
-                    </svg>
-                </a>
-            </p>
         </div>
     `;
 
@@ -1591,6 +1581,18 @@ function renderContentBlocks(blocks = []) {
                 return `<h3 class="article-block section-subheader">${content}</h3>`;
             case 'pull_quote':
                 return `<blockquote class="article-block pull-quote">${content}</blockquote>`;
+            case 'image': {
+                const url = block.url || '';
+                const alt = block.alt_text || 'Article image';
+                const caption = block.caption || '';
+                if (!url) return '';
+                return `
+                    <figure class="article-block article-image">
+                        <img src="${url}" alt="${alt}" loading="lazy">
+                        ${caption ? `<figcaption>${caption}</figcaption>` : ''}
+                    </figure>
+                `;
+            }
             case 'image_placeholder': {
                 const alt = block.alt_text || 'Image placeholder';
                 const caption = block.caption || block.note || '';
@@ -1611,6 +1613,29 @@ function renderContentBlocks(blocks = []) {
                             <span>${caption || 'Video placeholder'}</span>
                         </div>
                         ${caption ? `<p class="placeholder-caption">${caption}</p>` : ''}
+                    </div>
+                `;
+            }
+            case 'game': {
+                const src = block.src || '';
+                const title = block.title || 'Interactive Game';
+                const height = block.height || '600';
+                if (!src) return '';
+                return `
+                    <div class="article-block article-game">
+                        <div class="game-header">
+                            <span class="game-icon">🎮</span>
+                            <span class="game-title">${title}</span>
+                        </div>
+                        <div class="game-container">
+                            <iframe
+                                src="${src}"
+                                title="${title}"
+                                loading="lazy"
+                                allow="fullscreen"
+                                style="width: 100%; height: ${height}px; border: none; border-radius: 12px;"
+                            ></iframe>
+                        </div>
                     </div>
                 `;
             }

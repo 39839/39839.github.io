@@ -21,30 +21,30 @@
       },
       {
         "order": 3,
-        "type": "image_placeholder",
-        "alt_text": "Vibrant fluorescent microscopy image showing the active movement of microglia",
-        "caption": "Vibrant fluorescent microscopy image showing the active movement of microglia in response to brain injury by Justlight. Licensed under the Education License",
-        "note": "Internal image placement indicated in source text"
-      },
-      {
-        "order": 4,
         "type": "paragraph",
         "content": "I hereby plea for a moment of recognition for the unsung hero of the nervous system– the glial cell concealed under the shadow of the more-popular astrocyte– the humble microglia."
       },
       {
-        "order": 5,
+        "order": 4,
         "type": "paragraph",
         "content": "To many, the microglia evokes thoughts of a boring macrophage, limited by the borders of the CNS. I would like to dispel these thoughts, first of all, by clarifying that the microglia is a species of its own; unlike the macrophage, our friendly microglia is yolk-sac derived. Secondly– sure the astrocyte provides metabolic support and assists the endothelial cells of the blood brain barrier, but who, I implore, defends our sacred neurons when intruders make their way through? Who relentlessly phagocytoses viruses and bacteria? Who unleashes reactive oxygen species, cytokines and chemokines to destroy enemies of the body and recruit the immune response? Who releases matrix metalloproteinases to clear the way for additional glia to come to aid? Who, I beg? Our valiant warrior not only responds to cellular stress and events of neuronal injury; microglia, as well, facilitate the processes that make you and me– you and me."
       },
       {
-        "order": 6,
+        "order": 5,
         "type": "paragraph",
         "content": "Throughout development, as neurons make redundant, careless connections, our faithful microglia survey the neuronal environment and carefully contemplate, based on synaptic activity, which synapses to accept, and which to prune. We have the microglia to thank for the efficiency of neuronal transmission, and for the healthy development of our brains. And while you and I have done our fair share of avoiding chores (when was the last time you vacuumed your room?) microglia are constantly cleaning the cellular environment, caringly and lovingly removing debris to ensure a squeaky and pristine landscape, hospitable to its fellow neurons, astrocytes, oligodendrocytes, schwann cells, ependymal cells, and endothelial cells. "
       },
       {
-        "order": 7,
+        "order": 6,
         "type": "paragraph",
-        "content": "Microglia may be the smallest glial cell in size, but they shan’t be underestimated. So allow me, please, to raise a toast for our unacknowledged friend; a moment of appreciation for the microglia."
+        "content": "Microglia may be the smallest glial cell in size, but they shan't be underestimated. So allow me, please, to raise a toast for our unacknowledged friend; a moment of appreciation for the microglia."
+      },
+      {
+        "order": 7,
+        "type": "game",
+        "src": "posts/games/article2.html",
+        "title": "Test Your Knowledge: Term Targeter",
+        "height": "580"
       }
     ]
   }

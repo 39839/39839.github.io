@@ -111,10 +111,10 @@
       },
       {
         "order": 21,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1cahill.avif",
         "alt_text": "Professor Christopher Cahill",
-        "caption": "Professor Christopher Cahill. Image courtesy of the Elliott School of International Affairs, The George Washington University.",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Professor Christopher Cahill. Image courtesy of the Elliott School of International Affairs, The George Washington University. <a href=\"https://elliott.gwu.edu/christopher-cahill\">elliott.gwu.edu/christopher-cahill</a>"
       },
       {
         "order": 22,
@@ -159,7 +159,14 @@
       {
         "order": 30,
         "type": "paragraph",
-        "content": "**2024 Oscar and Shoshanna Tractenberg Prize for Scholarship (Research):** Christopher Cahill received this prestigious award, which honors outstanding research accomplishments and highlights GW’s commitment to advancing research and creative endeavors.\n\n**Chemistry’s Cahill Elected AAAS Fellow:** Christopher Cahill, chair of the CCAS Chemistry Department and a renowned leader in inorganic and materials chemistry, was recognized as an AAAS Fellow for his contributions to science and innovation.\n\n**2023 Hillebrand Prize:** Professor Christopher L. Cahill was honored with this award for groundbreaking research in condensed phase actinide chemistry and crystal engineering, which has significant implications for environmental remediation, separations, and nuclear forensics. He will present at the CSW dinner meeting on March 14, 2024. Read the full story in GW Today."
+        "content": "**2024 Oscar and Shoshanna Tractenberg Prize for Scholarship (Research):** Christopher Cahill received this prestigious award, which honors outstanding research accomplishments and highlights GW's commitment to advancing research and creative endeavors.\n\n**Chemistry's Cahill Elected AAAS Fellow:** Christopher Cahill, chair of the CCAS Chemistry Department and a renowned leader in inorganic and materials chemistry, was recognized as an AAAS Fellow for his contributions to science and innovation.\n\n**2023 Hillebrand Prize:** Professor Christopher L. Cahill was honored with this award for groundbreaking research in condensed phase actinide chemistry and crystal engineering, which has significant implications for environmental remediation, separations, and nuclear forensics. He will present at the CSW dinner meeting on March 14, 2024. Read the full story in GW Today."
+      },
+      {
+        "order": 31,
+        "type": "game",
+        "src": "posts/games/article11.html",
+        "title": "Test Your Knowledge: Professor Cahill's Journey",
+        "height": "580"
       }
     ]
   }

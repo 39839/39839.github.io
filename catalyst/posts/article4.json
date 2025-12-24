@@ -56,7 +56,8 @@
       },
       {
         "order": 10,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/everythingsingsimage1.webp",
         "alt_text": "Gold Cortex neuron art",
         "caption": "Gold Cortex neuron art by Greg A. Dunn",
         "note": "Internal image placement indicated in source text"
@@ -100,6 +101,13 @@
         "order": 18,
         "type": "paragraph",
         "content": "Complexity Science is not only an emerging interdisciplinary field, but also a thought provoking exercise in every scientist’s ability to see the bigger picture. Many problems that appear unsolvable on their surface– the origins of evolution, the cure to cancer, nuclear fusion– may in fact be solvable through cross-pollination over other fields. If anything, Complexity Science commands each of us to step outside our comfort zones and view our work in the light of others’."
+      },
+      {
+        "order": 19,
+        "type": "game",
+        "src": "posts/games/article4.html",
+        "title": "Term Targeter: Everything Sings",
+        "height": "580"
       }
     ]
   }
