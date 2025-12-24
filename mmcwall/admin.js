@@ -80,6 +80,14 @@ const formBtnText = document.getElementById('form-btn-text');
 const announcementsList = document.getElementById('announcements-list');
 const bubblePreview = document.getElementById('bubble-preview');
 
+// Card style elements
+const cardStyleToggle = document.getElementById('card-style-toggle');
+const cardStyleFields = document.getElementById('card-style-fields');
+const regularMessageField = document.getElementById('regular-message-field');
+const announcementHeader = document.getElementById('announcement-header');
+const announcementBody = document.getElementById('announcement-body');
+const bodyCharCurrent = document.getElementById('body-char-current');
+
 // Display settings elements
 const displaySettingsForm = document.getElementById('display-settings-form');
 const heroTextInput = document.getElementById('hero-text');
@@ -401,16 +409,39 @@ function loadAnnouncements() {
 async function addAnnouncement(e) {
     e.preventDefault();
 
-    // Get plain text (for validation/character count) and formatted HTML
-    const plainText = announcementText.textContent.trim();
-    const formattedText = announcementText.innerHTML.trim();
+    const isCardStyle = cardStyleToggle && cardStyleToggle.checked;
     const typeRadio = document.querySelector('input[name="announcement-type"]:checked');
     const type = typeRadio ? typeRadio.value : 'info';
     const active = announcementActive.checked;
 
-    if (!plainText) {
-        showToast('Please enter a message', 'error');
-        return;
+    let plainText, formattedText, header, body;
+
+    if (isCardStyle) {
+        // Card style announcement with header and body (now contenteditable with rich text)
+        const headerPlain = announcementHeader ? announcementHeader.textContent.trim() : '';
+        const bodyPlain = announcementBody ? announcementBody.textContent.trim() : '';
+        const headerFormatted = announcementHeader ? announcementHeader.innerHTML.trim() : '';
+        const bodyFormatted = announcementBody ? announcementBody.innerHTML.trim() : '';
+
+        if (!headerPlain && !bodyPlain) {
+            showToast('Please enter a header or body message', 'error');
+            return;
+        }
+
+        // For plain text, combine header and body
+        plainText = headerPlain + (headerPlain && bodyPlain ? '. ' : '') + bodyPlain;
+        // Store formatted versions
+        header = sanitizeHtml(headerFormatted);
+        body = sanitizeHtml(bodyFormatted);
+    } else {
+        // Regular announcement
+        plainText = announcementText.textContent.trim();
+        formattedText = announcementText.innerHTML.trim();
+
+        if (!plainText) {
+            showToast('Please enter a message', 'error');
+            return;
+        }
     }
 
     if (typeof announcementsRef === 'undefined') {
@@ -422,17 +453,33 @@ async function addAnnouncement(e) {
     announcementForm.querySelector('button[type="submit"]').disabled = true;
 
     try {
-        await announcementsRef.add({
+        const announcementData = {
             text: plainText,
-            formattedText: sanitizeHtml(formattedText),
             type: type,
             active: active,
+            isCardStyle: isCardStyle,
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             createdBy: currentUser ? currentUser.email : 'unknown'
-        });
+        };
+
+        if (isCardStyle) {
+            announcementData.header = header;
+            announcementData.body = body;
+        } else {
+            announcementData.formattedText = sanitizeHtml(formattedText);
+        }
+
+        await announcementsRef.add(announcementData);
 
         // Reset form
         announcementText.innerHTML = '';
+        if (announcementHeader) announcementHeader.innerHTML = '';
+        if (announcementBody) announcementBody.innerHTML = '';
+        if (bodyCharCurrent) bodyCharCurrent.textContent = '0';
+        if (cardStyleToggle) {
+            cardStyleToggle.checked = false;
+            toggleCardStyleFields(false);
+        }
         document.querySelector('input[name="announcement-type"][value="info"]').checked = true;
         announcementActive.checked = true;
         charCurrent.textContent = '0';
@@ -450,37 +497,50 @@ async function addAnnouncement(e) {
 
 // Sanitize HTML to only allow safe formatting tags
 function sanitizeHtml(html) {
-    const allowedTags = ['b', 'strong', 'i', 'em', 'u', 'span', 'br'];
-    const allowedAttributes = ['style'];
+    const allowedTags = ['b', 'strong', 'i', 'em', 'u', 'span', 'br', 'ul', 'ol', 'li', 'font'];
+    const allowedAttributes = ['style', 'color', 'face'];
 
     const temp = document.createElement('div');
     temp.innerHTML = html;
 
     function cleanNode(node) {
         if (node.nodeType === Node.TEXT_NODE) {
-            return;
+            return document.createTextNode(node.textContent);
         }
         if (node.nodeType === Node.ELEMENT_NODE) {
             const tagName = node.tagName.toLowerCase();
             if (!allowedTags.includes(tagName)) {
-                // Replace disallowed tag with its text content
-                const text = document.createTextNode(node.textContent);
-                node.parentNode.replaceChild(text, node);
-                return;
+                // Unwrap disallowed tags but keep their allowed children (preserves lists)
+                const fragment = document.createDocumentFragment();
+                Array.from(node.childNodes).forEach(child => {
+                    const cleaned = cleanNode(child);
+                    if (cleaned) fragment.appendChild(cleaned);
+                });
+                return fragment;
             }
-            // Remove disallowed attributes
+
+            const cleanEl = document.createElement(tagName);
             Array.from(node.attributes).forEach(attr => {
-                if (!allowedAttributes.includes(attr.name.toLowerCase())) {
-                    node.removeAttribute(attr.name);
+                if (allowedAttributes.includes(attr.name.toLowerCase())) {
+                    cleanEl.setAttribute(attr.name, attr.value);
                 }
             });
-            // Clean children
-            Array.from(node.childNodes).forEach(cleanNode);
+            Array.from(node.childNodes).forEach(child => {
+                const cleaned = cleanNode(child);
+                if (cleaned) cleanEl.appendChild(cleaned);
+            });
+            return cleanEl;
         }
+        return null;
     }
 
-    Array.from(temp.childNodes).forEach(cleanNode);
-    return temp.innerHTML;
+    const result = document.createElement('div');
+    Array.from(temp.childNodes).forEach(child => {
+        const cleaned = cleanNode(child);
+        if (cleaned) result.appendChild(cleaned);
+    });
+
+    return result.innerHTML;
 }
 
 async function toggleActive(id, newState) {
@@ -520,8 +580,13 @@ async function openEditAnnouncementModal(announcementId) {
     const editActive = document.getElementById('edit-announcement-active');
     const editIdInput = document.getElementById('edit-announcement-id');
     const editCharCurrent = document.getElementById('edit-char-current');
+    const editCardStyleToggle = document.getElementById('edit-card-style-toggle');
+    const editCardStyleFields = document.getElementById('edit-card-style-fields');
+    const editRegularMessageField = document.getElementById('edit-regular-message-field');
+    const editHeader = document.getElementById('edit-announcement-header');
+    const editBody = document.getElementById('edit-announcement-body');
 
-    if (!modal || !editText) return;
+    if (!modal) return;
 
     try {
         // Fetch the announcement data from Firebase
@@ -535,9 +600,33 @@ async function openEditAnnouncementModal(announcementId) {
 
         // Populate the form with existing data
         editIdInput.value = announcementId;
-        editText.innerHTML = data.formattedText || escapeHtml(data.text);
         editActive.checked = data.active;
-        editCharCurrent.textContent = editText.textContent.length;
+
+        // Handle card style vs regular
+        const isCardStyle = data.isCardStyle === true;
+
+        if (editCardStyleToggle) {
+            editCardStyleToggle.checked = isCardStyle;
+        }
+
+        if (isCardStyle) {
+            // Card style announcement (now with rich text - contenteditable)
+            if (editCardStyleFields) editCardStyleFields.classList.remove('hidden');
+            if (editRegularMessageField) editRegularMessageField.classList.add('hidden');
+            if (editHeader) editHeader.innerHTML = data.header || '';
+            if (editBody) editBody.innerHTML = data.body || '';
+            if (editText) editText.innerHTML = '';
+        } else {
+            // Regular announcement
+            if (editCardStyleFields) editCardStyleFields.classList.add('hidden');
+            if (editRegularMessageField) editRegularMessageField.classList.remove('hidden');
+            if (editText) {
+                editText.innerHTML = data.formattedText || escapeHtml(data.text);
+                if (editCharCurrent) editCharCurrent.textContent = editText.textContent.length;
+            }
+            if (editHeader) editHeader.innerHTML = '';
+            if (editBody) editBody.innerHTML = '';
+        }
 
         // Render category selector for edit modal
         renderEditCategorySelector(data.type);
@@ -547,7 +636,11 @@ async function openEditAnnouncementModal(announcementId) {
 
         // Show modal
         modal.style.display = 'flex';
-        editText.focus();
+        if (isCardStyle && editHeader) {
+            editHeader.focus();
+        } else if (editText) {
+            editText.focus();
+        }
     } catch (error) {
         console.error('Error loading announcement:', error);
         showToast('Error loading announcement', 'error');
@@ -589,23 +682,76 @@ function renderEditCategorySelector(selectedType) {
 function updateEditPreview() {
     const editText = document.getElementById('edit-announcement-text');
     const editBubblePreview = document.getElementById('edit-bubble-preview');
-    if (!editText || !editBubblePreview) return;
+    const editCardStyleToggle = document.getElementById('edit-card-style-toggle');
+    const editHeader = document.getElementById('edit-announcement-header');
+    const editBody = document.getElementById('edit-announcement-body');
 
-    const formattedText = editText.innerHTML.trim();
-    const plainText = editText.textContent.trim();
+    if (!editBubblePreview) return;
+
+    const isCardStyle = editCardStyleToggle && editCardStyleToggle.checked;
     const typeRadio = document.querySelector('input[name="edit-announcement-type"]:checked');
     const type = typeRadio ? typeRadio.value : 'info';
-    const typeConfig = TYPE_CONFIG[type] || TYPE_CONFIG.info;
+    const typeConfig = TYPE_CONFIG[type] || { label: 'Update', color: '#3b82f6' };
 
     // Update preview bubble
     editBubblePreview.className = `bubble-preview type-${type}`;
+
+    const previewHeaderEl = editBubblePreview.querySelector('.bubble-preview-header');
     const previewTextEl = editBubblePreview.querySelector('.bubble-preview-text');
-    if (plainText) {
-        previewTextEl.innerHTML = formattedText;
-    } else {
-        previewTextEl.textContent = 'Your message will appear here...';
+    const previewPillEl = editBubblePreview.querySelector('.bubble-preview-pill');
+    const previewLabelEl = editBubblePreview.querySelector('.bubble-preview-label');
+
+    // Apply category color to pill
+    if (previewPillEl && typeConfig.color) {
+        previewPillEl.style.background = hexToRgba(typeConfig.color, 0.15);
+        previewPillEl.style.color = typeConfig.color;
+        previewPillEl.style.borderLeft = `3px solid ${typeConfig.color}`;
     }
-    editBubblePreview.querySelector('.bubble-preview-label').textContent = typeConfig.label;
+
+    if (isCardStyle) {
+        // Card style preview (now with rich text)
+        const headerPlain = editHeader ? editHeader.textContent.trim() : '';
+        const bodyPlain = editBody ? editBody.textContent.trim() : '';
+        const headerFormatted = editHeader ? editHeader.innerHTML.trim() : '';
+        const bodyFormatted = editBody ? editBody.innerHTML.trim() : '';
+
+        if (previewHeaderEl) {
+            if (headerPlain) {
+                previewHeaderEl.innerHTML = headerFormatted;
+                previewHeaderEl.classList.remove('hidden');
+            } else {
+                previewHeaderEl.classList.add('hidden');
+            }
+        }
+
+        if (previewTextEl) {
+            if (bodyPlain) {
+                previewTextEl.innerHTML = bodyFormatted;
+            } else {
+                previewTextEl.textContent = headerPlain ? '' : 'Your message will appear here...';
+            }
+        }
+    } else {
+        // Regular preview
+        const formattedText = editText ? editText.innerHTML.trim() : '';
+        const plainText = editText ? editText.textContent.trim() : '';
+
+        if (previewHeaderEl) {
+            previewHeaderEl.classList.add('hidden');
+        }
+
+        if (previewTextEl) {
+            if (plainText) {
+                previewTextEl.innerHTML = formattedText;
+            } else {
+                previewTextEl.textContent = 'Your message will appear here...';
+            }
+        }
+    }
+
+    if (previewLabelEl) {
+        previewLabelEl.textContent = typeConfig.label;
+    }
 }
 
 function updateEditCharCount() {
@@ -623,17 +769,42 @@ async function saveEditAnnouncement(e) {
     const editActive = document.getElementById('edit-announcement-active');
     const editIdInput = document.getElementById('edit-announcement-id');
     const saveBtn = document.getElementById('save-edit-btn');
+    const editCardStyleToggle = document.getElementById('edit-card-style-toggle');
+    const editHeader = document.getElementById('edit-announcement-header');
+    const editBody = document.getElementById('edit-announcement-body');
 
     const announcementId = editIdInput.value;
-    const plainText = editText.textContent.trim();
-    const formattedText = editText.innerHTML.trim();
+    const isCardStyle = editCardStyleToggle && editCardStyleToggle.checked;
     const typeRadio = document.querySelector('input[name="edit-announcement-type"]:checked');
     const type = typeRadio ? typeRadio.value : 'info';
     const active = editActive.checked;
 
-    if (!plainText) {
-        showToast('Please enter a message', 'error');
-        return;
+    let plainText, formattedText, header, body;
+
+    if (isCardStyle) {
+        // Card style with rich text (contenteditable)
+        const headerPlain = editHeader ? editHeader.textContent.trim() : '';
+        const bodyPlain = editBody ? editBody.textContent.trim() : '';
+        const headerFormatted = editHeader ? editHeader.innerHTML.trim() : '';
+        const bodyFormatted = editBody ? editBody.innerHTML.trim() : '';
+
+        if (!headerPlain && !bodyPlain) {
+            showToast('Please enter a header or body message', 'error');
+            return;
+        }
+
+        plainText = headerPlain + (headerPlain && bodyPlain ? '. ' : '') + bodyPlain;
+        header = sanitizeHtml(headerFormatted);
+        body = sanitizeHtml(bodyFormatted);
+        formattedText = null;
+    } else {
+        plainText = editText ? editText.textContent.trim() : '';
+        formattedText = editText ? editText.innerHTML.trim() : '';
+
+        if (!plainText) {
+            showToast('Please enter a message', 'error');
+            return;
+        }
     }
 
     if (!announcementId) {
@@ -645,14 +816,26 @@ async function saveEditAnnouncement(e) {
     saveBtn.disabled = true;
 
     try {
-        await announcementsRef.doc(announcementId).update({
+        const updateData = {
             text: plainText,
-            formattedText: sanitizeHtml(formattedText),
             type: type,
             active: active,
+            isCardStyle: isCardStyle,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedBy: currentUser ? currentUser.email : 'unknown'
-        });
+        };
+
+        if (isCardStyle) {
+            updateData.header = header;
+            updateData.body = body;
+            updateData.formattedText = null;
+        } else {
+            updateData.formattedText = sanitizeHtml(formattedText);
+            updateData.header = null;
+            updateData.body = null;
+        }
+
+        await announcementsRef.doc(announcementId).update(updateData);
 
         closeEditAnnouncementModal();
         showToast('Announcement updated successfully', 'success');
@@ -989,21 +1172,70 @@ window.deleteCategory = deleteCategory;
 // ================================
 
 function updatePreview() {
-    const formattedText = announcementText.innerHTML.trim();
-    const plainText = announcementText.textContent.trim();
+    const isCardStyle = cardStyleToggle && cardStyleToggle.checked;
     const typeRadio = document.querySelector('input[name="announcement-type"]:checked');
     const type = typeRadio ? typeRadio.value : 'info';
-    const typeConfig = TYPE_CONFIG[type];
+    const typeConfig = TYPE_CONFIG[type] || { label: 'Update', color: '#3b82f6' };
 
-    // Update preview bubble with formatted text
+    // Update preview bubble
     bubblePreview.className = `bubble-preview type-${type}`;
+
+    const previewHeaderEl = bubblePreview.querySelector('.bubble-preview-header');
     const previewTextEl = bubblePreview.querySelector('.bubble-preview-text');
-    if (plainText) {
-        previewTextEl.innerHTML = formattedText;
-    } else {
-        previewTextEl.textContent = 'Your message will appear here...';
+    const previewPillEl = bubblePreview.querySelector('.bubble-preview-pill');
+    const previewLabelEl = bubblePreview.querySelector('.bubble-preview-label');
+
+    // Apply category color to pill
+    if (previewPillEl && typeConfig.color) {
+        previewPillEl.style.background = hexToRgba(typeConfig.color, 0.15);
+        previewPillEl.style.color = typeConfig.color;
+        previewPillEl.style.borderLeft = `3px solid ${typeConfig.color}`;
     }
-    bubblePreview.querySelector('.bubble-preview-label').textContent = typeConfig.label;
+
+    if (isCardStyle) {
+        // Card style preview (now with rich text)
+        const headerPlain = announcementHeader ? announcementHeader.textContent.trim() : '';
+        const bodyPlain = announcementBody ? announcementBody.textContent.trim() : '';
+        const headerFormatted = announcementHeader ? announcementHeader.innerHTML.trim() : '';
+        const bodyFormatted = announcementBody ? announcementBody.innerHTML.trim() : '';
+
+        if (previewHeaderEl) {
+            if (headerPlain) {
+                previewHeaderEl.innerHTML = headerFormatted;
+                previewHeaderEl.classList.remove('hidden');
+            } else {
+                previewHeaderEl.classList.add('hidden');
+            }
+        }
+
+        if (previewTextEl) {
+            if (bodyPlain) {
+                previewTextEl.innerHTML = bodyFormatted;
+            } else {
+                previewTextEl.textContent = headerPlain ? '' : 'Your message will appear here...';
+            }
+        }
+    } else {
+        // Regular preview
+        const formattedText = announcementText.innerHTML.trim();
+        const plainText = announcementText.textContent.trim();
+
+        if (previewHeaderEl) {
+            previewHeaderEl.classList.add('hidden');
+        }
+
+        if (previewTextEl) {
+            if (plainText) {
+                previewTextEl.innerHTML = formattedText;
+            } else {
+                previewTextEl.textContent = 'Your message will appear here...';
+            }
+        }
+    }
+
+    if (previewLabelEl) {
+        previewLabelEl.textContent = typeConfig.label;
+    }
 
     // Update full display preview with current settings
     updateFullDisplayPreview();
@@ -1344,6 +1576,9 @@ function initDisplaySettings() {
             gradientPresets.forEach(p => p.classList.remove('selected'));
             preset.classList.add('selected');
 
+            // Clear video selection when a gradient is selected
+            setSelectedVideo('');
+
             // Update preview
             updateDisplayPreview();
         });
@@ -1436,6 +1671,13 @@ function renderVideoOptions() {
 
 function handleVideoSelection(e) {
     selectedVideo = e.target.value;
+
+    // When a video is selected (not "No Video"), deselect gradient presets
+    if (selectedVideo) {
+        // Remove selected class from all gradient presets
+        gradientPresets.forEach(preset => preset.classList.remove('selected'));
+    }
+
     updateVideoPreview(selectedVideo);
     updateDisplayPreview();
 }
@@ -1762,6 +2004,235 @@ function initMusicSettings() {
 }
 
 // ================================
+// Card Style Announcements
+// ================================
+
+function initCardStyleToggle() {
+    if (!cardStyleToggle) return;
+
+    cardStyleToggle.addEventListener('change', () => {
+        toggleCardStyleFields(cardStyleToggle.checked);
+        updatePreview();
+    });
+
+    // Character count for body (contenteditable)
+    if (announcementBody) {
+        announcementBody.addEventListener('input', () => {
+            if (bodyCharCurrent) {
+                bodyCharCurrent.textContent = announcementBody.textContent.length;
+            }
+            updatePreview();
+        });
+    }
+
+    // Header input updates preview
+    if (announcementHeader) {
+        announcementHeader.addEventListener('input', updatePreview);
+    }
+
+    // Initialize card formatting toolbar
+    initCardFormattingToolbar();
+}
+
+function initCardFormattingToolbar() {
+    // Format buttons for card header/body
+    document.querySelectorAll('.card-format-btn').forEach(btn => {
+        btn.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent losing focus from the editor
+        });
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const command = btn.dataset.command;
+            const target = btn.dataset.target;
+
+            // Focus the appropriate editor
+            const editor = target === 'header' ? announcementHeader : announcementBody;
+            if (editor) {
+                // Ensure the editor is focused and has a selection
+                editor.focus();
+
+                // If the editor is empty or has no selection, place cursor at the end
+                const selection = window.getSelection();
+                if (selection.rangeCount === 0 || !editor.contains(selection.anchorNode)) {
+                    const range = document.createRange();
+                    if (editor.lastChild) {
+                        range.selectNodeContents(editor);
+                        range.collapse(false); // Move to end
+                    } else {
+                        range.setStart(editor, 0);
+                        range.collapse(true);
+                    }
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+
+                document.execCommand(command, false, null);
+                updatePreview();
+            }
+        });
+    });
+
+    // Header color picker
+    const headerColorPicker = document.getElementById('header-color-picker');
+    if (headerColorPicker) {
+        headerColorPicker.addEventListener('input', () => {
+            if (announcementHeader) {
+                announcementHeader.focus();
+                document.execCommand('foreColor', false, headerColorPicker.value);
+                updatePreview();
+            }
+        });
+    }
+
+    // Body color picker
+    const bodyColorPicker = document.getElementById('body-color-picker');
+    if (bodyColorPicker) {
+        bodyColorPicker.addEventListener('input', () => {
+            if (announcementBody) {
+                announcementBody.focus();
+                document.execCommand('foreColor', false, bodyColorPicker.value);
+                updatePreview();
+            }
+        });
+    }
+
+    // Body font selector
+    const bodyFontSelect = document.getElementById('body-font-select');
+    if (bodyFontSelect) {
+        bodyFontSelect.addEventListener('change', () => {
+            if (announcementBody) {
+                announcementBody.focus();
+                document.execCommand('fontName', false, bodyFontSelect.value);
+                updatePreview();
+            }
+        });
+    }
+}
+
+function toggleCardStyleFields(isCardStyle) {
+    if (isCardStyle) {
+        cardStyleFields.classList.remove('hidden');
+        regularMessageField.classList.add('hidden');
+    } else {
+        cardStyleFields.classList.add('hidden');
+        regularMessageField.classList.remove('hidden');
+    }
+}
+
+function initEditCardStyleToggle() {
+    const editCardStyleToggle = document.getElementById('edit-card-style-toggle');
+    const editCardStyleFields = document.getElementById('edit-card-style-fields');
+    const editRegularMessageField = document.getElementById('edit-regular-message-field');
+    const editHeader = document.getElementById('edit-announcement-header');
+    const editBody = document.getElementById('edit-announcement-body');
+
+    if (!editCardStyleToggle) return;
+
+    editCardStyleToggle.addEventListener('change', () => {
+        if (editCardStyleToggle.checked) {
+            editCardStyleFields.classList.remove('hidden');
+            editRegularMessageField.classList.add('hidden');
+        } else {
+            editCardStyleFields.classList.add('hidden');
+            editRegularMessageField.classList.remove('hidden');
+        }
+        updateEditPreview();
+    });
+
+    if (editHeader) {
+        editHeader.addEventListener('input', updateEditPreview);
+    }
+
+    if (editBody) {
+        editBody.addEventListener('input', updateEditPreview);
+    }
+
+    // Initialize edit card formatting toolbar
+    initEditCardFormattingToolbar();
+}
+
+function initEditCardFormattingToolbar() {
+    // Format buttons for edit card header/body
+    document.querySelectorAll('.edit-card-format-btn').forEach(btn => {
+        btn.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevent losing focus from the editor
+        });
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const command = btn.dataset.command;
+            const target = btn.dataset.target;
+
+            const editHeader = document.getElementById('edit-announcement-header');
+            const editBody = document.getElementById('edit-announcement-body');
+
+            // Focus the appropriate editor
+            const editor = target === 'edit-header' ? editHeader : editBody;
+            if (editor) {
+                // Ensure the editor is focused and has a selection
+                editor.focus();
+
+                // If the editor is empty or has no selection, place cursor at the end
+                const selection = window.getSelection();
+                if (selection.rangeCount === 0 || !editor.contains(selection.anchorNode)) {
+                    const range = document.createRange();
+                    if (editor.lastChild) {
+                        range.selectNodeContents(editor);
+                        range.collapse(false); // Move to end
+                    } else {
+                        range.setStart(editor, 0);
+                        range.collapse(true);
+                    }
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+
+                document.execCommand(command, false, null);
+                updateEditPreview();
+            }
+        });
+    });
+
+    // Edit header color picker
+    const editHeaderColorPicker = document.getElementById('edit-header-color-picker');
+    if (editHeaderColorPicker) {
+        editHeaderColorPicker.addEventListener('input', () => {
+            const editHeader = document.getElementById('edit-announcement-header');
+            if (editHeader) {
+                editHeader.focus();
+                document.execCommand('foreColor', false, editHeaderColorPicker.value);
+                updateEditPreview();
+            }
+        });
+    }
+
+    // Edit body color picker
+    const editBodyColorPicker = document.getElementById('edit-body-color-picker');
+    if (editBodyColorPicker) {
+        editBodyColorPicker.addEventListener('input', () => {
+            const editBody = document.getElementById('edit-announcement-body');
+            if (editBody) {
+                editBody.focus();
+                document.execCommand('foreColor', false, editBodyColorPicker.value);
+                updateEditPreview();
+            }
+        });
+    }
+
+    // Edit body font selector
+    const editBodyFontSelect = document.getElementById('edit-body-font-select');
+    if (editBodyFontSelect) {
+        editBodyFontSelect.addEventListener('change', () => {
+            const editBody = document.getElementById('edit-announcement-body');
+            if (editBody) {
+                editBody.focus();
+                document.execCommand('fontName', false, editBodyFontSelect.value);
+                updateEditPreview();
+            }
+        });
+    }
+}
+
+// ================================
 // Utilities
 // ================================
 
@@ -1848,8 +2319,10 @@ function init() {
     initNavigation();
     initPreview();
     initFormattingToolbar();
+    initCardStyleToggle();
     initCategoryModal();
     initEditAnnouncementModal();
+    initEditCardStyleToggle();
     loadCategories();
     initDisplaySettings();
     initMusicSettings();

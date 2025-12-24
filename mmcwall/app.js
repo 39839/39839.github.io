@@ -746,11 +746,6 @@ function createSlideElement(item) {
     const slide = document.createElement('article');
     slide.className = 'slide';
 
-    // Use formatted text if available, otherwise escape plain text
-    const displayText = item.formattedText
-        ? sanitizeDisplayHtml(item.formattedText)
-        : escapeHtml(item.text);
-
     // Get category info (from dynamic categories or fallback to CONFIG)
     const category = categories[item.type] || { label: CONFIG.typeLabels[item.type] || 'Update', color: '#3b82f6' };
     const categoryLabel = category.label || CONFIG.typeLabels[item.type] || 'Update';
@@ -759,12 +754,35 @@ function createSlideElement(item) {
     // Create pill with custom color styling
     const pillStyle = `background: ${hexToRgba(categoryColor, 0.12)}; color: ${categoryColor}; border-left: 3px solid ${categoryColor};`;
 
-    slide.innerHTML = `
-        <div class="slide-meta">
-            <span class="slide-pill" style="${pillStyle}">${categoryLabel}</span>
-        </div>
-        <div class="slide-text">${displayText}</div>
-    `;
+    // Check if this is a card-style announcement
+    if (item.isCardStyle && (item.header || item.body)) {
+        // Card-style announcement with header and body (now supports rich text)
+        const headerHtml = item.header ? `<h3 class="slide-header">${sanitizeDisplayHtml(item.header)}</h3>` : '';
+        const bodyHtml = item.body ? `<div class="slide-body">${sanitizeDisplayHtml(item.body)}</div>` : '';
+
+        slide.innerHTML = `
+            <div class="slide-meta">
+                <span class="slide-pill" style="${pillStyle}">${categoryLabel}</span>
+            </div>
+            <div class="slide-content card-style">
+                ${headerHtml}
+                ${bodyHtml}
+            </div>
+        `;
+    } else {
+        // Regular announcement - use formatted text if available, otherwise escape plain text
+        const displayText = item.formattedText
+            ? sanitizeDisplayHtml(item.formattedText)
+            : escapeHtml(item.text);
+
+        slide.innerHTML = `
+            <div class="slide-meta">
+                <span class="slide-pill" style="${pillStyle}">${categoryLabel}</span>
+            </div>
+            <div class="slide-text">${displayText}</div>
+        `;
+    }
+
     return slide;
 }
 
@@ -778,7 +796,7 @@ function hexToRgba(hex, alpha) {
 
 // Sanitize HTML for safe display - only allow formatting tags
 function sanitizeDisplayHtml(html) {
-    const allowedTags = ['b', 'strong', 'i', 'em', 'u', 'span', 'br', 'font'];
+    const allowedTags = ['b', 'strong', 'i', 'em', 'u', 'span', 'br', 'font', 'ul', 'ol', 'li'];
     const allowedAttributes = ['style', 'color', 'face'];
 
     const temp = document.createElement('div');
@@ -922,7 +940,10 @@ function initFirestore() {
                         formattedText: item.formattedText || null,
                         type: item.type || 'info',
                         active: item.active !== false,
-                        timestamp: item.timestamp?.toDate?.() || new Date()
+                        timestamp: item.timestamp?.toDate?.() || new Date(),
+                        isCardStyle: item.isCardStyle || false,
+                        header: item.header || null,
+                        body: item.body || null
                     };
                 });
 
@@ -985,10 +1006,8 @@ function showDummyData() {
 // Utilities
 // ================================
 function hideLoading() {
-    loadingElement.style.opacity = '0';
-    setTimeout(() => {
-        loadingElement.classList.add('hidden');
-    }, 500);
+    // Hide loading screen immediately - no delay
+    loadingElement.classList.add('hidden');
 }
 
 function escapeHtml(text) {
@@ -1027,9 +1046,19 @@ function init() {
     // Set default display mode immediately (will be overridden by Firebase settings)
     applyDisplayMode('light');
 
+    // Add class to skip initial animations for instant card display
+    document.body.classList.add('instant-load');
+
     // IMMEDIATELY show fallback content so screen is never empty
     updateSlidesFromData([]);
     hideLoading();
+
+    // Remove instant-load class after first render to enable smooth transitions
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.body.classList.remove('instant-load');
+        });
+    });
 
     initAudio();
     loadVideosData(); // Load video data before display settings
@@ -1038,15 +1067,13 @@ function init() {
     loadCategories();
     initFullscreen();
 
-    // Small delay to ensure Firebase is loaded, then fetch real data
-    setTimeout(() => {
-        try {
-            initFirestore();
-        } catch (e) {
-            console.error('Error initializing Firestore:', e);
-            showDummyData();
-        }
-    }, 0);
+    // Load Firebase data immediately
+    try {
+        initFirestore();
+    } catch (e) {
+        console.error('Error initializing Firestore:', e);
+        showDummyData();
+    }
 }
 
 if (document.readyState === 'loading') {

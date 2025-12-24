@@ -7,6 +7,24 @@
         "description": "Calming bubble animation"
     },
     {
+        "id": "circles",
+        "name": "Circles",
+        "mp4Url": "https://video.wixstatic.com/video/11b1c4_b90bd98e03a44bd193405f6418b2fc11/1080p/mp4/file.mp4",
+        "description": "Flowing circle patterns"
+    },
+    {
+        "id": "rain",
+        "name": "Rain",
+        "mp4Url": "https://video.wixstatic.com/video/11b1c4_08eac85b36214d51a23c40c6e7f95a67/1080p/mp4/file.mp4",
+        "description": "Gentle rain drops"
+    },
+    {
+        "id": "bluewave",
+        "name": "Blue Wave",
+        "mp4Url": "https://video.wixstatic.com/video/11b1c4_0da21b02658a4ca1b869a92569cbab41/1080p/mp4/file.mp4",
+        "description": "Calming blue wave motion"
+    },
+    {
         "id": "goop",
         "name": "Goop",
         "youtubeId": "2o-8Xxo2uJA",

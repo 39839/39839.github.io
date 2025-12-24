@@ -1249,6 +1249,42 @@ body.layout-3 .slide.tertiary {
     text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
 }
 
+/* Card-style announcements with header and body */
+.slide-content.card-style {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.slide-header {
+    font-size: calc(var(--slide-text-size) * 1.25);
+    font-weight: 700;
+    line-height: 1.3;
+    color: rgba(26, 32, 44, 0.95);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.slide-body {
+    font-size: var(--slide-text-size);
+    font-weight: 400;
+    line-height: 1.6;
+    color: rgba(26, 32, 44, 0.85);
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    margin: 0;
+}
+
+/* Card-style list styling */
+.slide-body ul,
+.slide-body ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.slide-body li {
+    margin-bottom: 0.25rem;
+}
+
 /* Clock display */
 .clock {
     position: fixed;
@@ -1429,12 +1465,10 @@ body.layout-3 .slide.tertiary {
     background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, #ffffff 100%);
     z-index: 1000;
     gap: var(--spacing-lg);
-    transition: opacity 500ms ease;
 }
 
 .loading.hidden {
-    display: none;
-    opacity: 0;
+    display: none !important;
 }
 
 .loading-spinner {
@@ -2368,12 +2402,43 @@ body.layout-3 .slide.tertiary {
 .bubble-preview.type-health::before { background: var(--color-health); }
 .bubble-preview.type-welcome::before { background: var(--color-welcome); }
 
+.bubble-preview-header {
+    font-size: calc(var(--font-size-lg) * 1.15);
+    font-weight: 700;
+    color: rgba(26, 32, 44, 0.95);
+    line-height: 1.3;
+    margin-bottom: var(--spacing-xs);
+}
+
+.bubble-preview-header.hidden {
+    display: none;
+}
+
 .bubble-preview-text {
     font-size: var(--font-size-lg);
     font-weight: 600;
     color: rgba(26, 32, 44, 0.9);
     line-height: 1.5;
     margin-bottom: var(--spacing-sm);
+}
+
+/* When card-style is used, make body text lighter weight */
+.bubble-preview-header + .bubble-preview-text {
+    font-weight: 400;
+    color: rgba(26, 32, 44, 0.8);
+}
+
+/* List styling in bubble preview */
+.bubble-preview-text ul,
+.bubble-preview-text ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+    text-align: left;
+}
+
+.bubble-preview-text li {
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
 }
 
 .bubble-preview-label {
@@ -3017,6 +3082,37 @@ body.layout-3 .slide.tertiary {
     margin-top: var(--spacing-xs);
 }
 
+/* Card Style Toggle */
+.card-style-toggle {
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Card Style Fields */
+.card-style-fields {
+    padding: var(--spacing-md);
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px dashed rgba(59, 130, 246, 0.3);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.card-style-fields.hidden {
+    display: none;
+}
+
+.card-style-fields .input-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.card-style-fields .input-group:last-child {
+    margin-bottom: 0;
+}
+
+.card-style-fields textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
 /* Rich Text Formatting Toolbar */
 .formatting-toolbar {
     display: flex;
@@ -3149,6 +3245,84 @@ body.layout-3 .slide.tertiary {
 
 .rich-text-editor u {
     text-decoration: underline;
+}
+
+/* Rich text editor list styling */
+.rich-text-editor ul,
+.rich-text-editor ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.rich-text-editor li {
+    margin-bottom: 0.25rem;
+}
+
+/* Card style specific editors */
+.card-header-editor {
+    min-height: 50px;
+    max-height: 80px;
+    font-weight: 600;
+    font-size: calc(var(--font-size-base) * 1.1);
+}
+
+.card-body-editor {
+    min-height: 80px;
+    max-height: 150px;
+}
+
+/* Smaller color picker for toolbar */
+.color-picker-small {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 2px solid var(--color-bg-dark);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    background: none;
+}
+
+.color-picker-small::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.color-picker-small::-webkit-color-swatch {
+    border-radius: 2px;
+    border: none;
+}
+
+/* Format dropdown in toolbar */
+.format-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.format-label {
+    font-size: 11px;
+    color: var(--color-text-light);
+    white-space: nowrap;
+}
+
+.format-select {
+    font-size: 12px;
+    padding: 4px 6px;
+    border: 1px solid var(--color-bg-dark);
+    border-radius: var(--radius-sm);
+    background: var(--color-white);
+    cursor: pointer;
+}
+
+/* Card header/body toolbar - more compact */
+.card-header-toolbar,
+.card-body-toolbar {
+    padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.card-header-toolbar .format-btn,
+.card-body-toolbar .format-btn {
+    width: 28px;
+    height: 28px;
 }
 
 /* Button Variants */
@@ -4602,6 +4776,14 @@ body.video-bg-active .slide-text {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+body.video-bg-active .slide-header {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+body.video-bg-active .slide-body {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
 body.video-bg-active .slide-pill {
     background: rgba(255, 255, 255, 0.2) !important;
     backdrop-filter: blur(10px);
@@ -4746,6 +4928,18 @@ body.display-mode-light .slide-text {
     text-shadow: none;
 }
 
+body.display-mode-light .slide-header {
+    color: var(--color-text) !important;
+    font-weight: 700;
+    text-shadow: none;
+}
+
+body.display-mode-light .slide-body {
+    color: rgba(26, 32, 44, 0.8) !important;
+    font-weight: 400;
+    text-shadow: none;
+}
+
 body.display-mode-light .slide-pill {
     color: inherit !important;
     text-shadow: none;
@@ -4783,6 +4977,18 @@ body.display-mode-dark .slide {
 body.display-mode-dark .slide-text {
     color: #ffffff !important;
     font-weight: 500;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+body.display-mode-dark .slide-header {
+    color: #ffffff !important;
+    font-weight: 700;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+body.display-mode-dark .slide-body {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 400;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
@@ -4830,4 +5036,20 @@ body.display-mode-dark.video-bg-active .slide {
 body.display-mode-dark.video-bg-active .clock,
 body.display-mode-dark.video-bg-active .display-title {
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* ================================
+   Instant Load - Skip animations on initial page load
+   ================================ */
+body.instant-load .slide {
+    transition: none !important;
+}
+
+body.instant-load .slide.active {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) translateY(0) scale(var(--slide-scale)) !important;
+}
+
+body.instant-load .loading {
+    display: none !important;
 }
