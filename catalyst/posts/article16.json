@@ -21,7 +21,8 @@
       },
       {
         "order": 3,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1serendipity.avif",
         "alt_text": "Dr. John Hawdon",
         "caption": "Dr. John Hawdon (photo from The Hawdon Lab)",
         "note": "Internal image placement indicated in source text"
@@ -93,7 +94,8 @@
       },
       {
         "order": 17,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2serendipity.avif",
         "alt_text": "Ancylostoma caninum",
         "caption": "Ancylostoma caninum (photo by Andrea Langeland)",
         "note": "Internal image placement indicated in source text"
@@ -157,6 +159,13 @@
         "order": 29,
         "type": "paragraph",
         "content": "After all, as Dr. Hawdon has learned firsthand, serendipity truly does favor the prepared mind."
+      },
+      {
+        "order": 30,
+        "type": "game",
+        "src": "posts/games/article16.html",
+        "title": "Parasite Pathways: Hawdon's Helminthes",
+        "height": "580"
       }
     ]
   }

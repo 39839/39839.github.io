@@ -26,7 +26,8 @@
       },
       {
         "order": 4,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1chromaticchemistry.webp",
         "alt_text": "Colorful mineral pigments",
         "caption": "Image Credit: © Attasit / stock.adobe.com",
         "note": "Internal image placement indicated in source text"
@@ -68,7 +69,8 @@
       },
       {
         "order": 12,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2chromaticchemistry.webp",
         "alt_text": "Horseshoe crabs with blue blood",
         "caption": "Image Credit: © ztony1971 / stock.adobe.com",
         "note": "Internal image placement indicated in source text"
@@ -90,7 +92,8 @@
       },
       {
         "order": 16,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3chromaticchemistry.webp",
         "alt_text": "Crystal Field Theory diagram",
         "caption": "Image Credit: Jorge Adrián Serrano, CC0, via Wikimedia Commons",
         "note": "Internal image placement indicated in source text"
@@ -119,6 +122,13 @@
         "order": 21,
         "type": "paragraph",
         "content": "From Renaissance paintings to modern dyes, transition metals have transformed the way we see and create color. Transition metals bridge the gap between the microscopic and the macroscopic, turning the subtle movements of electrons into a vivid tapestry of color. So, the next time you marvel at a gemstone or catch the glimmer of a vibrant hue in nature, take a moment to appreciate the chemistry behind it—transition metals spinning their invisible dance to create the visible wonders of our world."
+      },
+      {
+        "order": 22,
+        "type": "game",
+        "src": "posts/games/article5.html",
+        "title": "Term Targeter: Chromatic Chemistry",
+        "height": "580"
       }
     ]
   }

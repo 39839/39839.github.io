@@ -21,7 +21,8 @@
       },
       {
         "order": 3,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1howtheworldofgenetics.avif",
         "alt_text": "Speyeria mormonia butterfly",
         "caption": "Image Credit: Photo by Jerrry G, licensed under an Education License. Dimensions: 5000 x 3321px.",
         "note": "Internal image placement indicated in source text"
@@ -65,6 +66,13 @@
         "order": 11,
         "type": "pull_quote",
         "content": "\"If you want to understand evolutionary principles, you have to understand the underlying genetic drivers of diversity—to understand how phenotypes evolved, first you must understand how genes evolved to generate these phenotypes. To understand the general evolutionary principle, you need to understand genetics. There’s another side to the quote ‘nothing in biology makes sense except in the light of evolution’. In reality, nothing makes sense except in the light of development, it’s necessary to pull back the folds of such evolutionary questions.\""
+      },
+      {
+        "order": 12,
+        "type": "game",
+        "src": "posts/games/article17.html",
+        "title": "EvoGenetics Dash: Livraghi's Lepidoptera",
+        "height": "580"
       }
     ]
   }

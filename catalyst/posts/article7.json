@@ -16,7 +16,8 @@
       },
       {
         "order": 2,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1significanceofgenetics.avif",
         "alt_text": "Heliconius Melpomene butterfly",
         "caption": "Heliconius Melpomene, the Postman Butterfly - a likely hybrid between melpomene subspecies malleti and plesseni (by Miroslav Srb, licensed for educational use via Adobe Stock).",
         "note": "Internal image placement indicated in source text"
@@ -38,7 +39,8 @@
       },
       {
         "order": 6,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2bsiggenetics.webp",
         "alt_text": "Limenitis archippus and Danaus plexippus comparison",
         "caption": "Limenitis archippus (Viceroy, Left) Danaus plexippus (Monarch, Right)",
         "note": "Internal image placement indicated in source text"
@@ -50,7 +52,8 @@
       },
       {
         "order": 8,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3bsiggenetics.webp",
         "alt_text": "Heliconius erato amazonia and Heliconius melpomene melpomene comparison",
         "caption": "Heliconius erato amazonia (Red Postman, Left) and Heliconius melpomene melpomene (Postman, Right)",
         "note": "Internal image placement indicated in source text"
@@ -59,6 +62,13 @@
         "order": 9,
         "type": "paragraph",
         "content": "This isn’t as simple as directly mutating the gene sequence repeatedly—no, that’s much too random and deleterious to consistently act as a driving force for evolution. The most common form of molecular and developmental change in evolution comes from regulatory tweaks. Similar to yellow, nature can twist parameters on where, when, and how these genes are expressed, all through changes in cis-regulatory expression. Cis-regulatory elements include enhancer and repressor regions in DNA—where important transcription factors bind in order to activate or hinder gene expression (the process of turning DNA sequences into RNA, and ultimately [but not always] protein). As mentioned, these cis-regulatory elements truly control every advanced direction for a gene during development [8]. Variations in DNA sequence, transcription factor or cofactor accessibility, and epigenetic modifications are all examples of factors that influence enhancer or repressor activity. These changes, in turn, regulate the expression of genes like optix, determining its activation in specific scale types or regions of the butterfly wing. Similar to yellow, evolution has a way of shifting not just parameters, but function, as a result. While the optix gene sequence remains the same in other butterfly & moth species, it has been shown to be absent in the production of red pigment. Understanding the mechanisms behind the gain and loss of regulatory specifications is a compelling way to study evolution, and researchers are only beginning to pull back the film in this field. "
+      },
+      {
+        "order": 10,
+        "type": "game",
+        "src": "posts/games/article7.html",
+        "title": "Term Targeter: Insect Genetics",
+        "height": "580"
       }
     ]
   }

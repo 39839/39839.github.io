@@ -21,7 +21,8 @@
       },
       {
         "order": 3,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1sillylexicon.avif",
         "alt_text": "Doctor holding human ear model",
         "caption": "Image Credit: Doctor holding human ear model to learn and treat hearing loss in patient. By manassanant.",
         "note": "Internal image placement indicated in source text"
@@ -48,7 +49,8 @@
       },
       {
         "order": 8,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2sillylexicon.avif",
         "alt_text": "Cochlea diagram",
         "caption": "\"1406 Cochlea\" by OpenStax is licensed under CC BY 4.0.",
         "note": "Internal image placement indicated in source text"
@@ -65,7 +67,8 @@
       },
       {
         "order": 11,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3sillylexicon.avif",
         "alt_text": "Zebrafish Yolk",
         "caption": "\"Zebrafish Yolk\" by National Institutes of Health (NIH) is marked with Public Domain Mark 1.0.",
         "note": "Internal image placement indicated in source text"
@@ -97,7 +100,8 @@
       },
       {
         "order": 17,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image4sillylexicon.avif",
         "alt_text": "Norbornane 2D skeletal structure",
         "caption": "\"File:Norbornane-2D-skeletal.svg\" by WhiteTimberwolf, Ben Mills (PNG version) is marked with CC0 1.0.",
         "note": "Internal image placement indicated in source text"
@@ -141,6 +145,13 @@
         "order": 25,
         "type": "paragraph",
         "content": "For Norbornane, I don’t have any great examples, but I can confidently say from experience that it makes an excellent plant name. I could see it being used for a fish, as well."
+      },
+      {
+        "order": 26,
+        "type": "game",
+        "src": "posts/games/article6.html",
+        "title": "Term Targeter: Science's Silly Lexicon",
+        "height": "580"
       }
     ]
   }
