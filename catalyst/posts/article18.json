@@ -132,6 +132,13 @@
         "order": 24,
         "type": "paragraph",
         "content": "“I think it’s beautiful we’re given the chance to live, breathe, think, and feel. I want my work to reflect that, be a part of the solutions for a more sustainable future.”"
+      },
+      {
+        "order": 25,
+        "type": "game",
+        "src": "posts/games/article18.html",
+        "title": "Sustainable Futures: Wyka's Way",
+        "height": "580"
       }
     ]
   }

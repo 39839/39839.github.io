@@ -41,7 +41,8 @@
       },
       {
         "order": 7,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1districtasustainable.avif",
         "alt_text": "Project Location Map of Northeast Boundary Utility Relocations",
         "caption": "Project Location Map of Northeast Boundary Utility Relocations Source: DC Water",
         "note": "Internal image placement indicated in source text"
@@ -63,7 +64,8 @@
       },
       {
         "order": 11,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2districtasustainable.avif",
         "alt_text": "Graph of D.C.’s Canopy Coverage",
         "caption": "Graph of D.C.’s Canopy Coverage between 2006 and 2032 Source: Department of Energy and Environment",
         "note": "Internal image placement indicated in source text"
@@ -75,7 +77,8 @@
       },
       {
         "order": 13,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3districtasustainable.avif",
         "alt_text": "Map of Where the Most Healthy Trees Have Been Removed",
         "caption": "Map of Where the Most Healthy Trees Have Been Removed Since 2020 Source: Equal Rights Center (2025)",
         "note": "Internal image placement indicated in source text"
@@ -104,6 +107,21 @@
         "order": 18,
         "type": "paragraph",
         "content": "Washington, D.C., is at a pivotal moment. LEED-certified buildings and new developments may signal progress, but a truly sustainable capital depends on how well the city restores its rivers, cools overheated neighborhoods with canopies, and protects its biodiversity. If the waterways remain polluted, wetlands continue to disappear, and communities lack green spaces, the District can’t call itself sustainable. Yet, with the right tools, such as hydrological modeling, GIS, and biophilic design, D.C. can weave nature back into city life and lead as a truly sustainable capital. If D.C. leverages STEM innovation and equitable planning, it could serve as a model for other U.S. cities striving for sustainability. D.C. has significant green initiatives, but without solutions that purposefully integrate ecological health, resilience, and environmental consciousness into every neighborhood, it doesn’t truly become sustainable."
+      },
+      {
+        "order": 19,
+        "type": "embed",
+        "url": "posts/insidearticleimages/image4districtasustainable.html",
+        "title": "Sustainable DC Actions",
+        "caption": "Interactive snapshot of key sustainable initiatives across D.C.",
+        "height": 720
+      },
+      {
+        "order": 20,
+        "type": "game",
+        "src": "posts/games/article10.html",
+        "title": "The District Dash: Sustainable City Challenge",
+        "height": "580"
       }
     ]
   }

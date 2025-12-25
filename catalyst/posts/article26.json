@@ -46,10 +46,10 @@
       },
       {
         "order": 8,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1chartingthefuture.avif",
         "alt_text": "Diagram of the role of complement at the neuromuscular junction",
-        "caption": "James F. Howard Jr. Myasthenia gravis: the role of complement at the neuromuscular junction. Annals of the New York Academy of Sciences. 2017",
-        "note": "Internal image placement and citation indicated in source text"
+        "caption": "James F. Howard Jr. Myasthenia gravis: the role of complement at the neuromuscular junction. Annals of the New York Academy of Sciences. 2017"
       },
       {
         "order": 9,
@@ -85,6 +85,13 @@
         "order": 15,
         "type": "paragraph",
         "content": "Though challenges in drug development and the elusive goal of eliminating specific antibody-producing cells persist, the combination of deepening mechanistic knowledge and sophisticated predictive tools, spearheaded by Dr. Kaminski, positions the field on the cusp of breakthroughs that could fundamentally change outcomes for patients living with this condition."
+      },
+      {
+        "order": 16,
+        "type": "game",
+        "src": "posts/games/article26.html",
+        "title": "MG Junction Quest: Targeted Care & Modeling",
+        "height": "580"
       }
     ]
   }

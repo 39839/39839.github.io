@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" style="--primary: #d32f2f; --secondary: #ff8a65;">
+<html lang="en" style="--primary: #3b82f6; --secondary: #f59e0b;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Everything Sings – Term Targeter</title>
+    <title>The Star of the Nervous System – Term Targeter</title>
 <style>
   @keyframes feedbackPop {
     0% {
@@ -552,7 +552,7 @@ button:disabled {
 <div class="interactive-game-container">
 
 
-  <h2><span class="game-icon">🪐</span>Term Targeter: Everything Sings</h2>
+  <h2><span class="game-icon">🪐</span>Term Targeter: The Star of the Nervous System</h2>
   <div id="clue">Press "Start Game" to begin your mission!</div>
   <div id="game-area">
     <div class="stars"></div>
@@ -560,7 +560,7 @@ button:disabled {
   <div class="score-display">
     <div class="score-item">
       <span class="score-label">Score</span>
-      <span class="score-value" id="score-value">0/5</span>
+      <span class="score-value" id="score-value">0/6</span>
     </div>
     <div class="score-item">
       <span class="score-label">Accuracy</span>
@@ -583,23 +583,23 @@ button:disabled {
 // Enhanced game engine with smooth animations and professional features
 class TermTargeterGame {
   constructor() {
-    // Game data from the "Everything Sings" article
+    // Game data from the "Insect Genetics" article
     this.roundsData = [
-      { term: 'Complexity Science', clue: 'Study of large interacting networks producing emergent, self-organizing phenomena' },
-      { term: 'Emergent phenomena', clue: 'Behaviors or patterns arising from interactions of simpler components' },
-      { term: 'Neural network', clue: 'Layered computational model inspired by brain neurons for tasks like AI' },
-      { term: 'Systems thinking', clue: 'Approach focusing on whole systems and interactions rather than isolated parts' },
-      { term: 'Cross-pollinate', clue: 'Apply ideas or methods from one discipline to another to spark new insights' }
-    ];
+{ term: 'Tripartite synapse', clue: 'Concept of synaptic communication involving two neurons plus an astrocyte' },
+{ term: 'Excitotoxicity', clue: 'Neuron death triggered by excessive glutamate or overexcitation' },
+{ term: 'Blood-brain barrier', clue: 'Selective CNS border whose tightness astrocyte endfeet help reinforce' },
+{ term: 'Lactate', clue: 'Energy source preferred by neurons during high metabolic demands' },
+{ term: 'Aquaporin channels', clue: 'Water pores astrocytes use during sleep to circulate fluid and clear waste' }
+];
     
     this.distractorsData = [
-      'Quantum tunneling',
-      'Stoichiometry',
-      'Habenula perforata',
-      'Epiboly',
-      'Norbornane',
-      'Tribbles'
-    ];
+'Saltatory conduction',
+'Node of Ranvier',
+'Myelin sheath',
+'GABAergic interneuron',
+'Synaptic vesicle recycling',
+'Glucose'
+];
     
     // DOM elements
     this.elements = {

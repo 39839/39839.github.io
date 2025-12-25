@@ -21,9 +21,11 @@
       },
       {
         "order": 3,
-        "type": "video_placeholder",
-        "note": "Context: The Invisible Gorilla Experiment video",
-        "caption": "Video reference indicated in source text."
+        "type": "embed",
+        "url": "https://www.youtube.com/embed/vJG698U2Mvo?si=n0zxY9xLOXR5xMPy&controls=0",
+        "title": "The Invisible Gorilla Experiment",
+        "caption": "Watch the classic attention experiment that inspired this section.",
+        "height": 360
       },
       {
         "order": 4,
@@ -42,10 +44,10 @@
       },
       {
         "order": 7,
-        "type": "image_placeholder",
-        "alt_text": "Dr. Sarah Shomstein",
-        "caption": "Dr. Sarah Shomstein (Credit: Lily Speredelozzi/GW Today)",
-        "note": "Internal image placement indicated in source text"
+        "type": "embed",
+        "url": "posts/insidearticleimages/image1iamtherefore.html",
+        "title": "Inattentional blindness demo",
+        "caption": "Video clip illustrating inattentional blindness in action."
       },
       {
         "order": 8,
@@ -89,10 +91,10 @@
       },
       {
         "order": 16,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2iamtherefore.avif",
         "alt_text": "Diagram of Visual processing streams",
-        "caption": "Visual processing in the brain divides into two main streams: the dorsal (“where”) pathway, which projects upward to the parietal lobe and processes spatial location and motion, and the ventral (“what”) pathway, which projects downward to the temporal lobe and identifies objects and their features. (Image adapted from Ventral and Dorsal Streams of Visual Information in Introduction to Neuroscience by the University of Utah)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Visual processing divides into dorsal (\"where\") and ventral (\"what\") pathways (adapted from University of Utah)."
       },
       {
         "order": 17,
@@ -126,10 +128,10 @@
       },
       {
         "order": 23,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3iamtherefore.avif",
         "alt_text": "Pupil mimicry study image",
-        "caption": "Psychologists measure changes in pupil size as a physiological indicator of trust and social interactions (Image from Kret, M.E. & De Dreu, C.K.W. (2018). Pupil-mimicry conditions trust in partners: Moderation by oxytocin and group membership. Evolution and Human Behavior.)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Pupil-mimicry study: physiological indicators of trust in social interactions (Kret & De Dreu, 2018)."
       },
       {
         "order": 24,
@@ -150,6 +152,13 @@
         "order": 27,
         "type": "paragraph",
         "content": "Dr. Shomstein emphasizes that science is a team sport. “We do it together,” she said. In her lab, graduate students and postdoctoral fellows are co-investigators, not just assistants, training to ask their own complex questions and developing novel approaches to find the answers. This collaborative ethos mirrors the very phenomenon she studies: separate systems working together, integrating multiple signals to produce something greater than the sum of its parts. By tracing how the brain edits reality on the fly, Dr. Shomstein is pushing the science of attention toward multi-sensory environments where we actually live. In doing so, she is helping to redraw the map of how we see and what we miss in an age when our perceptual worlds are more crowded, more mediated, and more augmented than ever before."
+      },
+      {
+        "order": 28,
+        "type": "game",
+        "src": "posts/games/article30.html",
+        "title": "Attention Quest: Shomstein’s Mind Map",
+        "height": "580"
       }
     ]
   }

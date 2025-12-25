@@ -36,10 +36,10 @@
       },
       {
         "order": 6,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1brandonkort.avif",
         "alt_text": "Returned: Child Soldiers of Nepal’s Maoist Army",
-        "caption": "Returned: Child Soldiers of Nepal’s Maoist Army",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Returned: Child Soldiers of Nepal’s Maoist Army"
       },
       {
         "order": 7,
@@ -158,10 +158,10 @@
       },
       {
         "order": 30,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2brandonkohrt.avif",
         "alt_text": "Brandon Kohrt, M.D., Ph.D., and Seidu Swaray",
-        "caption": "Brandon Kohrt, M.D., Ph.D., and Seidu Swaray of the Liberian Association for Psychosocial Services are conducting a needs assessment for the Carter Center in Lofa County, Liberia. (Image Credit)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Brandon Kohrt, M.D., Ph.D., and Seidu Swaray of the Liberian Association for Psychosocial Services conduct a needs assessment for the Carter Center in Lofa County, Liberia."
       },
       {
         "order": 31,
@@ -187,6 +187,13 @@
         "order": 35,
         "type": "paragraph",
         "content": "Drawing on anthropology, implementation science, and digital innovation, Kohrt builds interventions that are deeply rooted in local contexts yet designed for global impact. For him, the most enduring solutions are those built through mutual learning, where knowledge moves in every direction and relationships define the roadmap."
+      },
+      {
+        "order": 36,
+        "type": "game",
+        "src": "posts/games/article25.html",
+        "title": "Global Mental Health Dash: Kohrt's Innovations",
+        "height": "580"
       }
     ]
   }

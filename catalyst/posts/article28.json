@@ -25,10 +25,10 @@
       },
       {
         "order": 3,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1cosmicjourney.avif",
         "alt_text": "Dr. Duilia De Mello",
-        "caption": "Dr. Duilia De Mello (Credit: Wikipedia)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Dr. Duilia De Mello (Credit: Wikipedia)"
       },
       {
         "order": 4,
@@ -52,10 +52,10 @@
       },
       {
         "order": 8,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2cosmicjourney.avif",
         "alt_text": "NASA Goddard Space Flight Center",
-        "caption": "NASA Goddard Space Flight Center where Dr. De Mello works with her team to conduct research (By NASA Goddard/Bill Hrybyk)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "NASA Goddard Space Flight Center where Dr. De Mello works with her team to conduct research (By NASA Goddard/Bill Hrybyk)"
       },
       {
         "order": 9,
@@ -79,10 +79,10 @@
       },
       {
         "order": 13,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3cosmicjourney.avif",
         "alt_text": "Blue blobs captured by the Hubble Space Telescope",
-        "caption": "Blue blobs captured by the Hubble Space Telescope. (Credit: NASA, ESA, and D. de Mello [Catholic University of America/GSFC])",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Blue blobs captured by the Hubble Space Telescope. (Credit: NASA, ESA, and D. de Mello [Catholic University of America/GSFC])"
       },
       {
         "order": 14,
@@ -111,10 +111,10 @@
       },
       {
         "order": 19,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image4acosmicjourney.webp",
         "alt_text": "Comparison of the southern ring nebula between the Hubble and James Webb Space Telescopes",
-        "caption": "Comparison of the southern ring nebula between the Hubble (left) and James Webb (right) Space Telescopes (Credit Left: Hubble Heritage Team [STScI/AURA/NASA/ESA]) (Credit Right: NASA, ESA, CSA, STScI)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Comparison of the southern ring nebula between the Hubble (left) and James Webb (right) Space Telescopes (Credit Left: Hubble Heritage Team [STScI/AURA/NASA/ESA]) (Credit Right: NASA, ESA, CSA, STScI)"
       }
     ]
   }

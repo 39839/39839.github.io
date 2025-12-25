@@ -75,6 +75,14 @@
         "content": "Researchers have found that these two memory systems operate in distinct brain regions. Declarative memory primarily involves structures in the medial temporal lobe, such as the hippocampus. In contrast, procedural memory largely involves the basal ganglia. These two \"classes\" of memory are the focus of the DP model."
       },
       {
+        "order": 13.5,
+        "type": "embed",
+        "url": "posts/insidearticleimages/image1proceduralmemory.html",
+        "title": "Declarative vs. Procedural Memory Graphic",
+        "caption": "Declarative and procedural systems, visualized for the DP model.",
+        "height": 520
+      },
+      {
         "order": 14,
         "type": "section_header",
         "content": "Formulating the Declarative/Procedural Model"
@@ -155,6 +163,14 @@
         "content": "Currently, Dr. Ullman teaches Medical Neuroscience courses for medical students at Georgetown Medical School. Drawing from his research on declarative memory, he structures his lectures for effective learning. Dr. Ullman emphasizes strategies like repeated concept exposure and the benefits of spacing out these repetitions. He also stresses the importance of the “testing effect,” or “retrieval practice,” which highlights the value of actively recalling information for long-term memory formation."
       },
       {
+        "order": 29.5,
+        "type": "embed",
+        "url": "posts/insidearticleimages/image2proceduralmemory.html",
+        "title": "Study Optimizer: Declarative/Procedural Model",
+        "caption": "Practical study strategies mapped to declarative and procedural memory.",
+        "height": 700
+      },
+      {
         "order": 30,
         "type": "section_header",
         "content": "Conclusion: Integrating Language, Memory, and Mind"
@@ -163,6 +179,13 @@
         "order": 31,
         "type": "paragraph",
         "content": "As students navigate lectures and lab reports, they might perceive language and memory as separate systems. Dr. Ullman’s research reveals the interconnectedness between these systems. The DP model elucidates not only how the brain processes language but also how we can learn more effectively. Through understanding how we think, we also come to appreciate the evolution of our brain's functions. Whether memorizing metabolic pathways in biochemistry or synthesis reactions in organic chemistry, the brain constantly utilizes both declarative and procedural memory systems to comprehend the world. Dr. Ullman’s work advances our understanding of the biological mechanisms underlying these functionalities, benefiting neuroscientists, psychologists, educators, and students alike."
+      },
+      {
+        "order": 32,
+        "type": "game",
+        "src": "posts/games/article21.html",
+        "title": "Neuro Dash: The DP Model",
+        "height": "580"
       }
     ]
   }

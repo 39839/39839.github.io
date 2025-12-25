@@ -61,10 +61,10 @@
       },
       {
         "order": 11,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1howcommunityledscience.avif",
         "alt_text": "Air quality monitoring sensors used in T.H.E.E.J. lab projects",
-        "caption": "Air quality monitoring sensors that are used in T.H.E.E.J. lab projects at Turner Station, Cheverly, and Curtis Bay, Maryland",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Air quality monitoring sensors used in T.H.E.E.J. lab projects at Turner Station, Cheverly, and Curtis Bay, Maryland"
       },
       {
         "order": 12,
@@ -85,6 +85,13 @@
         "order": 15,
         "type": "paragraph",
         "content": "Engaging the community in research, whether it is through community-based science or citizen science, leads to a greater understanding and impact. Elevating the voices of those most impacted and giving non-scientists the tools to shape their future will create better outcomes for both scientists and citizens. Engaging communities in scientific research has the potential to increase trust in science and drive policy decisions. As Dr. Wilson said, “communities want science that leads to real action and change, so to do that you have to translate the science and communicate to decision makers, like policy makers.” Empowering communities to tell their stories through science helps to keep policy and people at the forefront of research, paving the way for a brighter, more equitable future."
+      },
+      {
+        "order": 16,
+        "type": "game",
+        "src": "posts/games/article27.html",
+        "title": "Eco-Justice Dash: Community Power",
+        "height": "580"
       }
     ]
   }

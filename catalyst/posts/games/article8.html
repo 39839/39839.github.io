@@ -1,24 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" style="--primary: #d32f2f; --secondary: #ff8a65;">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Everything Sings – Term Targeter</title>
-<style>
-  @keyframes feedbackPop {
-    0% {
-      transform: translate(-50%, -50%) scale(0.8);
-      opacity: 0;
-    }
-    50% {
-      transform: translate(-50%, -50%) scale(1.1);
-    }
-    100% {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-    }
-  }
-</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Paradoxes in Science – Term Targeter</title>
 <style>
 :root {
   /* Dynamic color palette */
@@ -80,15 +65,14 @@ body::before {
 }
 
 .interactive-game-container {
-  /* MODIFICATION: Reduced size - was max-width: 720px */
   width: 100%;
-  max-width: 580px;
-  margin: 0.75rem;
-  padding: 0.75rem;
+  max-width: 720px;
+  margin: 1rem;
+  padding: 1rem;
   background: rgba(30, 41, 59, 0.8);
   backdrop-filter: blur(20px);
   border: none;
-  border-radius: 20px;
+  border-radius: 24px;
   box-shadow: none;
   position: relative;
   overflow: hidden;
@@ -115,11 +99,10 @@ body::before {
 }
 
 h2 {
-  /* MODIFICATION: Reduced font size - was 2rem */
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -131,8 +114,7 @@ h2 {
 
 .game-icon {
   display: inline-block;
-  /* MODIFICATION: Reduced icon size - was 2.5rem */
-  font-size: 2rem;
+  font-size: 2.5rem;
   margin-right: 0.5rem;
   animation: float 3s ease-in-out infinite;
 }
@@ -143,13 +125,11 @@ h2 {
 }
 
 #clue {
-  /* MODIFICATION: Reduced font size - was 1.125rem */
-  font-size: 1rem;
-  line-height: 1.5;
-  /* MODIFICATION: Reduced min-height - was 3.5rem */
-  min-height: 3rem;
-  margin-bottom: 0.75rem;
-  padding: 0.6rem 0.8rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  min-height: 3.5rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
   background: rgba(99, 102, 241, 0.1);
   border: 1px solid rgba(99, 102, 241, 0.3);
   border-radius: 12px;
@@ -173,9 +153,8 @@ h2 {
 
 #game-area {
   position: relative;
-  /* MODIFICATION: Reduced height - was 320px */
-  height: 260px;
-  margin: 0.75rem 0;
+  height: 320px;
+  margin: 1rem 0;
   background: var(--bg-game);
   border: 2px solid var(--border);
   border-radius: 16px;
@@ -225,11 +204,9 @@ h2 {
 
 .target {
   position: absolute;
-  /* MODIFICATION: Reduced padding - was 0.75rem 1.25rem */
-  padding: 0.6rem 1rem;
-  min-width: 70px;
-  /* MODIFICATION: Reduced font size - was 0.875rem */
-  font-size: 0.8rem;
+  padding: 0.75rem 1.25rem;
+  min-width: 80px;
+  font-size: 0.875rem;
   font-weight: 600;
   font-family: var(--font-mono);
   background: linear-gradient(135deg, var(--bg-secondary), rgba(51, 65, 85, 0.8));
@@ -246,20 +223,10 @@ h2 {
   will-change: transform;
 }
 
-/* MODIFICATION: Fixed animation to ensure targets are removed when they reach the left edge */
 @keyframes slideIn {
-  from { 
-    transform: translateX(0) scale(0.8); 
-    opacity: 0; 
-  }
-  5% { 
-    transform: translateX(-10px) scale(1); 
-    opacity: 1; 
-  }
-  100% { 
-    transform: translateX(-100vw) scale(1); 
-    opacity: 1; 
-  }
+  from { transform: translateX(0) scale(0.8); opacity: 0; }
+  10% { transform: translateX(-20px) scale(1); opacity: 1; }
+  to { transform: translateX(-900px) scale(1); opacity: 1; }
 }
 
 .target::before {
@@ -322,10 +289,8 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* MODIFICATION: Reduced margin - was 0.75rem 0 */
-  margin: 0.5rem 0;
-  /* MODIFICATION: Reduced padding - was 0.75rem */
-  padding: 0.6rem;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
   background: rgba(99, 102, 241, 0.1);
   border-radius: 12px;
   border: 1px solid rgba(99, 102, 241, 0.3);
@@ -339,15 +304,14 @@ h2 {
 }
 
 .score-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--text-secondary);
 }
 
 .score-value {
-  /* MODIFICATION: Reduced font size - was 1.5rem */
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   font-family: var(--font-mono);
   color: var(--primary);
@@ -356,17 +320,14 @@ h2 {
 
 .button-container {
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   justify-content: center;
-  /* MODIFICATION: Reduced margin - was 1rem */
-  margin-top: 0.75rem;
+  margin-top: 1rem;
 }
 
 button {
-  /* MODIFICATION: Reduced padding - was 0.75rem 2rem */
-  padding: 0.6rem 1.5rem;
-  /* MODIFICATION: Reduced font size - was 1rem */
-  font-size: 0.9rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
   font-weight: 600;
   border: 2px solid var(--primary);
   border-radius: 12px;
@@ -414,11 +375,9 @@ button:disabled {
 }
 
 #game-end-message-area {
-  /* MODIFICATION: Reduced font size - was 1.25rem */
-  font-size: 1.1rem;
-  /* MODIFICATION: Reduced margin - was 1rem */
-  margin-top: 0.75rem;
-  min-height: 1.5rem;
+  font-size: 1.25rem;
+  margin-top: 1rem;
+  min-height: 2rem;
   text-align: center;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -486,39 +445,35 @@ button:disabled {
 
 @media (max-width: 640px) {
   .interactive-game-container {
-    margin: 0.5rem;
-    padding: 0.75rem;
-    /* MODIFICATION: Further reduced max-width for mobile */
-    max-width: 500px;
+    margin: 0.75rem;
+    padding: 1rem;
   }
   
-  h2 { 
-    font-size: 1.4rem;
+  h2 { font-size: 1.5rem;
   }
   
   .game-icon {
-    font-size: 1.75rem;
+    font-size: 2rem;
   }
   
   #clue {
-    font-size: 0.9rem;
-    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
   }
   
   #game-area {
-    /* MODIFICATION: Further reduced height for mobile - was 280px */
-    height: 220px;
+    height: 280px;
   }
   
   .target {
-    font-size: 0.75rem;
-    padding: 0.5rem 0.8rem;
-    min-width: 60px;
+    font-size: 0.8rem;
+    padding: 0.6rem 1rem;
+    min-width: 70px;
   }
   
   button {
-    padding: 0.5rem 1.2rem;
-    font-size: 0.8rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
   }
 }
 
@@ -551,8 +506,7 @@ button:disabled {
 
 <div class="interactive-game-container">
 
-
-  <h2><span class="game-icon">🪐</span>Term Targeter: Everything Sings</h2>
+  <h2><span class="game-icon">🚀</span>Term Targeter: Paradoxes in Science</h2>
   <div id="clue">Press "Start Game" to begin your mission!</div>
   <div id="game-area">
     <div class="stars"></div>
@@ -560,7 +514,7 @@ button:disabled {
   <div class="score-display">
     <div class="score-item">
       <span class="score-label">Score</span>
-      <span class="score-value" id="score-value">0/5</span>
+      <span class="score-value" id="score-value">0/0</span>
     </div>
     <div class="score-item">
       <span class="score-label">Accuracy</span>
@@ -583,22 +537,45 @@ button:disabled {
 // Enhanced game engine with smooth animations and professional features
 class TermTargeterGame {
   constructor() {
-    // Game data from the "Everything Sings" article
+    // Game data
     this.roundsData = [
-      { term: 'Complexity Science', clue: 'Study of large interacting networks producing emergent, self-organizing phenomena' },
-      { term: 'Emergent phenomena', clue: 'Behaviors or patterns arising from interactions of simpler components' },
-      { term: 'Neural network', clue: 'Layered computational model inspired by brain neurons for tasks like AI' },
-      { term: 'Systems thinking', clue: 'Approach focusing on whole systems and interactions rather than isolated parts' },
-      { term: 'Cross-pollinate', clue: 'Apply ideas or methods from one discipline to another to spark new insights' }
+      { 
+        term: 'anticipatory regulation',
+        clue: 'Feedback driven by inferred trends pre-empting real-time inputs in biological systems' 
+      },
+      { 
+        term: 'negative feedback loop',
+        clue: 'Mechanism where insulin and glucagon counteract glucose fluctuations' 
+      },
+      { 
+        term: 'Schrödinger\'s cat',
+        clue: 'Thought experiment showing a system in two states until observed' 
+      },
+      { 
+        term: 'quantum superposition',
+        clue: 'Paradox where particles exist in multiple configurations simultaneously' 
+      },
+      { 
+        term: 'wavefunction collapse',
+        clue: 'Process where measurement forces a quantum system into a definite state' 
+      },
+      { 
+        term: 'black box model',
+        clue: 'System whose inner workings are hidden yet yields accurate predictions' 
+      }
     ];
     
     this.distractorsData = [
-      'Quantum tunneling',
-      'Stoichiometry',
-      'Habenula perforata',
-      'Epiboly',
-      'Norbornane',
-      'Tribbles'
+      'control theory',
+      'paracrine signaling',
+      'somatostatin release',
+      'model blindspot',
+      'immunological priming',
+      'machine learning',
+      'entropy increase',
+      'observer effect',
+      'uncertainty principle',
+      'feedback inhibition'
     ];
     
     // DOM elements
@@ -659,9 +636,7 @@ class TermTargeterGame {
   
   setRandomTheme() {
     const themes = [
-      { primary: '#d32f2f', secondary: '#ff8a65' }, // Red theme from old game
-      { primary: '#007aff', secondary: '#4fc3f7' }, // Blue theme from old game
-      { primary: '#af52de', secondary: '#9575cd' }, // Purple theme from old game
+      { primary: '#6366f1', secondary: '#ec4899' },
       { primary: '#3b82f6', secondary: '#f59e0b' },
       { primary: '#8b5cf6', secondary: '#10b981' },
       { primary: '#06b6d4', secondary: '#f43f5e' }
@@ -705,15 +680,14 @@ class TermTargeterGame {
   }
   
   update() {
-    // Update active targets - MODIFICATION: Improved target removal logic
+    // Update active targets
     this.state.activeTargets.forEach(target => {
-      if (target.element && !target.hit && target.element.parentNode) {
+      if (target.element && !target.hit) {
         const rect = target.element.getBoundingClientRect();
         const areaRect = this.elements.area.getBoundingClientRect();
         
-        // MODIFICATION: More reliable check for targets that have moved off screen
-        // Check if target has completely left the game area (with buffer)
-        if (rect.right < areaRect.left - 50) {
+        // Check if target has left the screen
+        if (rect.right < areaRect.left) {
           this.removeTarget(target);
         }
       }
@@ -768,7 +742,7 @@ class TermTargeterGame {
     
     // Position target
     const laneHeight = this.elements.area.clientHeight / this.state.maxConcurrentTargets;
-    const y = lane * laneHeight + (laneHeight - 50) / 2; // MODIFICATION: Adjusted for smaller target height
+    const y = lane * laneHeight + (laneHeight - 60) / 2;
     target.style.top = `${y}px`;
     target.style.left = `${this.elements.area.clientWidth}px`;
     
@@ -788,13 +762,6 @@ class TermTargeterGame {
     // Add click handler
     target.addEventListener('click', (e) => this.handleTargetClick(e, targetObj));
     target.addEventListener('touchstart', (e) => this.handleTargetClick(e, targetObj), { passive: true });
-    
-    // MODIFICATION: Add animation end listener to ensure cleanup
-    target.addEventListener('animationend', () => {
-      if (!targetObj.hit) {
-        this.removeTarget(targetObj);
-      }
-    });
     
     // Add to DOM and track
     this.elements.area.appendChild(target);
@@ -1178,7 +1145,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const game = new TermTargeterGame();
 });
 
+// Add CSS animation for feedback
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes feedbackPop {
+    0% {
+      transform: translate(-50%, -50%) scale(0.8);
+      opacity: 0;
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  }
+`;
+document.head.appendChild(style);
 </script>
-
 </body>
-</html>
+</html

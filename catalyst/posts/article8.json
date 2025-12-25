@@ -26,7 +26,8 @@
       },
       {
         "order": 4,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1paradoxes.avif",
         "alt_text": "Penrose Cube illusion",
         "caption": "Penrose Cube: A mind-bending illusion that twists geometry and perspective. By fran_kie.",
         "note": "Internal image placement indicated in source text"
@@ -83,7 +84,8 @@
       },
       {
         "order": 15,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2paradoxes.avif",
         "alt_text": "Illustration of Schrödinger’s Cat Thought Experiment",
         "caption": "Illustration of Schrödinger’s Cat Thought Experiment. By Oleksander Hokusai",
         "note": "Internal image placement indicated in source text"
@@ -125,7 +127,8 @@
       },
       {
         "order": 23,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3paradoxes.avif",
         "alt_text": "The Black Box illustration",
         "caption": "The Black Box: Where data goes in, but mystery comes out. By Tameem",
         "note": "Internal image placement indicated in source text"
@@ -159,6 +162,13 @@
         "order": 29,
         "type": "paragraph",
         "content": "Understanding these complexities opens pathways for deeper comprehension. Paradoxes push science forward, demanding we adapt and expand our models. For anyone eager to explore further, consider the phrase anticipatory regulation which perfectly illustrates this concept."
+      },
+      {
+        "order": 30,
+        "type": "game",
+        "src": "posts/games/article8.html",
+        "title": "Paradox Explorer: Science's Contradictions",
+        "height": "580"
       }
     ]
   }

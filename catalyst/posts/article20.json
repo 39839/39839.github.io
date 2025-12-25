@@ -21,7 +21,8 @@
       },
       {
         "order": 3,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1roleofscience.avif",
         "alt_text": "Holden Thorp",
         "caption": "Holden Thorp, editor-in-chief of Science magazine",
         "note": "Internal image placement indicated in source text"
@@ -90,6 +91,20 @@
         "order": 16,
         "type": "paragraph",
         "content": "The responsibility to bridge this gap doesn't fall only to journalists, doctors, or research specialists; it belongs to all those engaged with science. At institutions like Planet Forward, the D.C. Science Writers Association, and the American Association for the Advancement of Science (AAAS), students and professionals alike are already working to bring science out of the ivory tower and into everyday conversations. These organizations are shaping the future of scientific communication."
+      },
+      {
+        "order": 16.5,
+        "type": "image",
+        "url": "posts/insidearticleimages/image2roleofscience.jpg",
+        "alt_text": "Science communicators collaborating",
+        "caption": "Science communicators collaborating to bring research to the public."
+      },
+      {
+        "order": 16.7,
+        "type": "game",
+        "src": "posts/games/article20.html",
+        "title": "Science Comm Dash: Future Insights",
+        "height": "580"
       },
       {
         "order": 17,

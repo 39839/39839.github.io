@@ -87,12 +87,9 @@ body::before {
   padding: 0.75rem;
   background: rgba(30, 41, 59, 0.8);
   backdrop-filter: blur(20px);
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 20px;
-  box-shadow: 
-    0 15px 20px -5px rgba(0, 0, 0, 0.1),
-    0 8px 8px -5px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: none;
   position: relative;
   overflow: hidden;
 }
@@ -170,8 +167,8 @@ h2 {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: none; }
 }
 
 #game-area {
@@ -243,11 +240,7 @@ h2 {
   user-select: none;
   white-space: nowrap;
   transition: all 0.2s ease;
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 20px rgba(99, 102, 241, 0.3);
+  box-shadow: none;
   animation: slideIn linear forwards;
   transform-origin: center;
   will-change: transform;
@@ -304,7 +297,7 @@ h2 {
   50% { 
     transform: scale(1.2);
     background: var(--success);
-    box-shadow: var(--glow-success);
+    box-shadow: none;
   }
   100% { 
     transform: scale(0);
@@ -402,7 +395,7 @@ button::before {
 button:hover:not(:disabled) {
   color: var(--bg-main);
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+  box-shadow: none;
 }
 
 button:hover:not(:disabled)::before {
@@ -557,6 +550,8 @@ button:disabled {
 <body>
 
 <div class="interactive-game-container">
+
+
   <h2><span class="game-icon">🪐</span>Term Targeter: Science’s Silly Lexicon</h2>
   <div id="clue">Press "Start Game" to begin your mission!</div>
   <div id="game-area">

@@ -16,7 +16,8 @@
       },
       {
         "order": 2,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1georgraphyofrisk.avif",
         "alt_text": "Children walking past an industrial facility in Brentwood",
         "caption": "Children walking past an industrial facility in Brentwood, a historically Black D.C. neighborhood (Fears, 2021)",
         "note": "Internal image placement indicated in source text"
@@ -53,7 +54,8 @@
       },
       {
         "order": 9,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2geographyofrisk.avif",
         "alt_text": "Residents from Buzzard Point protesting",
         "caption": "Residents from Buzzard Point, a predominantly Black D.C. neighborhood, protesting the groundbreaking of the DC United Soccer Stadium (Fulton, 2016)",
         "note": "Internal image placement indicated in source text"
@@ -95,7 +97,8 @@
       },
       {
         "order": 17,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3geographyofrisk.avif",
         "alt_text": "Map of D.C. by Ward",
         "caption": "Map of D.C. by Ward (What's My Ward?)",
         "note": "Internal image placement indicated in source text"
@@ -147,10 +150,10 @@
       },
       {
         "order": 27,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image4geographyofrisk.avif",
         "alt_text": "Nsedu Obot Witherspoon",
-        "caption": "Nsedu Obot Witherspoon (McCaw, 2020)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "Nsedu Obot Witherspoon (McCaw, 2020)"
       },
       {
         "order": 28,
@@ -181,6 +184,13 @@
         "order": 33,
         "type": "paragraph",
         "content": "Ultimately, there is no doubt that environmental racism is detrimental to children’s development and is up against fierce governmental opposition—making individuals and organizations in D.C. even more responsible to do something about it. “How do we raise our voice, collectively, taking the resources that we have, taking the amazing intelligence of our upcoming generations?” Witherspoon asks. “That’s really where the crux of our resources want to go: we want you to be educated, we want you to elevate your thinking, we want to connect the dots for you, but more importantly, we want you to understand that there is something you can do about it.” To truly mitigate the effects of the climate crisis and build a more sustainable city, we need to make sure we do so for everyone—which means understanding and addressing the harmful inequities that already exist first."
+      },
+      {
+        "order": 34,
+        "type": "game",
+        "src": "posts/games/article29.html",
+        "title": "The Geography of Risk: How D.C. Neighborhoods Shape Children's Health",
+        "height": "580"
       }
     ]
   }

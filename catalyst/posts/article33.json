@@ -26,9 +26,10 @@
       },
       {
         "order": 4,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1canaitransofrm.avif",
         "alt_text": "Worlds of Hello",
-        "note": "Image location indicated in source text"
+        "caption": "Worlds of Hello mobile experience preview."
       },
       {
         "order": 5,
@@ -47,9 +48,17 @@
       },
       {
         "order": 8,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2canaitransform.avif",
         "alt_text": "Worlds of Hello",
-        "note": "Image location indicated in source text"
+        "caption": "Interface showing family-driven speech practice."
+      },
+      {
+        "order": 8.5,
+        "type": "image",
+        "url": "posts/insidearticleimages/image3canaitransform.avif",
+        "alt_text": "Worlds of Hello",
+        "caption": "AI voice-cloning and gamified lessons for kids."
       },
       {
         "order": 9,
@@ -70,6 +79,13 @@
         "order": 12,
         "type": "paragraph",
         "content": "“If one child can speak or doesn't have trouble with speaking, it just makes the world better because that child can be productive and give back to their community as a citizen,” Dr. Quarkume shared. “So even though the work isn't considered top priority, some of us are still doing it because we know that the impacts supersede the communities that we’re working with,” referring to young children with speech delays. “It will benefit everyone if we still continue [to work] on these challenges.”"
+      },
+      {
+        "order": 13,
+        "type": "game",
+        "src": "posts/games/article33.html",
+        "title": "Voice Tech Dash: Quarkume's Vision",
+        "height": "580"
       }
     ]
   }

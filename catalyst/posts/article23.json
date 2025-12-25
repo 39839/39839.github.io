@@ -111,7 +111,8 @@
       },
       {
         "order": 21,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1frombattling.avif",
         "alt_text": "Palais des Nations in Geneva, Switzerland",
         "caption": "Palais des Nations in Geneva, Switzerland, home of the United Nations Office at Geneva",
         "note": "Internal image placement indicated in source text"
@@ -210,6 +211,13 @@
         "order": 40,
         "type": "paragraph",
         "content": "The next pandemic is not a question of if, but when. The better the nation understands the systems that failed — and the people and partnerships that responded — the more prepared the country and the world will be to face the music."
+      },
+      {
+        "order": 41,
+        "type": "game",
+        "src": "posts/games/article23.html",
+        "title": "Biosecurity Dash: Katz's Insight",
+        "height": "580"
       }
     ]
   }

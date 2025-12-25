@@ -36,7 +36,8 @@
       },
       {
         "order": 6,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1howcoastaltrees.avif",
         "alt_text": "Tree rings revealing climate conditions",
         "caption": "Tree rings reveal annual climate conditions, with thick rings marking wet years and thin rings signaling drought. (Image: science.org)",
         "note": "Internal image placement indicated in source text"
@@ -88,9 +89,11 @@
       },
       {
         "order": 16,
-        "type": "image_placeholder",
-        "alt_text": "Forest Royale interactive game",
+        "type": "embed",
+        "url": "https://forest-royale.onrender.com/game",
+        "title": "Forest Royale interactive game",
         "caption": "Forest Royale, an interactive game exploring tree survival strategies under environmental stress.",
+        "height": 640,
         "note": "Internal image placement indicated in source text"
       },
       {
@@ -107,6 +110,13 @@
         "order": 19,
         "type": "paragraph",
         "content": "Predicting how trees respond to adverse conditions can shape how humans manage forests around the world. According to the United Nations, forests make up 31 percent of the world, providing habitats for 80 percent of terrestrial organisms that live on, in, or around them. Trees’ response to environmental stressors can propagate through ecosystems, and their important role in carbon sequestration can affect the whole planet, making it extremely important to understand and protect them."
+      },
+      {
+        "order": 20,
+        "type": "game",
+        "src": "posts/games/article24.html",
+        "title": "Forest Royale Dash: Coastal Tree Challenge",
+        "height": "580"
       }
     ]
   }

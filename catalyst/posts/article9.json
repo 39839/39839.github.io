@@ -87,6 +87,13 @@
         "order": 15,
         "type": "paragraph",
         "content": "For too long, the narrative of the brain has been neuron-centric, like imagining a galaxy with only one type of planet. The more we learn about the complex relationships that constitute our brains, the clearer it becomes that no single cell acts in isolation. Yet, if there is one cell that truly holds it all together—the tireless soldier that holds up the forts of the nervous system while nourishing its neighboring neurons and providing metabolic support—it is the “star”-cell. My previous ode celebrated the important contributions of the microglia, and rightly so. But in rectifying that oversight, I hope to have shone a deserving spotlight on the astrocyte, whose functions are, quite literally, central to our ability to think, feel, and function. The story of the astrocyte is far from fully written, inviting a new generation of scientists to continue uncovering its secrets and revolutionizing our understanding of the brain."
+      },
+      {
+        "order": 16,
+        "type": "game",
+        "src": "posts/games/article9.html",
+        "title": "The Star of the Nervous System – Term Targeter",
+        "height": "580"
       }
     ]
   }

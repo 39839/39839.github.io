@@ -16,7 +16,8 @@
       },
       {
         "order": 2,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1pollutiontosolution.avif",
         "alt_text": "Forest Fire, Wildfire burning tree",
         "caption": "Forest Fire, Wildfire burning tree in red and orange color. Photo by yelantsevv",
         "note": "Internal image placement indicated in source text"
@@ -53,10 +54,9 @@
       },
       {
         "order": 9,
-        "type": "image_placeholder",
-        "alt_text": "The Rowland-Molina theory of ozone depletion diagram",
-        "caption": "The Rowland-Molina theory of ozone depletion.",
-        "note": "Internal image placement indicated in source text"
+        "type": "html",
+        "content": "<table style=\"border-collapse: collapse; margin: 0 auto;\">\n  <caption style=\"font-weight: bold; margin-bottom: 8px;\">Catalytic Ozone Destruction</caption>\n  <tbody><tr>\n    <td>Cl + O<sub>3</sub></td>\n    <td>→</td>\n    <td>ClO + O<sub>2</sub></td>\n  </tr>\n  <tr>\n    <td>ClO + O</td>\n    <td>→</td>\n    <td>Cl + O<sub>2</sub></td>\n  </tr>\n  <tr style=\"border-top: 1px solid #000;\">\n    <td colspan=\"3\" style=\"text-align:center; padding-top: 8px;\">\n      Net: O + O<sub>3</sub> → 2 O<sub>2</sub>\n    </td>\n  </tr>\n</tbody></table>",
+        "caption": "The Rowland-Molina theory of ozone depletion."
       },
       {
         "order": 10,
@@ -95,7 +95,8 @@
       },
       {
         "order": 17,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image3polutiontosolution.avif",
         "alt_text": "Nitrous oxide emissions",
         "caption": "Nitrous oxide emissions from wastewater treatment systems.",
         "note": "Internal image placement indicated in source text"
@@ -149,6 +150,13 @@
         "order": 27,
         "type": "paragraph",
         "content": "As is made clearer every day, the worsening condition of the environment demands scientific minds to collaborate towards discovering innovative solutions, and often tweak existing solutions. While climate change is an undoubtedly urgent issue, environmental science is one of many fields in STEM that can benefit from interdisciplinary collaboration and communication. This field allows for a positive impact on the world through science and a wide scope of influence, even if the means are unconventional."
+      },
+      {
+        "order": 28,
+        "type": "game",
+        "src": "posts/games/article19.html",
+        "title": "Atmospheric Alchemy: Gao’s Policy Quest",
+        "height": "580"
       }
     ]
   }

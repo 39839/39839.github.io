@@ -86,10 +86,10 @@
       },
       {
         "order": 16,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1imerselab.avif",
         "alt_text": "The Smart Tissue Autonomous Robot (STAR) system",
-        "caption": "The Smart Tissue Autonomous Robot (STAR) system, developed by the IMERSE Lab at Johns Hopkins University. (The IMERSE LAB / Johns Hopkins University)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "The Smart Tissue Autonomous Robot (STAR) system, developed by the IMERSE Lab at Johns Hopkins University. (The IMERSE LAB / Johns Hopkins University)"
       },
       {
         "order": 17,
@@ -108,10 +108,10 @@
       },
       {
         "order": 20,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image2imerselab.avif",
         "alt_text": "PhD student Juo-Tung “Justin” Chen beside the SRT-H robotic system",
-        "caption": "PhD student Juo-Tung “Justin” Chen beside the SRT-H robotic system (Juo-Tung Chen / Johns Hopkins University)",
-        "note": "Internal image placement indicated in source text"
+        "caption": "PhD student Juo-Tung “Justin” Chen beside the SRT-H robotic system (Juo-Tung Chen / Johns Hopkins University)"
       },
       {
         "order": 21,
@@ -132,13 +132,6 @@
         "order": 24,
         "type": "paragraph",
         "content": "SRT-H has already advanced toward the operating room. In published studies, it achieved step-level autonomy - that is, independence across a sequence of surgical steps rather than a single repeated motion - during the clipping and cutting phase of a cholecystectomy (gallbladder removal) on ex vivo (outside-the-body) pig tissue. Across eight trials, the robot completed the sequence without human intervention, achieving 100 percent success. While not yet capable of a full cholecystectomy, this demonstration marked the first time a system achieved autonomous control across multiple surgical subtasks rather than a single isolated skill."
-      },
-      {
-        "order": 25,
-        "type": "image_placeholder",
-        "alt_text": "SRT-H led cholecystectomy on a pig gallbladder",
-        "caption": "SRT-H led cholecystectomy on a pig gallbladder, 14x speed (Juo-Tung Chen / Johns Hopkins University)",
-        "note": "Internal image placement indicated in source text"
       },
       {
         "order": 26,

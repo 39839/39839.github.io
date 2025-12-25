@@ -35,14 +35,6 @@
         "content": "For those who are less familiar with the brain, neurons— the primary cell of the central nervous system— form a complex communication system that enables us to think, experience, perform and exist as conscious beings. Unlike most cells of the body, which communicate by chemical signals, neurons mediate fast signal transmission through electrical currents produced by ion flow. This can sometimes involve direct ion transmission between neurons (at gap junctions), but neurons most often communicate by releasing molecules, known as neurotransmitters. Neurotransmitters can act as agonists for ion channels– allowing the movement of ions in/out of the cell to create an electrical current– or they may bind to G-protein coupled receptors, which either cause cellular changes through second messengers, or open ion channels. You may have heard of some of these neurotransmitters (ex. glutamate, GABA, serotonin), but today’s discussion centers on dopamine."
       },
       {
-        "order": 6,
-        "type": "image",
-        "url": "posts/insidearticleimages/Image1Understandingscience.jpg",
-        "alt_text": "Brain anatomy illustration",
-        "caption": "Photo by Pablo Peiker",
-        "note": "Internal image placement indicated in source text"
-      },
-      {
         "order": 7,
         "type": "section_header",
         "content": "Dopamine in the Brain"

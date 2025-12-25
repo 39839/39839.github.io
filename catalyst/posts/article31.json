@@ -30,6 +30,13 @@
         "content": "Beyond his scientific and medical contributions, Dr. Huang’s story serves as a powerful example of how curiosity, dedication, and mentorship can guide an uncertain start towards an impactful and fulfilling career. In an interview with The Catalyst, he shares some of the pivotal moments that shaped his career trajectory, his lab’s exciting breakthroughs and discoveries, and his candid advice for students seeking a meaningful career in science."
       },
       {
+        "order": 4.5,
+        "type": "image",
+        "url": "posts/insidearticleimages/image1decodingdemyleination.avif",
+        "alt_text": "Lab slide showing demyelination research",
+        "caption": "Demyelination research from Dr. Huang's lab at Georgetown University."
+      },
+      {
         "order": 5,
         "type": "section_header",
         "content": "Dr. Huang’s Research Evolution: Remyelination & Multiple Sclerosis"

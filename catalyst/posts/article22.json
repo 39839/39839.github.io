@@ -181,7 +181,8 @@
       },
       {
         "order": 35,
-        "type": "image_placeholder",
+        "type": "image",
+        "url": "posts/insidearticleimages/image1scottsklar.avif",
         "alt_text": "Professor Scott Sklar in the field",
         "caption": "Professor Scott Sklar in the field at the largest agrivoltaics project in Washington, D.C. in April 2023",
         "note": "Internal image placement indicated in source text"
@@ -205,6 +206,13 @@
         "order": 39,
         "type": "paragraph",
         "content": "The Catalyst looks forward to hosting Professor Sklar on an upcoming podcast, where he will delve deeper into the groundbreaking projects that inspire and energize him."
+      },
+      {
+        "order": 40,
+        "type": "game",
+        "src": "posts/games/article22.html",
+        "title": "Renewable Energy Dash: Sklar's Vision",
+        "height": "580"
       }
     ]
   }
