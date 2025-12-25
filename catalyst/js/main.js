@@ -294,6 +294,91 @@ function registerProgressiveImages(scope = document) {
         progressiveObserver.observe(el);
     });
 }
+
+// ============================================
+// COLLABORATION MAILTO HANDLERS
+// ============================================
+function setupCollaborationMailto() {
+    // Clear any legacy EmailJS rate-limit data so mailto flow never errors
+    try {
+        localStorage.removeItem('catalyst_form_submissions');
+    } catch (err) {}
+
+    const proposalForm = document.getElementById('proposal-form');
+    if (proposalForm) {
+        proposalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formInputs = proposalForm.querySelectorAll('input:not([type="file"]), select, textarea');
+            const firstName = formInputs[0]?.value.trim() || '';
+            const lastName = formInputs[1]?.value.trim() || '';
+            const email = formInputs[2]?.value.trim() || '';
+            const proposalType = formInputs[3]?.value || '';
+            const title = formInputs[4]?.value.trim() || '';
+            const description = formInputs[5]?.value.trim() || '';
+            const link = formInputs[6]?.value.trim() || '';
+
+            const subject = `Article Proposal: ${title || 'Your Proposal'}`;
+            const body = `Hi Catalyst Team,
+
+I would like to submit an article proposal.
+
+Name: ${firstName} ${lastName}
+Email: ${email}
+Proposal Type: ${proposalType}
+Project Title: ${title}
+
+Description:
+${description}
+
+${link ? `Link to Draft/Materials: ${link}` : ''}
+
+IMPORTANT: Please attach your article or materials (PDF, DOC, JPG, MP3, or MP4) to this email.
+
+Best regards,
+${firstName} ${lastName}`.trim();
+
+            const mailtoLink = `mailto:stemcatalystmagazine@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
+            showNotification('Opening your email client. Please attach your materials and send the email.');
+        });
+    }
+
+    const teamForm = document.getElementById('team-form');
+    if (teamForm) {
+        teamForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formInputs = teamForm.querySelectorAll('input:not([type="file"]), select');
+            const firstName = formInputs[0]?.value.trim() || '';
+            const lastName = formInputs[1]?.value.trim() || '';
+            const email = formInputs[2]?.value.trim() || '';
+            const phone = formInputs[3]?.value.trim() || '';
+            const position = formInputs[4]?.value || '';
+            const portfolioLink = formInputs[5]?.value.trim() || '';
+
+            const subject = `Team Application: ${position || 'Role'} - ${firstName} ${lastName}`.trim();
+            const body = `Hi Catalyst Team,
+
+I would like to apply to join your team.
+
+Name: ${firstName} ${lastName}
+Email: ${email}
+Phone: ${phone || 'Not provided'}
+Position Applied For: ${position}
+${portfolioLink ? `Portfolio: ${portfolioLink}` : ''}
+
+IMPORTANT: Please attach your CV/Resume (PDF, DOC, or DOCX) to this email.
+
+Best regards,
+${firstName} ${lastName}`.trim();
+
+            const mailtoLink = `mailto:stemcatalystmagazine@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
+            showNotification('Opening your email client. Please attach your CV/Resume and send the email.');
+        });
+    }
+}
 const deepClone = (val) => {
     if (typeof structuredClone === 'function') return structuredClone(val);
     return JSON.parse(JSON.stringify(val));
@@ -304,7 +389,7 @@ async function initApp() {
     setupNewsletterModal();
     setupScrollEffects();
     setupScrollToTop();
-    setupForms();
+    setupCollaborationMailto();
     initImageOptimization();
 
     // Page-specific initialization
@@ -925,110 +1010,6 @@ function setupMagazineNav(data) {
     });
 }
 
-// ============================================
-// FORMS WITH EMAILJS INTEGRATION
-// ============================================
-function setupForms() {
-    // Newsletter form
-    const newsletterForms = document.querySelectorAll('#newsletter-form');
-    newsletterForms.forEach(form => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const emailInput = form.querySelector('input[type="email"]');
-            const submitButton = form.querySelector('button[type="submit"]');
-            const email = emailInput.value.trim();
-
-            if (!email) {
-                showErrorMessage('Please enter your email address');
-                return;
-            }
-
-            setButtonLoading(submitButton, true);
-
-            try {
-                await handleNewsletterSubmit(email);
-                showSuccessMessage('Thank you for subscribing! Check your email for confirmation.');
-                form.reset();
-            } catch (error) {
-                showErrorMessage(error.message || 'Something went wrong. Please try again.');
-                console.error('Newsletter submission error:', error);
-            } finally {
-                setButtonLoading(submitButton, false);
-            }
-        });
-    });
-
-    // Proposal form
-    const proposalForm = document.getElementById('proposal-form');
-    if (proposalForm) {
-        proposalForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const submitButton = proposalForm.querySelector('button[type="submit"]');
-            const formInputs = proposalForm.querySelectorAll('input, select, textarea');
-
-            // Collect form data
-            const formData = {
-                firstName: formInputs[0].value.trim(),
-                lastName: formInputs[1].value.trim(),
-                email: formInputs[2].value.trim(),
-                proposalType: formInputs[3].value,
-                title: formInputs[4].value.trim(),
-                description: formInputs[5].value.trim(),
-                link: formInputs[6]?.value.trim() || ''
-            };
-
-            setButtonLoading(submitButton, true);
-
-            try {
-                await handleProposalSubmit(formData);
-                showSuccessMessage('Thank you for your submission! We will review it and get back to you soon.');
-                proposalForm.reset();
-            } catch (error) {
-                showErrorMessage(error.message || 'Something went wrong. Please try again.');
-                console.error('Proposal submission error:', error);
-            } finally {
-                setButtonLoading(submitButton, false);
-            }
-        });
-    }
-
-    // Team form
-    const teamForm = document.getElementById('team-form');
-    if (teamForm) {
-        teamForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const submitButton = teamForm.querySelector('button[type="submit"]');
-            const formInputs = teamForm.querySelectorAll('input, select');
-
-            // Collect form data
-            const formData = {
-                firstName: formInputs[0].value.trim(),
-                lastName: formInputs[1].value.trim(),
-                email: formInputs[2].value.trim(),
-                phone: formInputs[3].value.trim(),
-                position: formInputs[4].value,
-                cvLink: formInputs[5]?.value.trim() || '',
-                portfolioLink: formInputs[6]?.value.trim() || ''
-            };
-
-            setButtonLoading(submitButton, true);
-
-            try {
-                await handleTeamSubmit(formData);
-                showSuccessMessage('Thank you for your interest! We will review your application and be in touch soon.');
-                teamForm.reset();
-            } catch (error) {
-                showErrorMessage(error.message || 'Something went wrong. Please try again.');
-                console.error('Team submission error:', error);
-            } finally {
-                setButtonLoading(submitButton, false);
-            }
-        });
-    }
-}
 
 function showNotification(message, type = 'success') {
     // Remove existing notification
