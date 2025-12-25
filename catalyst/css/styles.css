@@ -4658,51 +4658,62 @@ img {
 }
 
 .article-detail-content figure.article-image {
-  margin: 40px 0;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: visible;
-  height: auto;
-  width: 100%;
-  position: static;
-  contain: none;
+  margin: 36px auto !important;
+  padding: 0 !important;
+  max-width: 720px !important;
+  width: fit-content !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  overflow: visible !important;
+  position: relative !important;
+  contain: none !important;
 }
 
 .article-detail-content figure.article-image img {
   display: block !important;
-  position: relative !important;
   width: auto !important;
   max-width: 100% !important;
   height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
   object-fit: contain !important;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: visible !important;
+  background: #f8fafc;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+  position: relative !important;
 }
 
 .article-detail-content figure.article-image img:hover {
-  transform: scale(1.01);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
 }
 
 .article-detail-content figure.article-image figcaption {
-  display: block;
-  width: 100%;
-  max-width: 720px;
-  margin-top: 16px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 14px 20px;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--text-body);
-  font-style: italic;
-  background: linear-gradient(135deg, rgba(13, 71, 161, 0.05), rgba(66, 165, 245, 0.08));
-  border-left: 3px solid var(--accent-primary);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  text-align: left;
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin-top: 0 !important;
+  padding: 10px 16px !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.5 !important;
+  color: rgba(51, 65, 85, 0.95) !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  background: linear-gradient(to bottom, #f1f5f9, #f8fafc) !important;
+  border: 1px solid rgba(226, 232, 240, 0.6) !important;
+  border-top: none !important;
+  border-radius: 0 0 10px 10px !important;
+  text-align: center !important;
+  transition: all 0.3s ease;
+}
+
+.article-detail-content figure.article-image:hover figcaption {
+  background: linear-gradient(to bottom, #e2e8f0, #f1f5f9) !important;
+  color: rgba(30, 41, 59, 1) !important;
 }
 
 .article-detail-content figure.article-image figcaption a {
@@ -4715,57 +4726,135 @@ img {
   color: var(--accent-secondary);
 }
 
+.article-detail-content figure.article-embed {
+  margin: 48px auto;
+  width: min(100%, 920px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+
+.article-detail-content .embed-frame {
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f8fafc;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+}
+
+.article-detail-content .embed-frame iframe {
+  display: block;
+  width: 100% !important;
+  border: none;
+}
+
+.article-detail-content .embed-caption {
+  width: 100%;
+  margin: 0;
+  padding: 14px 20px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: rgba(15, 23, 42, 0.9);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px) saturate(150%);
+  -webkit-backdrop-filter: blur(10px) saturate(150%);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  text-align: center;
+}
+
+/* Mobile responsive images and captions */
+@media (max-width: 768px) {
+  .article-detail-content figure.article-image {
+    margin: 28px auto !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .article-detail-content figure.article-image img {
+    border-radius: 8px 8px 0 0 !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .article-detail-content figure.article-image figcaption {
+    padding: 8px 14px !important;
+    font-size: 0.75rem !important;
+    border-radius: 0 0 8px 8px !important;
+  }
+
+  .article-detail-content figure.article-embed {
+    margin: 40px auto;
+    gap: 12px;
+  }
+
+  .article-detail-content .embed-caption {
+    padding: 12px 16px;
+    font-size: 0.8125rem;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .article-detail-content figure.article-image {
+    margin: 24px auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .article-detail-content figure.article-image img {
+    border-radius: 6px 6px 0 0 !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .article-detail-content figure.article-image figcaption {
+    padding: 6px 12px !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.4 !important;
+    border-radius: 0 0 6px 6px !important;
+  }
+
+  .article-detail-content figure.article-embed {
+    margin: 30px auto;
+    gap: 10px;
+  }
+
+  .article-detail-content .embed-caption {
+    padding: 10px 14px;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    border-radius: 6px;
+  }
+}
+
 /* Embedded game styling */
 .article-detail-content .article-game {
-  margin: 48px 0;
-  border-radius: var(--radius-lg);
+  margin: 56px 0;
+  border-radius: 12px;
   overflow: hidden;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  border: none;
+  box-shadow: none;
+  transition: all 0.3s ease;
 }
 
-.article-detail-content .article-game .game-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.1));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.article-detail-content .article-game:hover {
+  box-shadow: none;
+  border-color: transparent;
 }
 
-.article-detail-content .article-game .game-icon {
-  font-size: 1.5rem;
-}
-
-.article-detail-content .article-game .game-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #f1f5f9;
-  letter-spacing: -0.01em;
-}
-
-.article-detail-content .article-game .game-container {
-  position: relative;
-  width: 100%;
-  background: #020617;
-}
-
-.article-detail-content .article-game .game-container iframe {
+.article-detail-content .article-game iframe {
   display: block;
+  width: 100%;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .article-detail-content .article-game {
-    margin: 32px -16px;
-    border-radius: 0;
-  }
-
-  .article-detail-content .article-game .game-header {
-    padding: 12px 16px;
-  }
-
-  .article-detail-content .article-game .game-title {
-    font-size: 1rem;
+    display: none;
   }
 }
 

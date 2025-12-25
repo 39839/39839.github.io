@@ -1589,7 +1589,7 @@ function renderContentBlocks(blocks = []) {
                 return `
                     <figure class="article-block article-image">
                         <img src="${url}" alt="${alt}" loading="lazy">
-                        ${caption ? `<figcaption>${caption}</figcaption>` : ''}
+                        ${caption ? `<figcaption class="image-caption">${caption}</figcaption>` : ''}
                     </figure>
                 `;
             }
@@ -1616,6 +1616,36 @@ function renderContentBlocks(blocks = []) {
                     </div>
                 `;
             }
+            case 'embed': {
+                const url = block.url || block.src || '';
+                const title = block.title || block.alt_text || 'Embedded content';
+                const height = block.height || 480;
+                const caption = block.caption || block.note || '';
+                if (!url) return '';
+                return `
+                    <figure class="article-block article-embed">
+                        <div class="embed-frame">
+                            <iframe
+                                src="${url}"
+                                title="${title}"
+                                loading="lazy"
+                                style="width: 100%; height: ${height}px; border: none; border-radius: 12px;"
+                                allow="fullscreen"
+                            ></iframe>
+                        </div>
+                        ${caption ? `<figcaption class="embed-caption">${caption}</figcaption>` : ''}
+                    </figure>
+                `;
+            }
+            case 'html': {
+                const caption = block.caption || block.note || '';
+                return `
+                    <div class="article-block custom-html">
+                        ${block.content || ''}
+                        ${caption ? `<p class="html-caption">${caption}</p>` : ''}
+                    </div>
+                `;
+            }
             case 'game': {
                 const src = block.src || '';
                 const title = block.title || 'Interactive Game';
@@ -1623,19 +1653,13 @@ function renderContentBlocks(blocks = []) {
                 if (!src) return '';
                 return `
                     <div class="article-block article-game">
-                        <div class="game-header">
-                            <span class="game-icon">🎮</span>
-                            <span class="game-title">${title}</span>
-                        </div>
-                        <div class="game-container">
-                            <iframe
-                                src="${src}"
-                                title="${title}"
-                                loading="lazy"
-                                allow="fullscreen"
-                                style="width: 100%; height: ${height}px; border: none; border-radius: 12px;"
-                            ></iframe>
-                        </div>
+                        <iframe
+                            src="${src}"
+                            title="${title}"
+                            loading="lazy"
+                            allow="fullscreen"
+                            style="width: 100%; height: ${height}px; border: none;"
+                        ></iframe>
                     </div>
                 `;
             }
