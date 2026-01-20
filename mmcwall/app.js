@@ -121,17 +121,40 @@ function updateClock() {
 // Audio Controls (YouTube + MP3 fallback)
 // ================================
 let musicPlayerReady = false;
+let mp3FallbackPlaying = false;
+let youtubeCatchupInterval = null;
 
 function initAudio() {
     bgMusic.volume = 0.3;
+    bgMusic.loop = true;
+    // Keep the audio element warmed up (muted) so unmute is instant
+    bgMusic.muted = true;
+    bgMusic.play().catch(() => {});
     updateMuteUI();
 
-    muteToggle.addEventListener('click', toggleMute);
+    if (muteToggle) {
+        muteToggle.addEventListener('click', toggleMute);
+    }
+
+    // Nudge audio playback whenever the user interacts (helps TVs with autoplay limits)
+    ['click', 'touchstart', 'keydown'].forEach(evt => {
+        document.addEventListener(evt, () => {
+            nudgeKeepAwake();
+            if (!isMuted) {
+                handleAudioStateChange();
+            } else {
+                warmMp3Pipeline();
+            }
+        }, { passive: true });
+    });
 
     if (youtubePlayer) {
         // Mark player as ready when iframe loads
         youtubePlayer.addEventListener('load', () => {
             musicPlayerReady = true;
+            if (!isMuted) {
+                handleAudioStateChange();
+            }
             console.log('Music player iframe loaded');
         });
 
@@ -140,7 +163,7 @@ function initAudio() {
             useYouTube = false;
             youtubeContainer.style.display = 'none';
             // Try to play MP3 fallback immediately
-            preloadMp3Fallback();
+            playMp3Fallback();
         });
 
         // Preload the iframe by setting loading="eager"
@@ -161,24 +184,118 @@ function preloadMp3Fallback() {
 function toggleMute() {
     isMuted = !isMuted;
 
-    if (useYouTube && youtubePlayer) {
-        const currentSrc = youtubePlayer.src;
-        if (isMuted) {
-            youtubePlayer.src = currentSrc.includes('mute=')
-                ? currentSrc.replace('mute=0', 'mute=1')
-                : `${currentSrc}&mute=1`;
-        } else {
-            youtubePlayer.src = currentSrc.replace('mute=1', 'mute=0');
-        }
-    } else {
-        if (isMuted) {
-            bgMusic.pause();
-        } else {
-            bgMusic.play().catch(err => console.log('Audio playback failed:', err));
-        }
+    handleAudioStateChange();
+    updateMuteUI();
+}
+
+function warmMp3Pipeline() {
+    if (!bgMusic) return;
+    bgMusic.muted = true;
+    bgMusic.play().catch(() => {});
+}
+
+function playMp3Fallback() {
+    if (!bgMusic) return;
+    bgMusic.muted = isMuted;
+    bgMusic.volume = isMuted ? 0 : 0.3;
+    bgMusic.loop = true;
+
+    if (mp3FallbackPlaying && !isMuted) {
+        return;
     }
 
-    updateMuteUI();
+    bgMusic.play()
+        .then(() => {
+            mp3FallbackPlaying = true;
+        })
+        .catch(err => console.log('Audio playback failed:', err));
+}
+
+function stopMp3Fallback() {
+    if (!bgMusic || !mp3FallbackPlaying) return;
+    bgMusic.pause();
+    mp3FallbackPlaying = false;
+}
+
+function sendYoutubeCommand(func, args = []) {
+    if (!youtubePlayer || !youtubePlayer.contentWindow) return false;
+
+    try {
+        youtubePlayer.contentWindow.postMessage(JSON.stringify({
+            event: 'command',
+            func,
+            args
+        }), '*');
+        return true;
+    } catch (e) {
+        console.log('YouTube command failed:', e);
+        return false;
+    }
+}
+
+function requestYoutubePlayback() {
+    if (!useYouTube || !musicPlayerReady) return false;
+
+    sendYoutubeCommand('playVideo');
+    sendYoutubeCommand(isMuted ? 'mute' : 'unMute');
+    return true;
+}
+
+function clearYoutubeCatchup() {
+    if (youtubeCatchupInterval) {
+        clearInterval(youtubeCatchupInterval);
+        youtubeCatchupInterval = null;
+    }
+}
+
+function startYoutubeCatchup() {
+    if (youtubeCatchupInterval || !useYouTube) return;
+
+    youtubeCatchupInterval = setInterval(() => {
+        if (!useYouTube) {
+            clearYoutubeCatchup();
+            return;
+        }
+
+        if (musicPlayerReady) {
+            const started = requestYoutubePlayback();
+            if (started && !isMuted) {
+                stopMp3Fallback();
+            }
+            if (started) {
+                clearYoutubeCatchup();
+            }
+        }
+    }, 1500);
+
+    // Stop retrying after a reasonable window
+    setTimeout(clearYoutubeCatchup, 12000);
+}
+
+function handleAudioStateChange() {
+    if (isMuted) {
+        sendYoutubeCommand('mute');
+        stopMp3Fallback();
+        warmMp3Pipeline();
+        return;
+    }
+
+    if (useYouTube && youtubePlayer) {
+        const started = requestYoutubePlayback();
+        if (!started) {
+            playMp3Fallback();
+            startYoutubeCatchup();
+        } else {
+            stopMp3Fallback();
+        }
+    } else {
+        playMp3Fallback();
+    }
+
+    // Keep trying to switch back to YouTube once it loads
+    if (useYouTube && !musicPlayerReady) {
+        startYoutubeCatchup();
+    }
 }
 
 function updateMuteUI() {
@@ -309,6 +426,8 @@ function startBackgroundWatchdog() {
         if (currentVideoId && currentVideoId.trim() !== '') {
             const videoContainerHidden = videoBgContainer?.classList.contains('hidden');
             const bodyHasVideoClass = document.body.classList.contains('video-bg-active');
+            const ambientBg = document.querySelector('.ambient-bg');
+            let videoHealthy = true;
 
             // If video should be showing but container is hidden, restore it
             if (videoContainerHidden || !bodyHasVideoClass) {
@@ -321,7 +440,6 @@ function startBackgroundWatchdog() {
                 document.body.classList.add('video-bg-active');
 
                 // Hide ambient gradient
-                const ambientBg = document.querySelector('.ambient-bg');
                 if (ambientBg) {
                     ambientBg.style.opacity = '0';
                 }
@@ -347,8 +465,111 @@ function startBackgroundWatchdog() {
                     }
                 }
             }
+
+            // If video is paused/stalled, show the gradient instead of black and try to resume
+            if (currentVideoType === 'mp4' && backgroundVideoMp4) {
+                if (backgroundVideoMp4.paused || backgroundVideoMp4.readyState < 2) {
+                    videoHealthy = false;
+                    backgroundVideoMp4.play().catch(() => {});
+                }
+            } else if (currentVideoType === 'youtube') {
+                if (bgYouTubePlayer && typeof bgYouTubePlayer.getPlayerState === 'function') {
+                    try {
+                        const state = bgYouTubePlayer.getPlayerState();
+                        if (state !== YT.PlayerState.PLAYING) {
+                            videoHealthy = false;
+                            bgYouTubePlayer.playVideo();
+                        }
+                    } catch (e) {
+                        videoHealthy = false;
+                    }
+                } else {
+                    videoHealthy = false;
+                }
+            }
+
+            if (ambientBg) {
+                ambientBg.style.opacity = videoHealthy ? '0' : '1';
+            }
         }
     }, 2000);
+}
+
+// ================================
+// Wake Lock / Attention Keeper (prevents TV idle prompts)
+// ================================
+const KEEP_AWAKE_VIDEO_SRC = 'data:video/mp4;base64,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';
+let wakeLock = null;
+let keepAwakeVideo = null;
+let keepAwakeInterval = null;
+
+async function requestScreenWakeLock() {
+    if (!('wakeLock' in navigator)) return;
+
+    try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => {
+            wakeLock = null;
+        });
+        console.log('Wake lock acquired');
+    } catch (e) {
+        wakeLock = null;
+        console.log('Wake lock failed:', e?.message || e);
+    }
+}
+
+function ensureKeepAwakeVideo() {
+    if (keepAwakeVideo) return keepAwakeVideo;
+
+    keepAwakeVideo = document.createElement('video');
+    keepAwakeVideo.id = 'keep-awake-video';
+    keepAwakeVideo.setAttribute('playsinline', '');
+    keepAwakeVideo.setAttribute('muted', '');
+    keepAwakeVideo.muted = true;
+    keepAwakeVideo.loop = true;
+    keepAwakeVideo.autoplay = true;
+    keepAwakeVideo.src = KEEP_AWAKE_VIDEO_SRC;
+    keepAwakeVideo.style.position = 'fixed';
+    keepAwakeVideo.style.width = '1px';
+    keepAwakeVideo.style.height = '1px';
+    keepAwakeVideo.style.opacity = '0';
+    keepAwakeVideo.style.pointerEvents = 'none';
+    keepAwakeVideo.style.left = '0';
+    keepAwakeVideo.style.bottom = '0';
+    document.body.appendChild(keepAwakeVideo);
+
+    keepAwakeVideo.play().catch(() => {});
+
+    keepAwakeInterval = setInterval(() => {
+        if (keepAwakeVideo && (keepAwakeVideo.paused || keepAwakeVideo.readyState < 2)) {
+            keepAwakeVideo.play().catch(() => {});
+        }
+    }, 15000);
+
+    return keepAwakeVideo;
+}
+
+function nudgeKeepAwake() {
+    ensureKeepAwakeVideo();
+    if (keepAwakeVideo && keepAwakeVideo.paused) {
+        keepAwakeVideo.play().catch(() => {});
+    }
+    requestScreenWakeLock();
+}
+
+function initWakePrevention() {
+    nudgeKeepAwake();
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            nudgeKeepAwake();
+        } else if (wakeLock) {
+            wakeLock.release().catch(() => {});
+            wakeLock = null;
+        }
+    });
+
+    window.addEventListener('focus', nudgeKeepAwake);
 }
 
 function toggleFullscreen() {
@@ -849,11 +1070,16 @@ function updateYoutubePlayer(videoId, loop = true) {
 
     const muteParam = isMuted ? '1' : '0';
     const loopParam = loop ? `loop=1&playlist=${videoId}` : 'loop=0';
-    const newSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&showinfo=0&mute=${muteParam}&${loopParam}&modestbranding=1&rel=0&playsinline=1`;
+    const originParam = (window.location.origin && window.location.origin !== 'null')
+        ? `&origin=${encodeURIComponent(window.location.origin)}`
+        : '';
+    const newSrc = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&showinfo=0&mute=${muteParam}&${loopParam}&modestbranding=1&rel=0&playsinline=1&enablejsapi=1${originParam}`;
 
     // Only update if the source is different (to avoid restarting the video)
     if (youtubePlayer.src !== newSrc) {
         console.log('Updating YouTube player with:', videoId, 'loop:', loop);
+        musicPlayerReady = false;
+        useYouTube = true;
         youtubePlayer.src = newSrc;
     }
 }
@@ -1234,6 +1460,7 @@ function init() {
     loadCategories();
     initFullscreen();
     initVisibilityHandler(); // Handle TV mute/unmute without losing background
+    initWakePrevention(); // Stop TV idle prompts by keeping playback active
 
     // Start periodic background state check (safety net for TV quirks)
     startBackgroundWatchdog();

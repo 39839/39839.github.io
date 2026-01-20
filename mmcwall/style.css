@@ -4535,7 +4535,7 @@ body.display-view.gradient-rain .ambient-bg {
     height: 100vh;
     z-index: 0;
     overflow: hidden;
-    background: #000;
+    background: transparent;
 }
 
 .video-bg-container.hidden {
@@ -4554,6 +4554,7 @@ body.display-view.gradient-rain .ambient-bg {
     height: auto;
     object-fit: cover;
     pointer-events: none;
+    background: transparent;
 }
 
 .background-video-mp4.hidden {
@@ -4575,6 +4576,7 @@ body.display-view.gradient-rain .ambient-bg {
     min-height: 56.25vw; /* 16:9 aspect ratio height (100vw * 9/16) */
     pointer-events: none;
     border: none;
+    background: transparent;
 }
 
 .background-video-iframe.hidden {
