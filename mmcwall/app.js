@@ -120,6 +120,8 @@ function updateClock() {
 // ================================
 // Audio Controls (YouTube + MP3 fallback)
 // ================================
+let musicPlayerReady = false;
+
 function initAudio() {
     bgMusic.volume = 0.3;
     updateMuteUI();
@@ -127,11 +129,32 @@ function initAudio() {
     muteToggle.addEventListener('click', toggleMute);
 
     if (youtubePlayer) {
+        // Mark player as ready when iframe loads
+        youtubePlayer.addEventListener('load', () => {
+            musicPlayerReady = true;
+            console.log('Music player iframe loaded');
+        });
+
         youtubePlayer.addEventListener('error', () => {
             console.log('YouTube player error, falling back to MP3');
             useYouTube = false;
             youtubeContainer.style.display = 'none';
+            // Try to play MP3 fallback immediately
+            preloadMp3Fallback();
         });
+
+        // Preload the iframe by setting loading="eager"
+        youtubePlayer.loading = 'eager';
+    }
+
+    // Also preload MP3 as backup
+    preloadMp3Fallback();
+}
+
+function preloadMp3Fallback() {
+    if (bgMusic) {
+        bgMusic.preload = 'auto';
+        bgMusic.load();
     }
 }
 
@@ -182,6 +205,150 @@ function initFullscreen() {
     document.addEventListener('mousemove', handleMouseMoveForControls);
     scheduleHideControls();
     scheduleHideCursor();
+}
+
+// ================================
+// Visibility Change Handler (prevents black screen on TV mute/unmute)
+// ================================
+let savedBackgroundState = null;
+
+function initVisibilityHandler() {
+    // Save state before visibility changes (TV mute/unmute can trigger this)
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Also handle page show/hide events (some TVs use these)
+    window.addEventListener('pageshow', handlePageShow);
+    window.addEventListener('pagehide', handlePageHide);
+
+    // Handle focus/blur events (some TV remotes trigger these)
+    window.addEventListener('blur', saveBackgroundState);
+    window.addEventListener('focus', restoreBackgroundState);
+}
+
+function saveBackgroundState() {
+    savedBackgroundState = {
+        videoId: currentVideoId,
+        videoType: currentVideoType,
+        displaySettings: { ...displaySettings },
+        hasVideoActive: document.body.classList.contains('video-bg-active'),
+        ambientOpacity: document.querySelector('.ambient-bg')?.style.opacity
+    };
+    console.log('Background state saved');
+}
+
+function restoreBackgroundState() {
+    if (!savedBackgroundState) return;
+
+    // Small delay to let the browser settle after visibility change
+    setTimeout(() => {
+        // Restore video background if it was active
+        if (savedBackgroundState.hasVideoActive && savedBackgroundState.videoId) {
+            // Ensure video container is visible
+            if (videoBgContainer) {
+                videoBgContainer.classList.remove('hidden');
+            }
+            document.body.classList.add('video-bg-active');
+
+            // Restore ambient background opacity
+            const ambientBg = document.querySelector('.ambient-bg');
+            if (ambientBg && savedBackgroundState.ambientOpacity !== undefined) {
+                ambientBg.style.opacity = savedBackgroundState.ambientOpacity;
+            }
+
+            // Resume video playback if needed
+            if (savedBackgroundState.videoType === 'mp4' && backgroundVideoMp4) {
+                if (backgroundVideoMp4.paused) {
+                    backgroundVideoMp4.play().catch(e => console.log('Resume MP4 failed:', e));
+                }
+                backgroundVideoMp4.classList.remove('hidden');
+            } else if (savedBackgroundState.videoType === 'youtube' && bgYouTubePlayer) {
+                try {
+                    if (typeof bgYouTubePlayer.playVideo === 'function') {
+                        bgYouTubePlayer.playVideo();
+                    }
+                } catch (e) {
+                    console.log('Resume YouTube failed:', e);
+                }
+                if (backgroundVideoIframe) {
+                    backgroundVideoIframe.classList.remove('hidden');
+                }
+            }
+
+            console.log('Background state restored');
+        }
+    }, 100);
+}
+
+function handleVisibilityChange() {
+    if (document.hidden) {
+        saveBackgroundState();
+    } else {
+        restoreBackgroundState();
+    }
+}
+
+function handlePageShow(event) {
+    // Restore on page show (especially important for bfcache)
+    if (event.persisted) {
+        restoreBackgroundState();
+    }
+}
+
+function handlePageHide() {
+    saveBackgroundState();
+}
+
+// Periodic watchdog to ensure background video stays visible
+// This catches edge cases where TV firmware might reset the display
+let backgroundWatchdogInterval = null;
+
+function startBackgroundWatchdog() {
+    // Check every 2 seconds that background is in correct state
+    backgroundWatchdogInterval = setInterval(() => {
+        // Only check if we should have a video background active
+        if (currentVideoId && currentVideoId.trim() !== '') {
+            const videoContainerHidden = videoBgContainer?.classList.contains('hidden');
+            const bodyHasVideoClass = document.body.classList.contains('video-bg-active');
+
+            // If video should be showing but container is hidden, restore it
+            if (videoContainerHidden || !bodyHasVideoClass) {
+                console.log('Watchdog: Restoring background video state');
+
+                // Restore the video background
+                if (videoBgContainer) {
+                    videoBgContainer.classList.remove('hidden');
+                }
+                document.body.classList.add('video-bg-active');
+
+                // Hide ambient gradient
+                const ambientBg = document.querySelector('.ambient-bg');
+                if (ambientBg) {
+                    ambientBg.style.opacity = '0';
+                }
+
+                // Ensure correct video element is visible and playing
+                if (currentVideoType === 'mp4' && backgroundVideoMp4) {
+                    backgroundVideoMp4.classList.remove('hidden');
+                    if (backgroundVideoMp4.paused) {
+                        backgroundVideoMp4.play().catch(() => {});
+                    }
+                } else if (currentVideoType === 'youtube') {
+                    if (backgroundVideoIframe) {
+                        backgroundVideoIframe.classList.remove('hidden');
+                    }
+                    if (bgYouTubePlayer && typeof bgYouTubePlayer.playVideo === 'function') {
+                        try {
+                            const state = bgYouTubePlayer.getPlayerState();
+                            // If paused or ended, resume
+                            if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) {
+                                bgYouTubePlayer.playVideo();
+                            }
+                        } catch (e) {}
+                    }
+                }
+            }
+        }
+    }, 2000);
 }
 
 function toggleFullscreen() {
@@ -1066,6 +1233,10 @@ function init() {
     initMusicSettingsListener();
     loadCategories();
     initFullscreen();
+    initVisibilityHandler(); // Handle TV mute/unmute without losing background
+
+    // Start periodic background state check (safety net for TV quirks)
+    startBackgroundWatchdog();
 
     // Load Firebase data immediately
     try {

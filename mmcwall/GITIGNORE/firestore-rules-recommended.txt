@@ -1,0 +1,64 @@
+============================================================
+RECOMMENDED FIRESTORE SECURITY RULES FOR MMCWALL
+============================================================
+
+Copy and paste these rules in your Firebase Console:
+1. Go to https://console.firebase.google.com
+2. Select your project (mmcwall)
+3. Click "Firestore Database" in the left sidebar
+4. Click the "Rules" tab
+5. Replace the existing rules with the ones below
+6. Click "Publish"
+
+============================================================
+RULES (copy everything between the dashed lines):
+------------------------------------------------------------
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Announcements collection
+    // - Anyone can read (for the public display)
+    // - Only authenticated users can write (create, update, delete)
+    match /announcements/{document} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Display settings document
+    // - Anyone can read (for the public display)
+    // - Only authenticated users can write
+    match /displaySettings/{document} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+
+------------------------------------------------------------
+
+============================================================
+WHAT THESE RULES DO:
+============================================================
+
+1. ANNOUNCEMENTS:
+   - READ: Anyone can read (so the TV display works without login)
+   - WRITE: Only logged-in admins can add, edit, or delete
+
+2. DISPLAY SETTINGS:
+   - READ: Anyone can read (so the TV display shows correct styling)
+   - WRITE: Only logged-in admins can change settings
+
+============================================================
+IMPORTANT NOTES:
+============================================================
+
+- These rules require Firebase Authentication to be set up
+- Make sure you've created admin user(s) in Firebase Console:
+  Authentication > Users > Add User
+
+- The public display (index.html) will work without login
+- The admin panel (admin.html) requires email/password login
+
+============================================================
