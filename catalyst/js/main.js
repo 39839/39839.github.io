@@ -689,7 +689,7 @@ function initHeroFeatured(data) {
     container.innerHTML = `
         <div class="hero-featured-grid">
             ${featured.map((article, index) => `
-                <div class="featured-card" onclick="viewArticle(${article.id})">
+                <div class="featured-card" onclick="viewArticle('${encodeURIComponent(getArticleLink(article))}')">
                     ${createProgressiveImage(
                         article.image || ARTICLE_FALLBACK_IMAGE,
                         article.title,
@@ -728,7 +728,7 @@ function initFeaturedStoriesGrid(data = []) {
         const previewBg = getLowQualityUrl(article.image || ARTICLE_FALLBACK_IMAGE, 520, 50);
 
         return `
-        <div class="featured-story-card" onclick="viewArticle(${article.id})">
+        <div class="featured-story-card" onclick="viewArticle('${encodeURIComponent(getArticleLink(article))}')">
             <div class="featured-story-image lazy-bg" data-bg-image="${article.image || ARTICLE_FALLBACK_IMAGE}" style="background-image: url('${previewBg}');" ${dataAttrs.join(' ')}></div>
             <div class="featured-story-content">
                 <span class="featured-story-badge">${formatCategory(article.category)}</span>
@@ -800,6 +800,10 @@ function renderArticles(filter = 'all', data = articleData) {
 }
 
 function createArticleCard(article) {
+    // For local published articles, use the direct path; otherwise use ID-based routing
+    const useDirectLink = article.link && article.link.startsWith('posts/published/');
+    const link = useDirectLink ? article.link : article.id;
+
     const imageSrc = article.image || ARTICLE_FALLBACK_IMAGE;
     const category = article.category || 'feature';
     const readingTime = article.readingTime || estimateReadingTime(article);
@@ -813,7 +817,7 @@ function createArticleCard(article) {
     );
 
     return `
-        <article class="article-card fade-in" onclick="viewArticle(${article.id})">
+        <article class="article-card fade-in" onclick="viewArticle('${encodeURIComponent(link)}')">
             ${imageMarkup}
             <div class="article-content">
                 <h3 class="article-title">${article.title}</h3>
@@ -890,7 +894,7 @@ function initMagazineCover(data) {
     const coverPreview = getLowQualityUrl(coverStory.image || ARTICLE_FALLBACK_IMAGE, 820, 55);
 
     coverContainer.innerHTML = `
-        <div class="magazine-cover-grid" onclick="viewArticle(${coverStory.id})">
+        <div class="magazine-cover-grid" onclick="viewArticle('${encodeURIComponent(getArticleLink(coverStory))}')">
             <div class="magazine-cover-image lazy-bg" data-bg-image="${coverStory.image || ARTICLE_FALLBACK_IMAGE}" style="background-image: url('${coverPreview}');"></div>
             <div class="magazine-cover-content">
                 <div class="magazine-cover-label">Cover Story</div>
@@ -986,7 +990,7 @@ function createMagazineArticle(article, sizeClass = 'small') {
     );
 
     return `
-        <article class="magazine-article ${sizeClass}" onclick="viewArticle(${article.id})">
+        <article class="magazine-article ${sizeClass}" onclick="viewArticle('${encodeURIComponent(getArticleLink(article))}')">
             ${imageMarkup}
             <div class="magazine-article-content">
                 <div class="magazine-article-category">${formatCategory(category)}</div>
@@ -1087,16 +1091,17 @@ function showNotification(message, type = 'success') {
 // ============================================
 function initArticleDetailPage(data) {
     const urlParams = new URLSearchParams(window.location.search);
-    const articleId = parseInt(urlParams.get('id'));
+    const rawId = urlParams.get('id');
+    const articleId = rawId;
 
-    if (!articleId || !Array.isArray(data)) {
-        window.location.href = 'articles';
+    if (!rawId || !Array.isArray(data)) {
+        window.location.href = 'articles.html';
         return;
     }
 
-    const article = data.find(a => a.id === articleId);
+    const article = data.find(a => String(a.id) === String(articleId));
     if (!article) {
-        window.location.href = 'articles';
+        window.location.href = 'articles.html';
         return;
     }
 
@@ -1194,8 +1199,14 @@ function renderRelatedArticles(currentArticle, data = articleData) {
     registerProgressiveImages(container);
 }
 
-function viewArticle(articleId) {
-    window.location.href = `article?id=${articleId}`;
+function viewArticle(linkOrId) {
+    if (!linkOrId) return;
+    const decoded = decodeURIComponent(linkOrId);
+    if (decoded.startsWith('http') || decoded.startsWith('posts/')) {
+        window.location.href = decoded;
+    } else {
+        window.location.href = `article.html?id=${decoded}`;
+    }
 }
 
 // ============================================
@@ -1211,6 +1222,12 @@ function formatCategory(category) {
         'editorial': 'Editorial'
     };
     return map[category] || category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+function getArticleLink(article) {
+    // For local published articles, use the direct path; otherwise use ID-based routing
+    const useDirectLink = article.link && article.link.startsWith('posts/published/');
+    return useDirectLink ? article.link : article.id;
 }
 
 // ============================================
@@ -1240,6 +1257,30 @@ async function loadArticles() {
         });
     } catch (err) {
         console.error('Article load failed', err);
+    }
+
+    // Merge in articles defined in js/data.js (published via the studio)
+    if (Array.isArray(window.articles)) {
+        window.articles.forEach(raw => {
+            if (!raw || !raw.title) return;
+            const link = raw.link || raw.url || '';
+            const key = safeKey({ title: raw.title, link });
+            if (byKey.has(key)) return;
+
+            byKey.set(key, {
+                id: raw.id || nextId++,
+                title: raw.title,
+                author: raw.author || 'The Catalyst',
+                date: raw.date || '',
+                image: raw.image || ARTICLE_FALLBACK_IMAGE,
+                link: link || `article?id=${raw.id || nextId}`,
+                url: link || `article?id=${raw.id || nextId}`,
+                category: (raw.category || 'feature').toLowerCase(),
+                tags: raw.tags || [],
+                excerpt: raw.deck || raw.excerpt || '',
+                deck: raw.deck || ''
+            });
+        });
     }
 
     const combined = Array.from(byKey.values()).filter(a => a.title).sort((a, b) => {
@@ -1654,8 +1695,16 @@ function formatJsonDate(raw = '') {
     if (!raw) return '';
     const trimmed = raw.trim();
     const hasYear = /\d{4}/.test(trimmed);
-    const withYear = hasYear ? trimmed : `${trimmed}, ${new Date().getFullYear()}`;
+    const now = new Date();
+    const fallbackYear = now.getFullYear();
+    const withYear = hasYear ? trimmed : `${trimmed}, ${fallbackYear}`;
     const d = new Date(withYear);
+
+    // If we guessed the year and the date ends up in the future, bump it to last year
+    if (!hasYear && !isNaN(d.getTime()) && d.getTime() > now.getTime()) {
+        d.setFullYear(fallbackYear - 1);
+    }
+
     if (!isNaN(d.getTime())) {
         return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
     }

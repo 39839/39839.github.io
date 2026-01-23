@@ -373,3 +373,10 @@ const editorials = [
         excerpt: "Microglia play crucial roles in brain health, from development to disease resistance."
     }
 ];
+
+// Expose data to main.js (it reads from window.articles)
+if (typeof window !== 'undefined') {
+    window.heroSlides = heroSlides;
+    window.articles = articles;
+    window.editorials = editorials;
+}
