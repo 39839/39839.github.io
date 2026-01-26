@@ -1,0 +1,350 @@
+/* ========================================
+   MOBILE-ONLY OVERRIDES FOR STATUS BAR
+   ======================================== */
+
+@media (max-width: 768px) {
+    /* HIDE online friends section on mobile to save space */
+    #community-status-bar {
+        display: none !important;
+    }
+
+    #header-online-section {
+        display: none !important;
+    }
+
+    /* Make the status bar compact on mobile */
+    #community-status-bar {
+        min-height: 48px;
+        padding: 0.35rem 0 !important;
+        margin: 0 !important;
+    }
+
+    #community-status-bar .container {
+        min-height: 48px;
+    }
+
+    #community-status-content {
+        gap: 0.75rem !important;
+        font-size: 0.68rem;
+        min-height: 48px;
+        padding: 0.4rem 1.25rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* Online section - stack vertically */
+    #header-online-section {
+        width: 100%;
+        gap: 0.5rem !important;
+        flex-wrap: wrap;
+    }
+
+    #header-online-section > div:first-child {
+        gap: 0.25rem !important;
+        min-width: 100%;
+    }
+
+    #header-online-section > div:first-child .text-xs {
+        font-size: 0.64rem !important;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        opacity: 0.8;
+    }
+
+    #header-online-users-list {
+        gap: 0.3rem !important;
+        flex-wrap: wrap !important;
+        max-width: 100%;
+        overflow: visible;
+        padding-bottom: 0;
+        width: 100%;
+    }
+
+    #header-online-concurrency {
+        width: auto;
+        justify-content: flex-start;
+        padding: 0 !important;
+        font-size: 0.62rem !important;
+        gap: 0.25rem !important;
+        color: rgba(15, 23, 42, 0.82) !important;
+        opacity: 0.85 !important;
+    }
+
+    #header-online-concurrency::before {
+        display: none;
+    }
+
+    /* Status badges - optimized for mobile */
+    #header-online-users-list .status-badge {
+        gap: 0.26rem;
+        padding: 0.4rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.66rem;
+        font-weight: 500;
+        line-height: 1.2;
+        box-shadow: none;
+        border-color: rgba(148, 163, 184, 0.24);
+        background: rgba(255, 255, 255, 0.82);
+        flex: 1 1 100%;
+        min-width: 100%;
+        max-width: 100%;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        min-height: 3rem;
+    }
+
+    /* Status dots - smaller on mobile */
+    #header-online-users-list .status-dot {
+        width: 0.36rem;
+        height: 0.36rem;
+    }
+
+    #header-online-users-list .status-badge--presence {
+        padding: 0.4rem 0.65rem;
+        backdrop-filter: blur(4px);
+        width: auto;
+        max-width: 100%;
+    }
+
+    #header-online-users-list .status-badge__info {
+        gap: 0.08rem;
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        align-items: center;
+        text-align: center;
+    }
+
+    #header-online-users-list .status-name--presence {
+        font-size: 0.7rem;
+        letter-spacing: 0.015em;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        width: 100%;
+        text-align: center;
+    }
+
+    #header-online-users-list .status-time--detail {
+        font-size: 0.58rem;
+        line-height: 1.3;
+        white-space: normal;
+        width: 100%;
+        text-align: center;
+    }
+
+    .mitzvah-card {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .mitzvah-card__body {
+        grid-template-columns: 1fr;
+        gap: 1.1rem;
+    }
+
+    .mitzvah-card__section {
+        padding: 1rem 1.1rem;
+    }
+
+    .mitzvah-card__title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+    }
+
+    .mitzvah-card__countdown {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .mitzvah-card__grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .mitzvah-card__subheading {
+        text-align: center;
+    }
+
+    .mitzvah-checklist {
+        align-items: center;
+        text-align: center;
+    }
+
+    .mitzvah-checklist__label {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .mitzvah-checklist__input {
+        margin-top: 0;
+    }
+
+    .mitzvah-chat {
+        padding: 1.25rem;
+    }
+
+    .mitzvah-chat__header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .mitzvah-chat__messages {
+        max-height: 220px;
+    }
+
+    .mitzvah-chat__actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .mitzvah-chat__submit {
+        width: 100%;
+    }
+
+    .mitzvah-chat__hint {
+        text-align: center;
+    }
+
+    .mitzvah-locked__card {
+        padding: 1.35rem;
+    }
+
+    #header-online-users-list .status-dot--compact {
+        width: 0.34rem;
+        height: 0.34rem;
+        margin-top: 0.04rem;
+    }
+
+    #header-online-users-list .status-badge--active {
+        background: rgba(240, 253, 244, 0.78);
+    }
+
+    /* Your status section - one line on mobile */
+    #header-your-status {
+        width: 100%;
+        gap: 0.3rem !important;
+        align-items: center;
+        justify-content: flex-start;
+        margin-left: 0 !important;
+    }
+
+    #header-your-status .text-xs:first-child {
+        font-size: 0.64rem !important;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        opacity: 0.8;
+    }
+
+    #header-your-username {
+        background: rgba(59, 130, 246, 0.05) !important;
+        padding: 0.24rem 0.48rem !important;
+        border-radius: 0.3rem !important;
+        border: 0.5px solid rgba(59, 130, 246, 0.12) !important;
+        font-size: 0.66rem !important;
+        font-weight: 600 !important;
+        color: #1e40af !important;
+    }
+
+    #header-your-login-time {
+        font-size: 0.62rem !important;
+        opacity: 0.8;
+    }
+
+    /* Mobile tooltip styling - centered bubble */
+    .status-tooltip[data-tooltip] {
+        position: relative;
+    }
+
+    .status-tooltip[data-tooltip]::after {
+        top: calc(100% + 0.4rem) !important;
+        bottom: auto !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translate(-50%, 0) !important;
+        width: min(72vw, 260px) !important;
+        min-width: 180px !important;
+        max-width: calc(100vw - 3rem) !important;
+        padding: 0.55rem 0.85rem !important;
+        font-size: 0.66rem !important;
+        line-height: 1.45 !important;
+        border-radius: 0.65rem !important;
+        text-align: left !important;
+        white-space: normal !important;
+        background: rgba(15, 23, 42, 0.95) !important;
+        color: #f8fafc !important;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.35) !important;
+        border: 1px solid rgba(148, 163, 184, 0.25) !important;
+        z-index: 50 !important;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .status-tooltip[data-tooltip]::before {
+        display: none !important;
+    }
+
+    .status-tooltip[data-tooltip]:hover::after,
+    .status-tooltip[data-tooltip]:focus-visible::after,
+    .status-tooltip[data-tooltip]:active::after {
+        opacity: 1 !important;
+        transform: translate(-50%, 0) !important;
+    }
+
+    /* Hover effects - more subtle on mobile */
+    #header-online-users-list .status-badge:hover {
+        transform: translateY(-0.4px);
+        box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+    }
+
+    /* Status leading dot - smaller on mobile */
+    .status-leading-dot {
+        width: 0.3rem !important;
+        height: 0.3rem !important;
+        flex-shrink: 0;
+    }
+}
+
+/* Extra small screens - 375px and below */
+@media (max-width: 375px) {
+    #community-status-bar {
+        min-height: 44px;
+        padding: 0.3rem 0 !important;
+    }
+
+    #community-status-content {
+        gap: 0.6rem !important;
+        padding: 0.35rem 1rem;
+        min-height: 44px;
+    }
+
+    #header-online-users-list .status-badge {
+        font-size: 0.62rem;
+        padding: 0.34rem 0.62rem;
+        flex: 1 1 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    #header-online-users-list .status-dot {
+        width: 0.32rem;
+        height: 0.32rem;
+    }
+
+    #header-your-username {
+        font-size: 0.62rem !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+
+    .status-tooltip[data-tooltip]::after {
+        max-width: 220px !important;
+        font-size: 0.62rem !important;
+        padding: 0.42rem 0.6rem !important;
+    }
+}
