@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Workflow Calculator - Phanova</title>
+    <meta name="description" content="Calculate your CCM revenue potential and staffing needs with Phanova's workflow calculator.">
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" type="image/png" href="../NewLogo3.png">
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-brand">
+                <img src="../NewLogo3.png" alt="Phanova Logo" class="nav-logo">
+                <span class="brand-badge">Clinical co-pilot</span>
+            </a>
+
+            <button class="mobile-menu-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <ul class="nav-menu" id="nav-menu" role="list">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="../physicians/index.html" class="nav-link">For Physicians</a></li>
+                <li><a href="../workflow/index.html" class="nav-link">Workflow</a></li>
+                <li><a href="../about/index.html" class="nav-link">About</a></li>
+                <li><a href="../contact/index.html" class="nav-link">Contact</a></li>
+                <li><a href="https://ccm.phanova.com" class="nav-link btn-primary" target="_blank" rel="noopener noreferrer">Clinic Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="parallax-bg"></div>
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-glass-card">
+                        <h1 class="hero-heading">Practice Workflow Calculator</h1>
+                        <p class="hero-subheading">
+                            Plan your CCM program revenue and staffing needs. Calculate your potential income and understand the ROI of adding clinical support staff.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Revenue Calculator Section -->
+        <section class="section">
+            <div class="container">
+                <div class="calculator-card">
+                    <div class="calculator-header">
+                        <h2>CCM Revenue Calculator</h2>
+                        <p>Estimate your monthly revenue potential from Chronic Care Management billing</p>
+                    </div>
+
+                    <form class="calculator-form" id="revenue-calculator">
+                        <div class="form-group">
+                            <label for="patient-count">Number of Enrolled Patients</label>
+                            <input
+                                type="number"
+                                id="patient-count"
+                                name="patient-count"
+                                min="1"
+                                step="1"
+                                placeholder="e.g., 50"
+                                required
+                            >
+                            <small class="form-hint">Total patients enrolled in your CCM program</small>
+                        </div>
+
+                        <div class="calculation-info">
+                            <div class="info-row">
+                                <span class="info-label">Time per patient:</span>
+                                <span class="info-value">20 minutes</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Reimbursement rate:</span>
+                                <span class="info-value">$40 per patient</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary calculate-btn">Calculate Revenue</button>
+
+                        <div class="calculator-results" id="revenue-results" style="display: none;">
+                            <h3>Your Revenue Potential</h3>
+                            <div class="result-grid">
+                                <div class="result-card">
+                                    <div class="result-label">Monthly Revenue</div>
+                                    <div class="result-value" id="monthly-revenue">$0</div>
+                                </div>
+                                <div class="result-card">
+                                    <div class="result-label">Annual Revenue</div>
+                                    <div class="result-value" id="annual-revenue">$0</div>
+                                </div>
+                                <div class="result-card">
+                                    <div class="result-label">Total Patient Hours</div>
+                                    <div class="result-value" id="total-hours">0 hrs</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- MA Staffing Calculator Section -->
+        <section class="section section-alt">
+            <div class="container">
+                <div class="calculator-card">
+                    <div class="calculator-header">
+                        <h2>Medical Assistant Staffing Calculator</h2>
+                        <p>Analyze the ROI of hiring a Medical Assistant to manage chart reviews and patient outreach</p>
+                    </div>
+
+                    <form class="calculator-form" id="ma-calculator">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="monthly-revenue-input">Monthly CCM Revenue</label>
+                                <input
+                                    type="number"
+                                    id="monthly-revenue-input"
+                                    name="monthly-revenue-input"
+                                    min="0"
+                                    step="100"
+                                    placeholder="$4,000"
+                                    required
+                                >
+                                <small class="form-hint">Revenue from calculator above</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="min-wage">Hourly Wage for MA</label>
+                                <input
+                                    type="number"
+                                    id="min-wage"
+                                    name="min-wage"
+                                    min="0"
+                                    step="0.50"
+                                    value="15.00"
+                                    placeholder="$15.00"
+                                    required
+                                >
+                                <small class="form-hint">Local minimum or competitive wage</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ma-hours">MA Weekly Hours</label>
+                            <input
+                                type="number"
+                                id="ma-hours"
+                                name="ma-hours"
+                                min="1"
+                                max="40"
+                                step="1"
+                                value="20"
+                                placeholder="20"
+                                required
+                            >
+                            <small class="form-hint">Hours per week the MA will work (typically part-time for chart reviews)</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="additional-patients">Additional Patients MA Can Manage</label>
+                            <input
+                                type="number"
+                                id="additional-patients"
+                                name="additional-patients"
+                                min="0"
+                                step="1"
+                                placeholder="e.g., 25"
+                                required
+                            >
+                            <small class="form-hint">Additional enrolled patients the MA can help you manage</small>
+                        </div>
+
+                        <button type="submit" class="btn-primary calculate-btn">Calculate ROI</button>
+
+                        <div class="calculator-results" id="ma-results" style="display: none;">
+                            <h3>Medical Assistant ROI Analysis</h3>
+                            <div class="result-grid">
+                                <div class="result-card result-expense">
+                                    <div class="result-label">MA Monthly Cost</div>
+                                    <div class="result-value" id="ma-monthly-cost">$0</div>
+                                    <small id="ma-cost-breakdown"></small>
+                                </div>
+                                <div class="result-card result-revenue">
+                                    <div class="result-label">Additional Monthly Revenue</div>
+                                    <div class="result-value" id="additional-revenue">$0</div>
+                                    <small id="additional-revenue-breakdown"></small>
+                                </div>
+                                <div class="result-card result-profit">
+                                    <div class="result-label">Net Monthly Benefit</div>
+                                    <div class="result-value" id="net-benefit">$0</div>
+                                    <small id="roi-percentage"></small>
+                                </div>
+                            </div>
+                            <div class="result-summary">
+                                <h4>Annual Impact</h4>
+                                <div class="result-grid-two">
+                                    <div class="result-item">
+                                        <span class="result-label">Total MA Annual Cost:</span>
+                                        <span class="result-value-inline" id="ma-annual-cost">$0</span>
+                                    </div>
+                                    <div class="result-item">
+                                        <span class="result-label">Total Additional Revenue:</span>
+                                        <span class="result-value-inline" id="additional-annual-revenue">$0</span>
+                                    </div>
+                                    <div class="result-item highlight">
+                                        <span class="result-label">Net Annual Benefit:</span>
+                                        <span class="result-value-inline" id="net-annual-benefit">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="section cta-band">
+            <div class="container">
+                <div class="cta-card">
+                    <h2>Ready to Optimize Your Practice Workflow?</h2>
+                    <p>Schedule a demo to see how Phanova can help you maximize your CCM revenue while improving patient care.</p>
+                    <a href="../contact/index.html" class="btn-primary">Get Started Today</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="../NewLogo3.png" alt="Phanova Logo" class="footer-logo">
+                    <p class="footer-tagline">Clinical excellence through intelligent automation</p>
+                </div>
+
+                <div class="footer-col">
+                    <h3 class="footer-heading">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="../about/index.html">About Us</a></li>
+                        <li><a href="../features/index.html">Features</a></li>
+                        <li><a href="../physicians/index.html">For Physicians</a></li>
+                        <li><a href="../workflow/index.html">Workflow Calculator</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h3 class="footer-heading">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="../contact/index.html">Contact</a></li>
+                        <li><a href="../policies/index.html">Privacy Policy</a></li>
+                        <li><a href="../policies/index.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h3 class="footer-heading">Connect</h3>
+                    <p>Questions? Reach out to our team.</p>
+                    <a href="mailto:hello@phanova.com" class="footer-contact">hello@phanova.com</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Phanova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>

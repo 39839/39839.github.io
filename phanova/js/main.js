@@ -372,4 +372,230 @@
             }, 800);
         });
     }
+
+    // Revenue Calculator
+    const revenueCalculator = document.getElementById('revenue-calculator');
+    const stepMa = document.getElementById('step-ma');
+    const setMaFieldsEnabled = (enabled) => {
+        if (!stepMa) return;
+        stepMa
+            .querySelectorAll('input[required], select[required], textarea[required]')
+            .forEach((field) => {
+                field.disabled = !enabled;
+            });
+    };
+
+    // Keep hidden MA required fields from blocking Step 1 submission.
+    if (stepMa) {
+        const isVisible = stepMa.offsetParent !== null;
+        setMaFieldsEnabled(isVisible);
+    }
+    if (revenueCalculator instanceof HTMLFormElement) {
+        const revenueResults = document.getElementById('revenue-results');
+
+        revenueCalculator.addEventListener('submit', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Get input
+            const patientCountInput = document.getElementById('patient-count');
+            if (!patientCountInput) {
+                console.error('Patient count input not found');
+                return;
+            }
+
+            const patientCount = parseInt(patientCountInput.value, 10);
+
+            // Validate
+            if (!patientCount || isNaN(patientCount) || patientCount < 1) {
+                patientCountInput.focus();
+                return;
+            }
+
+            // Calculate revenue
+            const reimbursementPerPatient = 40;
+            const monthlyRevenue = patientCount * reimbursementPerPatient;
+            const annualRevenue = monthlyRevenue * 12;
+            const totalMinutes = patientCount * 20;
+            const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
+
+            // Update results
+            const monthlyRevenueEl = document.getElementById('monthly-revenue');
+            const annualRevenueEl = document.getElementById('annual-revenue');
+            const totalHoursEl = document.getElementById('total-hours');
+
+            if (monthlyRevenueEl) {
+                monthlyRevenueEl.textContent = `$${monthlyRevenue.toLocaleString()}`;
+            }
+            if (annualRevenueEl) {
+                annualRevenueEl.textContent = `$${annualRevenue.toLocaleString()}`;
+            }
+            if (totalHoursEl) {
+                totalHoursEl.textContent = `${totalHours} hrs`;
+            }
+
+            // Show results with animation
+            if (revenueResults) {
+                revenueResults.style.display = 'block';
+                revenueResults.style.opacity = '0';
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        revenueResults.style.opacity = '1';
+                    });
+                });
+            }
+
+            // Auto-populate MA calculator if it exists
+            const maRevenueInput = document.getElementById('monthly-revenue-input');
+            if (maRevenueInput instanceof HTMLInputElement) {
+                maRevenueInput.value = monthlyRevenue.toString();
+            }
+        });
+    }
+
+    // Continue to MA Calculator button
+    const continueToMaBtn = document.getElementById('continue-to-ma');
+    if (continueToMaBtn && stepMa) {
+        continueToMaBtn.addEventListener('click', () => {
+            stepMa.style.display = 'block';
+            setMaFieldsEnabled(true);
+            setTimeout(() => {
+                stepMa.style.opacity = '1';
+                // Smooth scroll to MA section
+                stepMa.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 10);
+        });
+    }
+
+    // MA Staffing Calculator
+    const calculateMaBtn = document.getElementById('calculate-ma-btn');
+    if (calculateMaBtn) {
+        calculateMaBtn.addEventListener('click', () => {
+            const maResults = document.getElementById('ma-results');
+
+            // Get input values
+            const monthlyRevenueInput = document.getElementById('monthly-revenue-input');
+            const minWageInput = document.getElementById('min-wage');
+            const maHoursInput = document.getElementById('ma-hours');
+            const additionalPatientsInput = document.getElementById('additional-patients');
+
+            // Validate inputs
+            if (!monthlyRevenueInput || !minWageInput || !maHoursInput || !additionalPatientsInput) {
+                return;
+            }
+
+            const monthlyRevenue = parseFloat(monthlyRevenueInput.value);
+            const hourlyWage = parseFloat(minWageInput.value);
+            const weeklyHours = parseFloat(maHoursInput.value);
+            const additionalPatients = parseInt(additionalPatientsInput.value, 10);
+
+            if (isNaN(monthlyRevenue) || isNaN(hourlyWage) || isNaN(weeklyHours) || isNaN(additionalPatients)) {
+                return;
+            }
+
+            // Calculate MA costs
+            const weeksPerMonth = 4.33;
+            const maMonthlyCost = hourlyWage * weeklyHours * weeksPerMonth;
+            const maAnnualCost = maMonthlyCost * 12;
+
+            // Calculate additional revenue from MA managing more patients
+            const reimbursementPerPatient = 40;
+            const additionalMonthlyRevenue = additionalPatients * reimbursementPerPatient;
+            const additionalAnnualRevenue = additionalMonthlyRevenue * 12;
+
+            // Calculate net benefit
+            const netMonthlyBenefit = additionalMonthlyRevenue - maMonthlyCost;
+            const netAnnualBenefit = additionalAnnualRevenue - maAnnualCost;
+
+            // Calculate ROI percentage
+            const roiPercentage = maMonthlyCost > 0 ? ((netMonthlyBenefit / maMonthlyCost) * 100) : 0;
+
+            // Calculate break-even point
+            const breakEvenPatients = Math.ceil(maMonthlyCost / reimbursementPerPatient);
+            const breakEvenRevenue = breakEvenPatients * reimbursementPerPatient;
+
+            // Update results
+            const maMonthlyCostEl = document.getElementById('ma-monthly-cost');
+            const maCostBreakdownEl = document.getElementById('ma-cost-breakdown');
+            const additionalRevenueEl = document.getElementById('additional-revenue');
+            const additionalRevenueBreakdownEl = document.getElementById('additional-revenue-breakdown');
+            const netBenefitEl = document.getElementById('net-benefit');
+            const roiPercentageEl = document.getElementById('roi-percentage');
+            const maAnnualCostEl = document.getElementById('ma-annual-cost');
+            const additionalAnnualRevenueEl = document.getElementById('additional-annual-revenue');
+            const netAnnualBenefitEl = document.getElementById('net-annual-benefit');
+            const breakEvenPatientsEl = document.getElementById('breakeven-patients');
+            const breakEvenHintEl = document.getElementById('breakeven-hint');
+            const breakEvenExplanationEl = document.getElementById('breakeven-explanation');
+
+            if (maMonthlyCostEl) {
+                maMonthlyCostEl.textContent = `$${Math.round(maMonthlyCost).toLocaleString()}`;
+            }
+            if (maCostBreakdownEl) {
+                maCostBreakdownEl.textContent = `$${hourlyWage}/hr × ${weeklyHours} hrs/week`;
+            }
+            if (additionalRevenueEl) {
+                additionalRevenueEl.textContent = `$${additionalMonthlyRevenue.toLocaleString()}`;
+            }
+            if (additionalRevenueBreakdownEl) {
+                additionalRevenueBreakdownEl.textContent = `${additionalPatients} patients × $${reimbursementPerPatient}`;
+            }
+            if (netBenefitEl) {
+                netBenefitEl.textContent = `$${Math.round(netMonthlyBenefit).toLocaleString()}`;
+                // Color code based on positive/negative
+                const resultCard = netBenefitEl.closest('.result-card');
+                if (resultCard) {
+                    if (netMonthlyBenefit >= 0) {
+                        resultCard.classList.remove('result-negative');
+                        resultCard.classList.add('result-positive');
+                    } else {
+                        resultCard.classList.remove('result-positive');
+                        resultCard.classList.add('result-negative');
+                    }
+                }
+            }
+            if (roiPercentageEl) {
+                const roiText = roiPercentage >= 0 ?
+                    `${Math.round(roiPercentage)}% ROI` :
+                    `${Math.round(Math.abs(roiPercentage))}% Loss`;
+                roiPercentageEl.textContent = roiText;
+            }
+            if (maAnnualCostEl) {
+                maAnnualCostEl.textContent = `$${Math.round(maAnnualCost).toLocaleString()}`;
+            }
+            if (additionalAnnualRevenueEl) {
+                additionalAnnualRevenueEl.textContent = `$${additionalAnnualRevenue.toLocaleString()}`;
+            }
+            if (netAnnualBenefitEl) {
+                netAnnualBenefitEl.textContent = `$${Math.round(netAnnualBenefit).toLocaleString()}`;
+            }
+
+            // Update break-even analysis
+            if (breakEvenPatientsEl) {
+                breakEvenPatientsEl.textContent = breakEvenPatients.toLocaleString();
+            }
+            if (breakEvenHintEl) {
+                breakEvenHintEl.textContent = `${breakEvenPatients} patients × $${reimbursementPerPatient} = $${breakEvenRevenue.toLocaleString()}/month`;
+            }
+            if (breakEvenExplanationEl) {
+                if (additionalPatients >= breakEvenPatients) {
+                    const surplus = additionalPatients - breakEvenPatients;
+                    breakEvenExplanationEl.innerHTML = `✓ With <strong>${additionalPatients} additional patients</strong>, you exceed the break-even point by <strong>${surplus} patients</strong>, generating a net profit of <strong>$${Math.round(netMonthlyBenefit).toLocaleString()}/month</strong>.`;
+                    breakEvenExplanationEl.className = 'breakeven-explanation success';
+                } else {
+                    const shortfall = breakEvenPatients - additionalPatients;
+                    breakEvenExplanationEl.innerHTML = `⚠ You need <strong>${shortfall} more patients</strong> to reach break-even. Currently, you would have a net loss of <strong>$${Math.round(Math.abs(netMonthlyBenefit)).toLocaleString()}/month</strong>.`;
+                    breakEvenExplanationEl.className = 'breakeven-explanation warning';
+                }
+            }
+
+            // Show results with animation
+            if (maResults) {
+                maResults.style.display = 'block';
+                setTimeout(() => {
+                    maResults.style.opacity = '1';
+                }, 10);
+            }
+        });
+    }
 })();
