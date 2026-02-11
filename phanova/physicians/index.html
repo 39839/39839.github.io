@@ -139,6 +139,209 @@
             </div>
         </section>
 
+        <!-- Practice Workflow Calculator Section -->
+        <section class="section">
+            <div class="container">
+                <div class="calculator-card">
+                    <div class="calculator-header">
+                        <h2>Practice Workflow & ROI Calculator</h2>
+                        <p>Calculate your RPM revenue potential and analyze the ROI of adding clinical support staff</p>
+                    </div>
+
+                    <form class="calculator-form" id="revenue-calculator">
+                        <!-- Step 1: Revenue Calculator -->
+                        <div class="calculator-step" id="step-revenue">
+                            <h3 class="step-title">Step 1: Calculate Your RPM Revenue</h3>
+
+                            <div class="form-group">
+                                <label for="patient-count">Number of Enrolled Patients</label>
+                                <input
+                                    type="number"
+                                    id="patient-count"
+                                    name="patient-count"
+                                    min="1"
+                                    step="1"
+                                    placeholder="e.g., 50"
+                                    required
+                                >
+                                <small class="form-hint">Total patients enrolled in your RPM program</small>
+                            </div>
+
+                            <div class="calculation-info">
+                                <div class="info-row">
+                                    <span class="info-label">Time per patient per month:</span>
+                                    <span class="info-value">20 minutes</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Monthly reimbursement:</span>
+                                    <span class="info-value">$40 per patient</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary calculate-btn">Calculate Revenue</button>
+
+                            <div class="calculator-results" id="revenue-results" style="display: none;">
+                                <h3>Your Revenue Potential</h3>
+                                <div class="result-grid">
+                                    <div class="result-card">
+                                        <div class="result-label">Monthly Revenue</div>
+                                        <div class="result-value" id="monthly-revenue">$0</div>
+                                    </div>
+                                    <div class="result-card">
+                                        <div class="result-label">Annual Revenue</div>
+                                        <div class="result-value" id="annual-revenue">$0</div>
+                                    </div>
+                                    <div class="result-card">
+                                        <div class="result-label">Hours Per Month</div>
+                                        <div class="result-value" id="total-hours">0 hrs</div>
+                                    </div>
+                                </div>
+
+                                <div class="continue-prompt">
+                                    <p>Want to see how a Medical Assistant can help you scale further?</p>
+                                    <button type="button" class="btn-secondary" id="continue-to-ma">Continue to MA Staffing Analysis</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: MA Calculator (Hidden Initially) -->
+                        <div class="calculator-step" id="step-ma" style="display: none;">
+                            <div class="step-divider"></div>
+
+                            <h3 class="step-title">Step 2: Medical Assistant ROI Analysis</h3>
+                            <p class="step-description">Calculate the return on investment of hiring a Medical Assistant to manage chart reviews and patient outreach</p>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="monthly-revenue-input">Monthly RPM Revenue</label>
+                                    <input
+                                        type="number"
+                                        id="monthly-revenue-input"
+                                        name="monthly-revenue-input"
+                                        min="0"
+                                        step="100"
+                                        placeholder="$4,000"
+                                        readonly
+                                    >
+                                    <small class="form-hint">From your revenue calculation above</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="min-wage">Hourly Wage for MA</label>
+                                    <input
+                                        type="number"
+                                        id="min-wage"
+                                        name="min-wage"
+                                        min="0"
+                                        step="0.50"
+                                        value="15.00"
+                                        placeholder="$15.00"
+                                        required
+                                    >
+                                    <small class="form-hint">Local minimum or competitive wage</small>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ma-hours">MA Weekly Hours</label>
+                                <div class="suggestion-badge" id="ma-hours-suggestion" style="display: none;">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm1-3H7V4h2v5z" fill="currentColor"/>
+                                    </svg>
+                                    <span id="ma-hours-suggestion-text"></span>
+                                </div>
+                                <input
+                                    type="number"
+                                    id="ma-hours"
+                                    name="ma-hours"
+                                    min="1"
+                                    max="40"
+                                    step="1"
+                                    value="20"
+                                    placeholder="20"
+                                    required
+                                >
+                                <small class="form-hint">Hours per week the MA will work (you can adjust this)</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="additional-patients">Additional Patients MA Can Manage</label>
+                                <input
+                                    type="number"
+                                    id="additional-patients"
+                                    name="additional-patients"
+                                    min="0"
+                                    step="1"
+                                    placeholder="e.g., 25"
+                                    required
+                                >
+                                <small class="form-hint">Additional enrolled patients the MA can help you manage</small>
+                            </div>
+
+                            <button type="button" class="btn-primary calculate-btn" id="calculate-ma-btn">Calculate ROI</button>
+
+                            <div class="calculator-results" id="ma-results" style="display: none;">
+                                <h3>Medical Assistant ROI Analysis</h3>
+                                <div class="result-grid">
+                                    <div class="result-card result-expense">
+                                        <div class="result-label">MA Monthly Cost</div>
+                                        <div class="result-value" id="ma-monthly-cost">$0</div>
+                                        <small id="ma-cost-breakdown"></small>
+                                    </div>
+                                    <div class="result-card result-revenue">
+                                        <div class="result-label">Additional Monthly Revenue</div>
+                                        <div class="result-value" id="additional-revenue">$0</div>
+                                        <small id="additional-revenue-breakdown"></small>
+                                    </div>
+                                    <div class="result-card result-profit">
+                                        <div class="result-label">Net Monthly Benefit</div>
+                                        <div class="result-value" id="net-benefit">$0</div>
+                                        <small id="roi-percentage"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Break-even Analysis -->
+                                <div class="breakeven-card">
+                                    <div class="breakeven-header">
+                                        <h4>Break-Even Analysis</h4>
+                                        <p>Minimum patients needed to cover MA cost</p>
+                                    </div>
+                                    <div class="breakeven-content">
+                                        <div class="breakeven-main">
+                                            <div class="breakeven-label">Patients Required for Break-Even</div>
+                                            <div class="breakeven-value" id="breakeven-patients">0</div>
+                                            <small class="breakeven-hint" id="breakeven-hint"></small>
+                                        </div>
+                                        <div class="breakeven-explanation">
+                                            <p id="breakeven-explanation"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="result-summary">
+                                    <h4>Annual Impact</h4>
+                                    <div class="result-grid-two">
+                                        <div class="result-item">
+                                            <span class="result-label">Total MA Annual Cost:</span>
+                                            <span class="result-value-inline" id="ma-annual-cost">$0</span>
+                                        </div>
+                                        <div class="result-item">
+                                            <span class="result-label">Total Additional Revenue:</span>
+                                            <span class="result-value-inline" id="additional-annual-revenue">$0</span>
+                                        </div>
+                                        <div class="result-item highlight">
+                                            <span class="result-label">Net Annual Benefit:</span>
+                                            <span class="result-value-inline" id="net-annual-benefit">$0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
         <!-- CTA Section -->
         <section class="cta-band">
             <div class="container">

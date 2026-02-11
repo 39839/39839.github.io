@@ -459,6 +459,32 @@
         continueToMaBtn.addEventListener('click', () => {
             stepMa.style.display = 'block';
             setMaFieldsEnabled(true);
+
+            // Calculate suggested MA hours based on patient count
+            const patientCountInput = document.getElementById('patient-count');
+            const maHoursInput = document.getElementById('ma-hours');
+            const suggestionBadge = document.getElementById('ma-hours-suggestion');
+            const suggestionText = document.getElementById('ma-hours-suggestion-text');
+
+            if (patientCountInput && maHoursInput) {
+                const patientCount = parseInt(patientCountInput.value, 10);
+                if (!isNaN(patientCount) && patientCount > 0) {
+                    // Calculate total monthly hours: patients × 20 minutes / 60
+                    const monthlyHours = (patientCount * 20) / 60;
+                    // Convert to weekly hours: monthly / 4.33 weeks
+                    const suggestedWeeklyHours = Math.round(monthlyHours / 4.33);
+
+                    // Set the suggested value
+                    maHoursInput.value = suggestedWeeklyHours.toString();
+
+                    // Show and update the suggestion badge
+                    if (suggestionBadge && suggestionText) {
+                        suggestionText.textContent = `${suggestedWeeklyHours} hours suggested based on ${patientCount} patients (${Math.round(monthlyHours)} hrs/month)`;
+                        suggestionBadge.style.display = 'inline-flex';
+                    }
+                }
+            }
+
             setTimeout(() => {
                 stepMa.style.opacity = '1';
                 // Smooth scroll to MA section

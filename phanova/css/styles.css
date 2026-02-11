@@ -5499,6 +5499,40 @@ main {
     font-weight: 600;
 }
 
+/* Suggestion Badge */
+.suggestion-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(220, 252, 231, 0.9), rgba(187, 247, 208, 0.9));
+    border: 1.5px solid rgba(34, 197, 94, 0.4);
+    border-radius: var(--radius-lg);
+    color: #166534;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+    animation: slideInDown 0.4s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.suggestion-badge svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
 /* Calculation Info Display */
 .calculation-info {
     background: rgba(219, 183, 185, 0.08);
