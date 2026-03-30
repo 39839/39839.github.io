@@ -13,17 +13,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link rel="stylesheet" href="app.css">
-<link rel="icon" type="image/png" href="Logo.png">
+<link rel="icon" type="image/webp" href="logo.webp">
 </head>
 <body>
 
 <!-- Header -->
 <header>
   <a class="wordmark" href="#">
-    <img src="Logo.png" alt="Text2Anki" class="logo-img">
+    <img src="logo.webp" alt="Text2Anki" class="logo-img">
     <span class="wordmark-text">Text2<span class="wordmark-accent">Anki</span></span>
   </a>
   <div class="auth-area" id="authArea">
+    <button class="btn-how-to" onclick="openInstructions()" title="How to use Text2Anki">
+      <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+        <circle cx="7.5" cy="7.5" r="6.5" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M7.5 11V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="7.5" cy="4.5" r="0.8" fill="currentColor"/>
+      </svg>
+      How to Use
+    </button>
     <button class="sidebar-toggle" id="sidebarToggle" onclick="openSidebar()" style="display:none" title="My Decks">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <rect x="1" y="3" width="14" height="2" rx="1" fill="currentColor"/>
@@ -42,9 +50,37 @@
       Sign in with Google
     </button>
     <div class="user-info" id="userInfo" style="display:none">
-      <div id="userAvatarWrap"></div>
-      <span class="user-name" id="userName"></span>
-      <button class="btn-signout" onclick="signOut()">Sign out</button>
+      <button class="user-avatar-btn" id="userAvatarBtn" onclick="toggleProfileDropdown(event)" aria-haspopup="true" aria-expanded="false">
+        <div id="userAvatarWrap"></div>
+        <svg class="avatar-chevron" width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="profile-dropdown" id="profileDropdown">
+        <div class="profile-dd-user">
+          <div id="profileDdAvatar"></div>
+          <div class="profile-dd-names">
+            <span class="profile-dd-name" id="profileDdName"></span>
+            <span class="profile-dd-email" id="profileDdEmail"></span>
+          </div>
+        </div>
+        <div class="profile-dd-divider"></div>
+        <button class="profile-dd-item" onclick="openSettings()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.93 2.93l1.06 1.06M10.01 10.01l1.06 1.06M2.93 11.07l1.06-1.06M10.01 3.99l1.06-1.06" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Settings
+        </button>
+        <div class="profile-dd-divider"></div>
+        <button class="profile-dd-item profile-dd-signout" onclick="closeProfileDropdown(); signOut()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M5 2H3a1 1 0 00-1 1v8a1 1 0 001 1h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M9 10l3-3-3-3M12 7H5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Sign out
+        </button>
+      </div>
     </div>
   </div>
 </header>
@@ -60,15 +96,39 @@
 
     <!-- AI prompt button row (top) -->
     <div class="tool-row" style="padding-bottom:0">
-      <button class="btn btn-secondary" onclick="openAIModal()" style="width:100%;justify-content:center">Generate AI Formatting Prompt</button>
+      <button class="btn btn-ai-cta" onclick="openAIModal()">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+          <path d="M7.5 1L8.6 4.9H12.7L9.6 7.2L10.7 11.1L7.5 8.8L4.3 11.1L5.4 7.2L2.3 4.9H6.4L7.5 1Z" fill="currentColor" opacity="0.9"/>
+          <circle cx="12.5" cy="2" r="1" fill="currentColor" opacity="0.6"/>
+          <circle cx="2.5" cy="12" r="0.8" fill="currentColor" opacity="0.5"/>
+        </svg>
+        Generate AI Formatting Prompt
+        <span class="btn-ai-cta-arrow">→</span>
+      </button>
     </div>
 
     <!-- Row 1 -->
     <div class="tool-row row-split">
+      <div style="position:relative">
+        <label class="field-label">Class <span class="field-label-hint">optional</span></label>
+        <!-- Hidden real input kept for getExportDeckName() to read -->
+        <input type="hidden" id="className">
+        <div class="class-dropdown-wrap">
+          <div class="class-dropdown-trigger" id="classDropdownTrigger" onclick="toggleClassDropdown()">
+            <span id="classDropdownDisplay">No class</span>
+            <svg class="class-dropdown-arrow" width="11" height="11" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="class-dropdown-menu" id="classDropdownMenu"></div>
+        </div>
+      </div>
       <div>
         <label class="field-label" for="deckName">Deck Name</label>
-        <input class="text-input" type="text" id="deckName" placeholder="My Study Deck" value="My Deck">
+        <input class="text-input" type="text" id="deckName" placeholder="e.g. Amino Acids" value="My Deck" oninput="updateDeckFullnamePreview()">
       </div>
+    </div>
+    <div class="tool-row row-split" style="padding-top:0">
       <div>
         <label class="field-label">Card Type</label>
         <div class="card-type-pills">
@@ -77,6 +137,7 @@
           <button class="type-pill"        data-type="Cloze++" onclick="setCardType('Cloze++',this)">Cloze++</button>
         </div>
       </div>
+      <div class="deck-fullname-preview" id="deckFullnamePreview"></div>
     </div>
 
     <!-- Row 2 -->
@@ -101,6 +162,32 @@
       <button class="btn btn-primary" id="btnPreview" onclick="doPreview()" disabled>Preview Cards</button>
       <button class="btn btn-download" id="btnDirectDownload" onclick="doDirectDownload()" disabled>Download .apkg</button>
       <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
+    </div>
+
+    <!-- Theme selector (shown only when user has saved presets) -->
+    <div class="tool-row theme-select-row" id="themeSelectRow" style="display:none;padding-top:0">
+      <label class="field-label" style="margin-bottom:5px">
+        Card Theme
+        <span class="field-label-hint">for this download</span>
+      </label>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="custom-select-wrap" style="flex:1">
+          <div class="custom-select-trigger" id="themeSelectTrigger" onclick="toggleThemeDropdown()">
+            <span id="themeSelectDisplay">Default (saved style)</span>
+            <svg class="custom-select-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="custom-select-dropdown" id="themeSelectDropdown"></div>
+          <select id="themeSelect" style="display:none" onchange="onThemeChange(this.value)">
+            <option value="">Default (saved style)</option>
+          </select>
+        </div>
+        <a class="btn-theme-edit" href="styles.html" title="Edit card styles">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M6.5 1v1M6.5 11v1M1 6.5h1M11 6.5h1M2.4 2.4l.7.7M9.9 9.9l.7.7M2.4 10.6l.7-.7M9.9 3.1l.7-.7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+          Edit
+        </a>
+      </div>
     </div>
 
   </div>
@@ -143,22 +230,58 @@
 
 <!-- Floating decks panel (right side, shown when logged in) -->
 <div id="floatingDecksPanel">
+
+  <!-- Header: wordmark + stats -->
   <div class="fdp-header">
     <div class="fdp-header-top">
-      <span class="fdp-wordmark">My Decks</span>
+      <div class="fdp-title-row">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="fdp-title-icon">
+          <rect x="1" y="2" width="12" height="9" rx="2.5" stroke="currentColor" stroke-width="1.3" fill="none"/>
+          <path d="M1 5h12" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        <span class="fdp-wordmark">My Library</span>
+      </div>
       <div class="fdp-stats">
         <div class="fdp-stat">
           <span class="fdp-stat-num" id="fdpStatDecks">0</span>
           <span class="fdp-stat-lbl">Decks</span>
         </div>
+        <div class="fdp-stat-div"></div>
         <div class="fdp-stat">
           <span class="fdp-stat-num" id="fdpStatCards">0</span>
           <span class="fdp-stat-lbl">Cards</span>
         </div>
       </div>
     </div>
-    <input class="fdp-search" id="fdpSearch" type="text" placeholder="Search decks..." oninput="renderFloatingPanel()">
+
+    <!-- Search -->
+    <div class="fdp-search-wrap">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="fdp-search-icon"><circle cx="5" cy="5" r="3.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 8l2.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <input class="fdp-search" id="fdpSearch" type="text" placeholder="Search decks..." oninput="renderFloatingPanel()">
+    </div>
   </div>
+
+  <!-- Inline "Create class" form (hidden by default) -->
+  <div class="fdp-create-class-form" id="fdpCreateClassForm" style="display:none">
+    <input class="fdp-input" id="fdpNewClassName" type="text" placeholder="Class name (e.g. Biochemistry)"
+           autocomplete="off" onkeydown="if(event.key==='Enter')fdpConfirmCreateClass(); if(event.key==='Escape')fdpCancelCreateClass()">
+    <div class="fdp-create-class-actions">
+      <button class="fdp-ccf-cancel" onclick="fdpCancelCreateClass()">Cancel</button>
+      <button class="fdp-ccf-confirm" onclick="fdpConfirmCreateClass()">Create</button>
+    </div>
+  </div>
+
+  <!-- Inline "Create deck" form (hidden by default) -->
+  <div class="fdp-create-deck-form" id="fdpCreateDeckForm" style="display:none">
+    <div class="fdp-cdf-label" id="fdpCreateDeckLabel">New deck</div>
+    <input class="fdp-input" id="fdpNewDeckName" type="text" placeholder="Deck name (e.g. Amino Acids)"
+           autocomplete="off" onkeydown="if(event.key==='Enter')fdpConfirmCreateDeck(); if(event.key==='Escape')fdpCancelCreateDeck()">
+    <div class="fdp-create-class-actions">
+      <button class="fdp-ccf-cancel" onclick="fdpCancelCreateDeck()">Cancel</button>
+      <button class="fdp-ccf-confirm" onclick="fdpConfirmCreateDeck()">Start</button>
+    </div>
+  </div>
+
   <div class="fdp-list" id="fdpList">
     <div class="fdp-empty">
       <div class="fdp-empty-icon">
@@ -170,9 +293,14 @@
       No decks yet.<br>Download your first deck to see it here.
     </div>
   </div>
+
   <div class="fdp-footer">
-    <button class="fdp-new-btn" onclick="document.getElementById('deckName').focus(); document.getElementById('deckName').select()">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    <button class="fdp-action-btn fdp-create-class-btn" onclick="fdpStartCreateClass()">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Create Class
+    </button>
+    <button class="fdp-action-btn fdp-create-deck-btn" onclick="fdpStartCreateDeck(null)">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
       New Deck
     </button>
   </div>
@@ -183,42 +311,43 @@
 
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-  <!-- Banner with gradient + user info -->
-  <div class="sidebar-banner">
-    <div class="sidebar-banner-top">
-      <span class="sidebar-banner-title">My Decks</span>
-      <button class="sidebar-close" onclick="closeSidebar()" title="Close">&times;</button>
-    </div>
-    <div class="sidebar-user" id="sidebarUser"></div>
-  </div>
 
-  <!-- Stats strip -->
-  <div class="sidebar-stats" id="sidebarStats">
-    <div class="stat-box">
-      <div class="stat-num" id="statDecks">0</div>
-      <div class="stat-label">Decks</div>
+  <!-- Header -->
+  <div class="sb-header">
+    <div class="sb-header-row">
+      <div class="sb-title">My Library</div>
+      <button class="sb-close" onclick="closeSidebar()" title="Close">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
     </div>
-    <div class="stat-box">
-      <div class="stat-num" id="statCards">0</div>
-      <div class="stat-label">Cards</div>
+    <div class="sb-user" id="sidebarUser"></div>
+    <div class="sb-stats-row">
+      <div class="sb-stat"><span class="sb-stat-num" id="statDecks">0</span><span class="sb-stat-lbl">Decks</span></div>
+      <div class="sb-stat-div"></div>
+      <div class="sb-stat"><span class="sb-stat-num" id="statCards">0</span><span class="sb-stat-lbl">Cards</span></div>
     </div>
   </div>
 
-  <!-- Nav -->
-  <div class="sidebar-nav">
-    <a class="sidebar-nav-btn active" href="#" onclick="closeSidebar();return false;">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="5" height="5" rx="1.5" fill="currentColor"/><rect x="7" y="1" width="5" height="5" rx="1.5" fill="currentColor"/><rect x="1" y="7" width="5" height="5" rx="1.5" fill="currentColor"/><rect x="7" y="7" width="5" height="5" rx="1.5" fill="currentColor"/></svg>
-      Home
-    </a>
-    <a class="sidebar-nav-btn" href="styles.html">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 10l3-3 2 2 4-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Card Styles
-    </a>
+  <!-- Search -->
+  <div class="sb-search-wrap">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="sb-search-icon"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 9.5l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    <input class="sb-search" id="sidebarSearch" type="text" placeholder="Search decks..." oninput="renderSidebarDecks()">
   </div>
 
-  <div class="sidebar-section-title">Recent Decks</div>
+  <!-- Card Styles promo banner -->
+  <a class="sb-styles-banner" href="styles.html">
+    <div class="sb-styles-banner-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3.5" fill="white" opacity="0.9"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </div>
+    <div class="sb-styles-banner-text">
+      <div class="sb-styles-banner-title">Customize Card Styles</div>
+      <div class="sb-styles-banner-sub">Change colors, fonts & themes →</div>
+    </div>
+  </a>
 
-  <div class="sidebar-decks" id="sidebarDecks">
+  <!-- Decks list -->
+  <div class="sb-section-label">Your Decks</div>
+  <div class="sb-decks" id="sidebarDecks">
     <div class="sidebar-empty">
       <div class="sidebar-empty-icon">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -230,19 +359,50 @@
     </div>
   </div>
 
-  <div class="sidebar-footer">
-    <button class="btn-new-deck" onclick="closeSidebar(); document.getElementById('deckName').focus()">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+  <!-- Footer -->
+  <div class="sb-footer">
+    <button class="sb-new-btn" onclick="closeSidebar(); document.getElementById('deckName').focus()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
       New Deck
     </button>
-    <a class="btn-card-styles" href="styles.html">
-      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M4 6.5h5M6.5 4v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      Edit Card Styles
-    </a>
   </div>
 </div>
 
-<footer>Text2Anki &middot; paste, convert, study</footer>
+<footer class="site-footer">
+  <div class="site-footer-inner">
+
+    <!-- Brand col -->
+    <div class="sf-brand">
+      <a class="sf-wordmark" href="#">
+        <img src="logo.webp" alt="Text2Anki" class="sf-logo">
+        <span>Text2<span class="wordmark-accent">Anki</span></span>
+      </a>
+      <p class="sf-tagline">Turn your notes into Anki flashcards in seconds. Paste, convert, study.</p>
+    </div>
+
+    <!-- Links col -->
+    <div class="sf-links-col">
+      <div class="sf-col-heading">Tools</div>
+      <a href="styles.html" class="sf-link">Card Styles</a>
+      <a href="#" class="sf-link" onclick="openAIModal(); return false;">AI Prompt Generator</a>
+      <a href="#" class="sf-link" onclick="openInstructions(); return false;">How to Use</a>
+    </div>
+
+    <!-- Info col -->
+    <div class="sf-links-col">
+      <div class="sf-col-heading">Card Types</div>
+      <span class="sf-link-plain">Basic — Q&amp;A flashcards</span>
+      <span class="sf-link-plain">Cloze+ — Fill-in-the-blank</span>
+      <span class="sf-link-plain">Cloze++ — Cloze with context</span>
+    </div>
+
+  </div>
+  <div class="sf-bottom">
+    <span>© 2025 Text2Anki</span>
+    <span class="sf-sep">·</span>
+    <span>paste, convert, study</span>
+  </div>
+</footer>
 
 <!-- Toast -->
 <div class="toast-container" id="toastContainer"></div>
@@ -285,6 +445,275 @@ A: The answer.</div>
       <pre class="prompt-pre" id="promptText"></pre>
       <button class="btn btn-teal" style="width:100%;justify-content:center" onclick="copyPrompt()">Copy to Clipboard</button>
     </div>
+  </div>
+</div>
+
+<!-- Instructions Modal -->
+<div class="modal-overlay" id="instructionsModal" onclick="closeInstructionsOnBg(event)">
+  <div class="modal instr-modal">
+    <button class="modal-close" onclick="closeInstructions()" title="Close">&times;</button>
+    <div class="instr-header">
+      <div class="instr-logo-wrap">
+        <img src="logo.webp" alt="Text2Anki" class="instr-logo">
+      </div>
+      <h2 class="instr-title">How to use Text2Anki</h2>
+      <p class="instr-sub">From raw notes to study-ready Anki cards in under a minute.</p>
+    </div>
+
+    <!-- Section 1: Overview -->
+    <div class="instr-section">
+      <div class="instr-section-title">What is Text2Anki?</div>
+      <p class="instr-body">Text2Anki converts plain text into Anki flashcard decks (<code>.apkg</code> files) that you can import directly into Anki on any device. You choose the card style, the deck name, and the format — the site handles the rest.</p>
+    </div>
+
+    <!-- Section 2: The three card types -->
+    <div class="instr-section">
+      <div class="instr-section-title">Card types</div>
+      <div class="instr-cards-grid">
+        <div class="instr-card-type">
+          <div class="instr-card-badge instr-badge-basic">Basic</div>
+          <div class="instr-card-desc">Classic question / answer cards. One side shows the question, the other reveals the answer.</div>
+          <div class="instr-card-example">
+            <span class="instr-ex-label">Format</span>
+            <code>Q: What is ATP?<br>A: The cell's energy currency.</code>
+          </div>
+        </div>
+        <div class="instr-card-type">
+          <div class="instr-card-badge instr-badge-cloze">Cloze+</div>
+          <div class="instr-card-desc">Fill-in-the-blank. The hidden word is shown in a highlight when you reveal the card.</div>
+          <div class="instr-card-example">
+            <span class="instr-ex-label">Format</span>
+            <code>The &#123;&#123;c1::mitochondria&#125;&#125; produce ATP.</code>
+          </div>
+        </div>
+        <div class="instr-card-type">
+          <div class="instr-card-badge instr-badge-clozep">Cloze++</div>
+          <div class="instr-card-desc">Cloze with an optional hint and a full explanation shown after reveal.</div>
+          <div class="instr-card-example">
+            <span class="instr-ex-label">Format</span>
+            <code>&#123;&#123;c1::ATP::hint&#125;&#125; powers the cell || Adenosine triphosphate — the energy carrier.</code>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Step by step -->
+    <div class="instr-section">
+      <div class="instr-section-title">Step-by-step guide</div>
+      <div class="instr-steps">
+        <div class="instr-step">
+          <div class="instr-step-num">1</div>
+          <div class="instr-step-body">
+            <div class="instr-step-head">Sign in with Google</div>
+            <div class="instr-step-text">Your decks, card styles, and classes are saved to your account so they're there every time you come back.</div>
+          </div>
+        </div>
+        <div class="instr-step">
+          <div class="instr-step-num">2</div>
+          <div class="instr-step-body">
+            <div class="instr-step-head">Choose a Class &amp; Deck name</div>
+            <div class="instr-step-text">A <strong>Class</strong> is a top-level subject (e.g. <em>Biochemistry</em>). A <strong>Deck</strong> is a subtopic within it (e.g. <em>Amino Acids</em>). In Anki this becomes <code>Biochemistry::Amino Acids</code> — a nested subdeck. If you don't need a class, just enter a deck name.</div>
+          </div>
+        </div>
+        <div class="instr-step">
+          <div class="instr-step-num">3</div>
+          <div class="instr-step-body">
+            <div class="instr-step-head">Pick a card type</div>
+            <div class="instr-step-text">Choose <strong>Basic</strong> for Q&amp;A, <strong>Cloze+</strong> for fill-in-the-blank, or <strong>Cloze++</strong> for cloze with a detailed explanation. You can mix types across different decks.</div>
+          </div>
+        </div>
+        <div class="instr-step">
+          <div class="instr-step-num">4</div>
+          <div class="instr-step-body">
+            <div class="instr-step-head">Paste your notes</div>
+            <div class="instr-step-text">Paste formatted text into the notes box. The format is detected automatically. You'll see a live preview of the cards that will be generated.</div>
+          </div>
+        </div>
+        <div class="instr-step">
+          <div class="instr-step-num">5</div>
+          <div class="instr-step-body">
+            <div class="instr-step-head">Download the .apkg file</div>
+            <div class="instr-step-text">Click <strong>Download .apkg</strong>. Open Anki → <em>File → Import</em> → select the file. Your cards appear instantly under the deck name you chose.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: AI workflow -->
+    <div class="instr-section instr-ai-section">
+      <div class="instr-ai-badge">
+        <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+          <path d="M7.5 1L8.6 4.9H12.7L9.6 7.2L10.7 11.1L7.5 8.8L4.3 11.1L5.4 7.2L2.3 4.9H6.4L7.5 1Z" fill="white"/>
+        </svg>
+        AI Workflow
+      </div>
+      <div class="instr-section-title" style="margin-top:10px">Using AI to format your notes</div>
+      <p class="instr-body">Don't want to format your notes manually? Use the built-in AI prompt generator.</p>
+      <div class="instr-ai-steps">
+        <div class="instr-ai-step">
+          <div class="instr-ai-step-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M5 5.5h4M5 10.5h3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div><strong>1. Click "Generate AI Formatting Prompt"</strong> at the top of the page. Choose your card type (Basic, Cloze+, or Cloze++).</div>
+        </div>
+        <div class="instr-ai-step">
+          <div class="instr-ai-step-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 8h8M10 5l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div><strong>2. Copy the prompt</strong> and open any AI (ChatGPT, Claude, Gemini, etc.). Paste the prompt, then paste your raw notes below it.</div>
+        </div>
+        <div class="instr-ai-step">
+          <div class="instr-ai-step-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l3.5 3.5L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div><strong>3. The AI outputs only the card text</strong> — already formatted correctly. Copy it and paste it straight into Text2Anki's notes box.</div>
+        </div>
+        <div class="instr-ai-step">
+          <div class="instr-ai-step-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div><strong>4. Download your .apkg</strong> and import into Anki. Done — from notes to cards in under a minute.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5: Card styles -->
+    <div class="instr-section">
+      <div class="instr-section-title">Customising card styles</div>
+      <p class="instr-body">Visit <a href="styles.html" class="instr-link">Card Styles</a> to change background colours, text colours, font sizes, corner radius, and more for each card type. Save your favourite looks as named presets and select them per-download using the <strong>Card Theme</strong> dropdown on the main page.</p>
+    </div>
+
+    <div class="instr-footer-action">
+      <button class="btn btn-primary" style="padding:12px 32px;font-size:15px" onclick="closeInstructions()">Got it, let's make cards →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Class Confirmation -->
+<div class="confirm-overlay" id="deleteClassOverlay">
+  <div class="confirm-dialog">
+    <div class="confirm-icon" style="background:rgba(127,181,176,0.12)">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="2" y="5" width="18" height="13" rx="3" stroke="#5e9a95" stroke-width="1.5" fill="none"/>
+        <path d="M2 9h18" stroke="#5e9a95" stroke-width="1.3"/>
+        <path d="M8 13h6" stroke="#5e9a95" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="confirm-title">Remove class?</div>
+    <div class="confirm-msg">This removes <strong id="deleteClassName"></strong> from your library panel. Your existing decks in this class are not deleted.</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" onclick="cancelDeleteClass()">Cancel</button>
+      <button class="btn-confirm-delete" style="background:#5e9a95" onclick="fdpDeleteClass()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Deck Confirmation -->
+<div class="confirm-overlay" id="deleteDeckOverlay">
+  <div class="confirm-dialog">
+    <div class="confirm-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M3 5.5h16M8 5.5V4a1 1 0 011-1h4a1 1 0 011 1v1.5M5.5 5.5l.75 12.5a1.5 1.5 0 001.5 1.5h6.5a1.5 1.5 0 001.5-1.5l.75-12.5" stroke="#e05252" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="confirm-title">Delete deck?</div>
+    <div class="confirm-msg">This will permanently remove <strong id="deleteDeckName"></strong> from your history. The .apkg file you already downloaded is not affected.</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" onclick="cancelDeleteDeck()">Cancel</button>
+      <button class="btn-confirm-delete" onclick="deleteDeck()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Page -->
+<div class="settings-overlay" id="settingsOverlay" onclick="settingsOverlayClick(event)">
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <div class="settings-title">Settings</div>
+      <button class="settings-close" onclick="closeSettings()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="settings-body">
+      <!-- Profile section -->
+      <div class="settings-section">
+        <div class="settings-section-label">Account</div>
+        <div class="settings-profile-card">
+          <div id="settingsAvatar"></div>
+          <div class="settings-profile-info">
+            <div class="settings-profile-name" id="settingsName"></div>
+            <div class="settings-profile-email" id="settingsEmail"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="settings-section">
+        <div class="settings-section-label">Data</div>
+        <div class="settings-card">
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-title">Reset account</div>
+              <div class="settings-row-desc">Permanently delete all decks, classes, and card history. You'll start completely fresh.</div>
+            </div>
+            <button class="settings-danger-btn" onclick="closeSettings(); confirmResetAccount()">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign out -->
+      <div class="settings-section">
+        <div class="settings-card">
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-title">Sign out</div>
+              <div class="settings-row-desc">Sign out of your Google account.</div>
+            </div>
+            <button class="settings-neutral-btn" onclick="closeSettings(); signOut()">Sign out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Account Confirmation -->
+<div class="confirm-overlay" id="resetAccountOverlay">
+  <div class="confirm-dialog">
+    <div class="confirm-icon" style="background:rgba(224,82,82,0.10)">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <path d="M11 3C6.58 3 3 6.58 3 11s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8z" stroke="#e05252" stroke-width="1.5" fill="none"/>
+        <path d="M11 7v5" stroke="#e05252" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="11" cy="15" r="1" fill="#e05252"/>
+      </svg>
+    </div>
+    <div class="confirm-title">Reset entire account?</div>
+    <div class="confirm-msg">This will permanently delete <strong>all your decks, classes, and card history</strong>. You will start completely fresh. This cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" onclick="cancelResetAccount()">Cancel</button>
+      <button class="btn-confirm-delete" onclick="resetAccount()">Yes, delete everything</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sign-in Wall -->
+<div class="signin-wall" id="signinWall">
+  <div class="signin-wall-card">
+    <img src="logo.webp" alt="Text2Anki" class="signin-wall-logo">
+    <div class="signin-wall-title">Welcome to Text2<span class="wordmark-accent">Anki</span></div>
+    <div class="signin-wall-sub">Sign in to start turning your notes into Anki flashcards. Your decks and styles are saved to your account.</div>
+    <button class="btn-google-signin signin-wall-btn" onclick="signInWithGoogle()">
+      <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
+        <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.566 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+        <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
+        <path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.548 0 9s.348 2.825.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
   </div>
 </div>
 

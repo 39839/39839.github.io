@@ -10,7 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<link rel="icon" type="image/png" href="Logo.png">
+<link rel="icon" type="image/webp" href="logo.webp">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -94,281 +94,410 @@ header {
   color: white; font-weight: 700; font-size: 13px;
 }
 
-/* ---- Layout ---- */
-.page-wrap {
-  max-width: 1100px;
+/* ---- Hero section ---- */
+.page-hero {
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 32px 24px 80px;
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 24px;
-  align-items: start;
+  padding: 36px 28px 0;
+}
+.hero-title {
+  font-size: 30px; font-weight: 800; letter-spacing: -0.5px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-sub {
+  font-size: 15px; font-weight: 500; color: var(--text-muted);
+  margin-top: 6px;
 }
 
-/* ---- Left tab nav ---- */
-.tab-nav {
+/* ---- Card type tabs (pill row) ---- */
+.tabs-row {
+  max-width: 1180px;
+  margin: 20px auto 0;
+  padding: 0 28px;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.card-tab-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 22px; border-radius: 50px;
+  border: 2px solid transparent;
   background: rgba(255,255,255,0.55);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 12px;
-  position: sticky;
-  top: 82px;
-}
-.tab-nav-title {
-  font-size: 10px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--text-muted);
-  padding: 6px 8px 10px;
-}
-.tab-btn {
-  width: 100%;
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px; border-radius: 13px;
-  border: 1px solid transparent;
-  background: none;
+  backdrop-filter: blur(8px);
   font-family: 'Nunito', sans-serif;
   font-size: 14px; font-weight: 700;
   color: var(--text-muted);
-  cursor: pointer; text-align: left;
-  transition: all 0.15s;
-  margin-bottom: 3px;
+  cursor: pointer;
+  transition: all 0.18s;
+  box-shadow: 0 1px 4px rgba(61,74,62,0.07);
 }
-.tab-btn:hover { background: rgba(143,171,135,0.08); color: var(--text); }
-.tab-btn.active {
-  background: rgba(143,171,135,0.15);
-  border-color: rgba(143,171,135,0.3);
+.card-tab-btn:hover {
+  background: rgba(255,255,255,0.8);
+  color: var(--text);
+}
+.card-tab-btn.active {
+  background: white;
+  border-color: var(--sage-light);
   color: var(--sage-dark);
+  box-shadow: 0 2px 12px rgba(143,171,135,0.2);
 }
-.tab-dot {
-  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+.tab-pill-dot {
+  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
 }
 .dot-basic  { background: linear-gradient(135deg, #8fab87, #7fb5b0); }
 .dot-cloze  { background: linear-gradient(135deg, #7fb5b0, #6a9abf); }
 .dot-clozep { background: linear-gradient(135deg, #a89abf, #7fb5b0); }
 
-.tab-nav-divider {
-  height: 1px; background: var(--glass-border);
-  margin: 10px 0;
+/* ---- Main layout ---- */
+.page-wrap {
+  max-width: 1180px;
+  margin: 24px auto 80px;
+  padding: 0 28px;
+  display: grid;
+  grid-template-columns: 1fr 44%;
+  gap: 24px;
+  align-items: start;
 }
 
-.save-status {
-  text-align: center;
-  font-size: 12px; font-weight: 600;
-  color: var(--text-muted);
-  padding: 6px 8px;
-  transition: color 0.3s;
-}
-.save-status.saved { color: var(--sage-dark); }
-.save-status.saving { color: var(--teal-dark); }
-
-/* ---- Right panel ---- */
-.editor-panel {
-  display: flex; flex-direction: column; gap: 20px;
-}
-
+/* ---- Tab content visibility ---- */
 .card-tab-content { display: none; }
-.card-tab-content.active { display: flex; flex-direction: column; gap: 20px; }
+.card-tab-content.active { display: contents; }
 
-.panel-card {
-  background: rgba(255,255,255,0.58);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 24px;
+/* ---- Controls column ---- */
+.controls-col {
+  display: flex; flex-direction: column; gap: 0;
 }
-.panel-card-title {
-  font-size: 13px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: 0.07em;
+
+/* ---- Sign-in prompt ---- */
+.sign-in-prompt {
+  text-align: center; padding: 18px 20px;
+  color: var(--text-muted); font-size: 14px; font-weight: 500;
+  background: rgba(255,255,255,0.5); border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  margin-bottom: 16px;
+}
+.sign-in-prompt strong { color: var(--text); }
+
+/* ---- Glass panel (controls container) ---- */
+.glass-panel {
+  background: rgba(255,255,255,0.62);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+/* ---- Preset row ---- */
+.presets-row {
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid rgba(184,168,200,0.2);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.presets-label {
+  font-size: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.1em;
   color: var(--text-muted);
-  margin-bottom: 18px;
+}
+.presets-pills {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+.preset-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 13px 6px 9px; border-radius: 50px;
+  border: 1px solid rgba(184,168,200,0.35);
+  background: rgba(255,255,255,0.7);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px; font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.preset-pill:hover {
+  background: white;
+  border-color: var(--sage-light);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(61,74,62,0.1);
+}
+.preset-dots {
+  display: flex; gap: 3px; align-items: center;
+}
+.preset-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.4);
+}
+
+/* ---- Section inside glass panel ---- */
+.ctrl-section {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(184,168,200,0.18);
+}
+.ctrl-section:last-child { border-bottom: none; }
+.section-heading {
+  font-size: 9.5px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
   display: flex; align-items: center; gap: 8px;
 }
-.panel-card-title span {
-  display: inline-block; width: 8px; height: 8px;
-  border-radius: 50%;
+.section-heading::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(184,168,200,0.4), transparent);
 }
 
-/* ---- Control rows ---- */
-.ctrl-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 14px;
+/* ---- Color swatch grid ---- */
+.swatch-grid {
+  display: flex; flex-wrap: wrap; gap: 14px;
 }
-.ctrl-item { display: flex; flex-direction: column; gap: 5px; }
-.ctrl-label {
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.05em;
-  color: var(--text-muted);
+.swatch-item {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  flex: 0 0 auto;
 }
-.ctrl-row { display: flex; align-items: center; gap: 8px; }
-
-/* Inputs */
-.ctrl-input {
-  flex: 1;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(143,171,135,0.25);
-  border-radius: 10px;
-  padding: 8px 11px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px; font-weight: 600;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+.swatch-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--text-muted); text-align: center;
+  max-width: 60px; line-height: 1.2;
 }
-.ctrl-input:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(143,171,135,0.15); }
-
-input[type="color"].ctrl-swatch {
-  width: 36px; height: 36px;
-  border-radius: 10px;
-  border: 2px solid rgba(143,171,135,0.25);
-  padding: 2px;
+.swatch-wrapper {
+  position: relative; width: 44px; height: 44px;
+}
+input[type="color"].big-swatch {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  border: 2.5px solid rgba(255,255,255,0.8);
+  padding: 0;
   cursor: pointer;
-  background: white;
-  flex-shrink: 0;
-}
-input[type="range"] {
-  flex: 1;
-  accent-color: var(--sage);
-}
-.range-val {
-  font-size: 12px; font-weight: 700;
-  color: var(--sage-dark);
-  min-width: 36px; text-align: right;
-}
-
-select.ctrl-input {
-  cursor: pointer;
-}
-
-.toggle-row {
-  display: flex; align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(184,168,200,0.15);
-}
-.toggle-row:last-child { border-bottom: none; }
-.toggle-label { font-size: 13px; font-weight: 600; color: var(--text); }
-.toggle-label small { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 1px; }
-
-/* Toggle switch */
-.toggle-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
-.toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-slider {
-  position: absolute; cursor: pointer;
-  inset: 0; background: var(--sand-dark);
-  border-radius: 24px; transition: background 0.2s;
-}
-.toggle-slider::before {
-  content: ''; position: absolute;
-  width: 18px; height: 18px; left: 3px; bottom: 3px;
-  background: white; border-radius: 50%;
-  transition: transform 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-}
-.toggle-switch input:checked + .toggle-slider { background: var(--sage); }
-.toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
-
-/* Accent colors strip */
-.accent-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
-.accent-swatch {
-  width: 28px; height: 28px; border-radius: 8px;
-  border: 2px solid transparent;
-  cursor: pointer; transition: all 0.15s;
-}
-.accent-swatch.active, .accent-swatch:hover {
-  border-color: var(--text);
-  transform: scale(1.12);
-}
-
-/* Highlight colors for bold/italic/underline */
-.markup-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 4px;
-}
-.markup-item { display: flex; flex-direction: column; gap: 5px; }
-.markup-preview {
-  text-align: center;
-  font-size: 14px;
-  padding: 6px 0;
-  border-radius: 8px;
-  background: rgba(255,255,255,0.5);
-  border: 1px solid var(--glass-border);
-}
-
-/* ---- Live preview ---- */
-.preview-wrap {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 20px rgba(61,74,62,0.08);
-}
-.preview-label {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 14px;
-  background: rgba(255,255,255,0.5);
-  border-bottom: 1px solid var(--glass-border);
-  font-size: 12px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  color: var(--text-muted);
-}
-.preview-toggle { display: flex; gap: 4px; }
-.ptgl-btn {
-  padding: 4px 10px; border-radius: 8px; border: none;
-  background: none; font-family: 'Nunito', sans-serif;
-  font-size: 11px; font-weight: 700; color: var(--text-muted);
-  cursor: pointer; transition: all 0.15s;
-}
-.ptgl-btn.active { background: var(--sage); color: white; }
-.preview-frame {
-  width: 100%; height: 320px; border: none;
+  box-shadow: 0 2px 8px rgba(61,74,62,0.15), inset 0 0 0 1px rgba(184,168,200,0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
   display: block;
 }
-
-/* ---- Action bar ---- */
-.action-bar {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+input[type="color"].big-swatch:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 14px rgba(61,74,62,0.2);
 }
-.btn-save {
-  padding: 11px 28px;
+.hex-badge {
+  font-size: 9px; font-weight: 700;
+  color: var(--text-muted);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Markup row ---- */
+.markup-row {
+  display: flex; gap: 18px; flex-wrap: wrap;
+}
+.markup-item {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+}
+.markup-preview-chip {
+  font-size: 12px; font-weight: 600;
+  padding: 3px 10px; border-radius: 6px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid var(--glass-border);
+}
+
+/* ---- Range sliders ---- */
+.range-row {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 14px;
+}
+.range-header {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.range-lbl {
+  font-size: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+.range-badge {
+  font-size: 12px; font-weight: 800;
+  color: var(--sage-dark);
+  background: rgba(143,171,135,0.12);
+  padding: 2px 8px; border-radius: 6px;
+  min-width: 44px; text-align: center;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--sage);
+  height: 6px;
+}
+
+/* ---- Font pills ---- */
+.font-pills {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.font-pill {
+  padding: 7px 14px; border-radius: 10px;
+  border: 1.5px solid rgba(184,168,200,0.3);
+  background: rgba(255,255,255,0.6);
+  font-size: 13px; font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.font-pill:hover { background: white; color: var(--text); }
+.font-pill.active {
+  background: white;
+  border-color: var(--sage);
+  color: var(--sage-dark);
+  box-shadow: 0 1px 6px rgba(143,171,135,0.2);
+}
+/* hidden select to carry the actual value */
+select.hidden-font-select { display: none; }
+
+/* ---- Save-preset row ---- */
+.save-preset-row {
+  padding: 14px 20px 0;
+  display: flex; align-items: center; gap: 8px;
+  border-top: 1px solid rgba(184,168,200,0.18);
+}
+.save-preset-input {
+  flex: 1; min-width: 0;
+  padding: 7px 11px; border-radius: 10px;
+  border: 1px solid rgba(184,168,200,0.35);
+  background: rgba(255,255,255,0.7);
+  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--text); outline: none;
+  transition: border-color 0.15s;
+}
+.save-preset-input:focus { border-color: var(--sage); background: white; }
+.save-preset-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+.btn-save-preset {
+  padding: 7px 14px; border-radius: 10px;
+  background: rgba(143,171,135,0.15);
+  border: 1px solid rgba(143,171,135,0.3);
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--sage-dark); cursor: pointer;
+  transition: all 0.15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-save-preset:hover { background: rgba(143,171,135,0.25); transform: translateY(-1px); }
+.user-preset-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px 5px 9px; border-radius: 50px;
+  border: 1.5px solid rgba(143,171,135,0.4);
+  background: rgba(143,171,135,0.1);
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+  color: var(--sage-dark); cursor: pointer;
+  transition: all 0.15s; position: relative;
+}
+.user-preset-pill:hover { background: rgba(143,171,135,0.2); border-color: var(--sage); }
+.user-preset-del {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(192,97,90,0.15); border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: #c0615a; cursor: pointer; padding: 0;
+  line-height: 1; flex-shrink: 0; margin-left: 1px;
+  transition: background 0.12s;
+}
+.user-preset-del:hover { background: rgba(192,97,90,0.3); }
+.presets-user-label {
+  font-size: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--sage-dark); opacity: 0.7;
+  margin-top: 10px; margin-bottom: 4px;
+}
+
+/* ---- Panel footer (actions) ---- */
+.panel-footer {
+  padding: 12px 20px 16px;
+  border-top: 1px solid rgba(184,168,200,0.2);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.btn-save-now {
+  padding: 9px 22px;
   background: linear-gradient(135deg, var(--sage) 0%, var(--teal) 100%);
-  color: white; border: none; border-radius: 14px;
+  color: white; border: none; border-radius: 12px;
   font-family: 'Nunito', sans-serif;
-  font-size: 14px; font-weight: 700;
+  font-size: 13px; font-weight: 700;
   cursor: pointer; transition: all 0.2s;
   box-shadow: 0 2px 10px rgba(143,171,135,0.35);
 }
-.btn-save:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(143,171,135,0.45); }
-.btn-reset {
-  padding: 11px 20px;
-  background: rgba(255,255,255,0.7);
-  color: var(--text-muted); border: 1px solid var(--glass-border);
-  border-radius: 14px;
+.btn-save-now:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(143,171,135,0.45); }
+.btn-restore {
   font-family: 'Nunito', sans-serif;
-  font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: all 0.2s;
-}
-.btn-reset:hover { background: var(--sand); color: var(--text); }
-.save-badge {
   font-size: 13px; font-weight: 600;
-  padding: 6px 14px; border-radius: 10px;
+  color: var(--text-muted);
+  background: none; border: none;
+  cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; gap: 5px;
+  transition: color 0.15s;
+  padding: 0;
+}
+.btn-restore:hover { color: #c0615a; }
+.save-badge {
+  font-size: 12px; font-weight: 700;
+  padding: 5px 12px; border-radius: 8px;
   opacity: 0; transition: opacity 0.3s;
 }
 .save-badge.show { opacity: 1; }
 .save-badge.ok { background: rgba(143,171,135,0.15); color: var(--sage-dark); }
 .save-badge.err { background: rgba(192,97,90,0.12); color: #c0615a; }
 
-.sign-in-prompt {
-  text-align: center; padding: 40px 24px;
-  color: var(--text-muted); font-size: 15px; font-weight: 500;
-  background: rgba(255,255,255,0.5); border-radius: 20px;
-  border: 1px solid var(--glass-border);
+/* ---- Preview column ---- */
+.preview-col {
+  position: sticky;
+  top: 82px;
+  display: flex; flex-direction: column; gap: 0;
 }
-.sign-in-prompt strong { color: var(--text); }
+.preview-panel {
+  background: rgba(255,255,255,0.62);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  overflow: hidden;
+}
+.preview-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.4);
+}
+.preview-title {
+  font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.preview-title::before {
+  content: '';
+  width: 8px; height: 8px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--sage), var(--teal));
+  display: inline-block;
+}
+.preview-right {
+  display: flex; align-items: center; gap: 10px;
+}
+.autosave-status {
+  font-size: 11px; font-weight: 600;
+  color: var(--text-muted);
+  transition: color 0.3s;
+}
+.autosave-status.saving { color: var(--teal-dark); }
+.autosave-status.saved  { color: var(--sage-dark); }
+.preview-toggle {
+  display: flex; gap: 4px;
+}
+.ptgl-btn {
+  padding: 5px 12px; border-radius: 8px; border: none;
+  background: none; font-family: 'Nunito', sans-serif;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  cursor: pointer; transition: all 0.15s;
+}
+.ptgl-btn.active { background: var(--sage); color: white; }
+.preview-frame {
+  width: 100%; height: 440px; border: none;
+  display: block;
+}
 
-/* Toast */
+/* ---- Global save status (hidden, for setStatus compat) ---- */
+#saveStatus {
+  display: none;
+}
+
+/* ---- Toast ---- */
 .toast-container {
   position: fixed; bottom: 24px; right: 24px; z-index: 500;
   display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
@@ -387,17 +516,22 @@ select.ctrl-input {
 .toast.error   { background: #c0615a; }
 .toast.info    { background: var(--teal-dark); }
 
-/* Responsive */
-@media (max-width: 860px) {
-  .page-wrap { grid-template-columns: 1fr; }
-  .tab-nav { position: static; display: flex; flex-direction: row; flex-wrap: wrap; gap: 4px; padding: 8px; }
-  .tab-nav-title, .tab-nav-divider { display: none; }
+/* ---- Responsive ---- */
+@media (max-width: 980px) {
+  .page-wrap {
+    grid-template-columns: 1fr;
+  }
+  .card-tab-content.active { display: flex; flex-direction: column; gap: 20px; }
+  .preview-col { position: static; }
+  .preview-frame { height: 300px; }
 }
 @media (max-width: 640px) {
   header { padding: 0 16px; }
-  .page-wrap { padding: 16px 16px 60px; }
-  .markup-grid { grid-template-columns: 1fr 1fr; }
-  .ctrl-grid { grid-template-columns: 1fr 1fr; }
+  .page-hero { padding: 20px 16px 0; }
+  .tabs-row { padding: 0 16px; margin-top: 14px; }
+  .page-wrap { padding: 0 16px; margin-top: 16px; }
+  .hero-title { font-size: 24px; }
+  .swatch-grid { gap: 10px; }
 }
 </style>
 </head>
@@ -405,7 +539,7 @@ select.ctrl-input {
 
 <header>
   <a class="wordmark" href="index.html">
-    <img src="Logo.png" alt="Text2Anki" class="logo-img">
+    <img src="logo.webp" alt="Text2Anki" class="logo-img">
     <span class="wordmark-text">Text2<span class="wordmark-accent">Anki</span></span>
   </a>
   <div class="header-right">
@@ -417,413 +551,661 @@ select.ctrl-input {
   </div>
 </header>
 
+<!-- Hero -->
+<div class="page-hero">
+  <div class="hero-title">Card Styles</div>
+  <div class="hero-sub">Customize how your Anki cards look. Changes save automatically.</div>
+</div>
+
+<!-- Card type tabs -->
+<div class="tabs-row">
+  <button class="card-tab-btn active" id="ctab-basic" onclick="switchTab('basic', this)">
+    <span class="tab-pill-dot dot-basic"></span> Basic
+  </button>
+  <button class="card-tab-btn" id="ctab-cloze" onclick="switchTab('cloze', this)">
+    <span class="tab-pill-dot dot-cloze"></span> Cloze+
+  </button>
+  <button class="card-tab-btn" id="ctab-clozep" onclick="switchTab('clozep', this)">
+    <span class="tab-pill-dot dot-clozep"></span> Cloze++
+  </button>
+</div>
+
+<!-- Hidden element for setStatus compat -->
+<div id="saveStatus"></div>
+
+<!-- Sign-in prompt (top-level, shown outside tabs) -->
+<div style="max-width:1180px;margin:16px auto 0;padding:0 28px;">
+  <div class="sign-in-prompt" id="signInPrompt" style="display:none">
+    <strong>Sign in to save your card styles.</strong><br>
+    You can still preview changes — sign in on the main page to save them to your account.
+  </div>
+</div>
+
 <div class="page-wrap">
 
-  <!-- Left: tab nav -->
-  <aside class="tab-nav">
-    <div class="tab-nav-title">Card Types</div>
-    <button class="tab-btn active" onclick="switchTab('basic',this)">
-      <span class="tab-dot dot-basic"></span> Basic
-    </button>
-    <button class="tab-btn" onclick="switchTab('cloze',this)">
-      <span class="tab-dot dot-cloze"></span> Cloze+
-    </button>
-    <button class="tab-btn" onclick="switchTab('clozep',this)">
-      <span class="tab-dot dot-clozep"></span> Cloze++
-    </button>
-    <div class="tab-nav-divider"></div>
-    <div class="save-status" id="saveStatus">All changes saved</div>
-  </aside>
+  <!-- ======= BASIC TAB ======= -->
+  <div class="card-tab-content active" id="tab-basic">
 
-  <!-- Right: editor -->
-  <div class="editor-panel">
+    <!-- Controls column -->
+    <div class="controls-col">
+      <div class="glass-panel">
 
-    <!-- Sign-in prompt shown when logged out -->
-    <div class="sign-in-prompt" id="signInPrompt" style="display:none">
-      <strong>Sign in to save your card styles.</strong><br>
-      You can still preview changes — sign in on the main page to save them to your account.
-    </div>
-
-    <!-- ======= BASIC TAB ======= -->
-    <div class="card-tab-content active" id="tab-basic">
-
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Page Background</div>
-        <div class="ctrl-grid">
-          <div class="ctrl-item">
-            <div class="ctrl-label">BG Color A</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-bg1" value="#f5f0e8" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-bg1-hex" value="#f5f0e8" oninput="syncColor('b-bg1','b-bg1-hex')">
-            </div>
+        <!-- Presets -->
+        <div class="presets-row">
+          <div class="presets-label">Quick Presets</div>
+          <div class="presets-pills">
+            <button class="preset-pill" onclick="applyPreset('basic','warm-linen')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f5f0e8"></div>
+                <div class="preset-dot" style="background:#fffdf8"></div>
+                <div class="preset-dot" style="background:#8fab87"></div>
+              </div>
+              Warm Linen
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','midnight')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0f1117"></div>
+                <div class="preset-dot" style="background:#1e2230"></div>
+                <div class="preset-dot" style="background:#7ab8f5"></div>
+              </div>
+              Midnight
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','ocean-blue')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#e8f4f8"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#2980b9"></div>
+              </div>
+              Ocean Blue
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','forest')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f0f7ee"></div>
+                <div class="preset-dot" style="background:#fafff8"></div>
+                <div class="preset-dot" style="background:#2e7d32"></div>
+              </div>
+              Forest
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','rose-gold')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fdf0f0"></div>
+                <div class="preset-dot" style="background:#fffafa"></div>
+                <div class="preset-dot" style="background:#c0697a"></div>
+              </div>
+              Rose Gold
+            </button>
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">BG Color B</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-bg2" value="#ede8f5" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-bg2-hex" value="#ede8f5" oninput="syncColor('b-bg2','b-bg2-hex')">
+          <div id="b-user-presets"></div>
+        </div>
+
+        <!-- Background -->
+        <div class="ctrl-section">
+          <div class="section-heading">Background</div>
+          <div class="swatch-grid">
+            <div class="swatch-item">
+              <div class="swatch-label">BG A</div>
+              <input type="color" class="big-swatch" id="b-bg1" value="#f5f0e8"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#f5f0e8</div>
             </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">BG Color C</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-bg3" value="#e8f0ed" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-bg3-hex" value="#e8f0ed" oninput="syncColor('b-bg3','b-bg3-hex')">
+            <div class="swatch-item">
+              <div class="swatch-label">BG B</div>
+              <input type="color" class="big-swatch" id="b-bg2" value="#ede8f5"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#ede8f5</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">BG C</div>
+              <input type="color" class="big-swatch" id="b-bg3" value="#e8f0ed"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#e8f0ed</div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Card Style</div>
-        <div class="ctrl-grid">
-          <div class="ctrl-item">
-            <div class="ctrl-label">Card Background</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-cardbg" value="#fffdf8" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-cardbg-hex" value="#fffdf8" oninput="syncColor('b-cardbg','b-cardbg-hex')">
+        <!-- Card -->
+        <div class="ctrl-section">
+          <div class="section-heading">Card</div>
+          <div class="swatch-grid" style="margin-bottom:14px">
+            <div class="swatch-item">
+              <div class="swatch-label">Card BG</div>
+              <input type="color" class="big-swatch" id="b-cardbg" value="#fffdf8"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#fffdf8</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Border</div>
+              <input type="color" class="big-swatch" id="b-border" value="#8fab87"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#8fab87</div>
             </div>
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Card Border Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-border" value="#8fab87" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-border-hex" value="#8fab87" oninput="syncColor('b-border','b-border-hex')">
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Corner Radius</span>
+              <span class="range-badge" id="b-radius-badge">26px</span>
             </div>
+            <input type="range" min="0" max="40" value="26" id="b-radius"
+              oninput="document.getElementById('b-radius-badge').textContent=this.value+'px'; updateBasicPreview(); scheduleAutoSave()">
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Corner Radius (px)</div>
-            <div class="ctrl-row">
-              <input type="range" min="0" max="40" value="26" id="b-radius" oninput="updateBasicPreview(); this.nextElementSibling.textContent=this.value+'px'">
-              <span class="range-val">26px</span>
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Question Font Size</span>
+              <span class="range-badge" id="b-frontsize-badge">21px</span>
             </div>
+            <input type="range" min="12" max="36" value="21" id="b-frontsize"
+              oninput="document.getElementById('b-frontsize-badge').textContent=this.value+'px'; updateBasicPreview(); scheduleAutoSave()">
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Font Family</div>
-            <select class="ctrl-input" id="b-font" onchange="updateBasicPreview()">
-              <option value="Georgia, serif" selected>Georgia (Serif)</option>
-              <option value="'Times New Roman', serif">Times New Roman</option>
-              <option value="Avenir, 'Helvetica Neue', sans-serif">Avenir (Sans)</option>
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Answer Font Size</span>
+              <span class="range-badge" id="b-backsize-badge">19px</span>
+            </div>
+            <input type="range" min="12" max="36" value="19" id="b-backsize"
+              oninput="document.getElementById('b-backsize-badge').textContent=this.value+'px'; updateBasicPreview(); scheduleAutoSave()">
+          </div>
+          <!-- Font -->
+          <div style="margin-top:4px">
+            <div class="range-lbl" style="margin-bottom:8px">Font Family</div>
+            <select class="hidden-font-select" id="b-font" onchange="updateBasicPreview(); scheduleAutoSave()">
+              <option value="Georgia, serif" selected>Georgia</option>
+              <option value="Times New Roman, serif">Times New Roman</option>
+              <option value="Avenir, Helvetica Neue, sans-serif">Avenir</option>
+              <option value="Inter, system-ui, sans-serif">Inter</option>
               <option value="system-ui, sans-serif">System UI</option>
-              <option value="'Courier New', monospace">Courier New</option>
+              <option value="Courier New, monospace">Courier New</option>
             </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Text Colors</div>
-        <div class="ctrl-grid">
-          <div class="ctrl-item">
-            <div class="ctrl-label">Front (Question)</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-front-color" value="#3a4a3b" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-front-color-hex" value="#3a4a3b" oninput="syncColor('b-front-color','b-front-color-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Back (Answer)</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-back-color" value="#5a7a5c" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-back-color-hex" value="#5a7a5c" oninput="syncColor('b-back-color','b-back-color-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Label Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-label-color" value="#8fab87" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-label-color-hex" value="#8fab87" oninput="syncColor('b-label-color','b-label-color-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Divider Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-divider-color" value="#8fab87" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-divider-color-hex" value="#8fab87" oninput="syncColor('b-divider-color','b-divider-color-hex')">
+            <div class="font-pills" id="b-font-pills">
+              <button class="font-pill active" style="font-family:Georgia,serif" onclick="setFont('b','Georgia, serif',this)">Georgia</button>
+              <button class="font-pill" style="font-family:serif" onclick="setFont('b','Times New Roman, serif',this)">Times</button>
+              <button class="font-pill" style="font-family:sans-serif" onclick="setFont('b','Avenir, Helvetica Neue, sans-serif',this)">Avenir</button>
+              <button class="font-pill" style="font-family:system-ui,sans-serif" onclick="setFont('b','Inter, system-ui, sans-serif',this)">Inter</button>
+              <button class="font-pill" style="font-family:monospace" onclick="setFont('b','Courier New, monospace',this)">Mono</button>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Markup Colors</div>
-        <div class="markup-grid">
-          <div class="markup-item">
-            <div class="ctrl-label">Bold <strong style="color:inherit">B</strong></div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-bold" value="#b07d2a" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-bold-hex" value="#b07d2a" oninput="syncColor('b-bold','b-bold-hex')">
+        <!-- Text Colors -->
+        <div class="ctrl-section">
+          <div class="section-heading">Text Colors</div>
+          <div class="swatch-grid">
+            <div class="swatch-item">
+              <div class="swatch-label">Question</div>
+              <input type="color" class="big-swatch" id="b-front-color" value="#3a4a3b"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#3a4a3b</div>
             </div>
-            <div class="markup-preview" id="b-bold-preview"><strong>Bold text</strong></div>
-          </div>
-          <div class="markup-item">
-            <div class="ctrl-label">Italic <em>I</em></div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-italic" value="#9a6060" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-italic-hex" value="#9a6060" oninput="syncColor('b-italic','b-italic-hex')">
+            <div class="swatch-item">
+              <div class="swatch-label">Answer</div>
+              <input type="color" class="big-swatch" id="b-back-color" value="#5a7a5c"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#5a7a5c</div>
             </div>
-            <div class="markup-preview" id="b-italic-preview"><em>Italic text</em></div>
-          </div>
-          <div class="markup-item">
-            <div class="ctrl-label">Underline <u>U</u></div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="b-underline" value="#5a9a95" oninput="updateBasicPreview()">
-              <input type="text" class="ctrl-input" id="b-underline-hex" value="#5a9a95" oninput="syncColor('b-underline','b-underline-hex')">
+            <div class="swatch-item">
+              <div class="swatch-label">Label</div>
+              <input type="color" class="big-swatch" id="b-label-color" value="#8fab87"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#8fab87</div>
             </div>
-            <div class="markup-preview" id="b-underline-preview"><u>Underline text</u></div>
+            <div class="swatch-item">
+              <div class="swatch-label">Divider</div>
+              <input type="color" class="big-swatch" id="b-divider-color" value="#8fab87"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#8fab87</div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Live preview -->
-      <div class="panel-card" style="padding:0">
-        <div class="preview-label">
-          Live Preview
-          <div class="preview-toggle">
-            <button class="ptgl-btn active" id="b-ptgl-front" onclick="setPreviewSide('basic','front')">Question</button>
-            <button class="ptgl-btn" id="b-ptgl-back" onclick="setPreviewSide('basic','back')">Answer</button>
+        <!-- Markup Colors -->
+        <div class="ctrl-section">
+          <div class="section-heading">Markup Colors</div>
+          <div class="markup-row">
+            <div class="markup-item">
+              <div class="swatch-label">Bold</div>
+              <input type="color" class="big-swatch" id="b-bold" value="#b07d2a"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#b07d2a</div>
+              <div class="markup-preview-chip" id="b-bold-preview"><strong style="color:#b07d2a">B</strong></div>
+            </div>
+            <div class="markup-item">
+              <div class="swatch-label">Italic</div>
+              <input type="color" class="big-swatch" id="b-italic" value="#9a6060"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#9a6060</div>
+              <div class="markup-preview-chip" id="b-italic-preview"><em style="color:#9a6060">I</em></div>
+            </div>
+            <div class="markup-item">
+              <div class="swatch-label">Underline</div>
+              <input type="color" class="big-swatch" id="b-underline" value="#5a9a95"
+                oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#5a9a95</div>
+              <div class="markup-preview-chip" id="b-underline-preview"><u style="color:#5a9a95">U</u></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save as Preset -->
+        <div class="save-preset-row">
+          <input class="save-preset-input" id="b-preset-name" type="text" placeholder="Name this preset..." maxlength="32">
+          <button class="btn-save-preset" onclick="saveNamedPreset('basic')">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Save Preset
+          </button>
+        </div>
+
+        <!-- Footer actions -->
+        <div class="panel-footer">
+          <button class="btn-save-now" onclick="saveStyles('basic')">Save Now</button>
+          <button class="btn-restore" onclick="resetStyles('basic')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6A5 5 0 1 0 2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M1 2v2.5h2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Restore Defaults
+          </button>
+          <span class="save-badge" id="b-save-badge"></span>
+        </div>
+      </div><!-- /glass-panel -->
+    </div><!-- /controls-col -->
+
+    <!-- Preview column -->
+    <div class="preview-col">
+      <div class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-title">Live Preview</div>
+          <div class="preview-right">
+            <span class="autosave-status" id="b-autosave-status"></span>
+            <div class="preview-toggle">
+              <button class="ptgl-btn active" id="b-ptgl-front" onclick="setPreviewSide('basic','front')">Question</button>
+              <button class="ptgl-btn" id="b-ptgl-back" onclick="setPreviewSide('basic','back')">Answer</button>
+            </div>
           </div>
         </div>
         <iframe class="preview-frame" id="b-preview-frame" title="Basic card preview"></iframe>
       </div>
+    </div>
 
-      <!-- Actions -->
-      <div class="action-bar">
-        <button class="btn-save" onclick="saveStyles('basic')">Save Basic Style</button>
-        <button class="btn-reset" onclick="resetStyles('basic')">Restore Defaults</button>
-        <span class="save-badge" id="b-save-badge"></span>
-      </div>
-    </div><!-- /tab-basic -->
+  </div><!-- /tab-basic -->
 
-    <!-- ======= CLOZE+ TAB ======= -->
-    <div class="card-tab-content" id="tab-cloze">
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#7fb5b0,#6a9abf)"></span> Page Background</div>
-        <div class="ctrl-grid">
-          <div class="ctrl-item">
-            <div class="ctrl-label">BG Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-bg" value="#1F80C1" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-bg-hex" value="#1F80C1" oninput="syncColor('c-bg','c-bg-hex')">
+  <!-- ======= CLOZE+ TAB ======= -->
+  <div class="card-tab-content" id="tab-cloze">
+
+    <div class="controls-col">
+      <div class="glass-panel">
+
+        <!-- Presets -->
+        <div class="presets-row">
+          <div class="presets-label">Quick Presets</div>
+          <div class="presets-pills">
+            <button class="preset-pill" onclick="applyPreset('cloze','dark-default')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1F80C1"></div>
+                <div class="preset-dot" style="background:#1E282C"></div>
+                <div class="preset-dot" style="background:#3CB371"></div>
+              </div>
+              Dark Default
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','light-mode')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f0f4f8"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#27ae60"></div>
+              </div>
+              Light Mode
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','purple-haze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2d1b69"></div>
+                <div class="preset-dot" style="background:#1a0f3d"></div>
+                <div class="preset-dot" style="background:#f39c12"></div>
+              </div>
+              Purple Haze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','sunset')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#ff6b35"></div>
+                <div class="preset-dot" style="background:#2d1a0e"></div>
+                <div class="preset-dot" style="background:#ffeb3b"></div>
+              </div>
+              Sunset
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','mint-fresh')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#e8f5e9"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#00897b"></div>
+              </div>
+              Mint Fresh
+            </button>
+          </div>
+          <div id="c-user-presets"></div>
+        </div>
+
+        <!-- Background -->
+        <div class="ctrl-section">
+          <div class="section-heading">Background &amp; Card</div>
+          <div class="swatch-grid" style="margin-bottom:14px">
+            <div class="swatch-item">
+              <div class="swatch-label">BG Color</div>
+              <input type="color" class="big-swatch" id="c-bg" value="#1F80C1"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#1F80C1</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Card BG</div>
+              <input type="color" class="big-swatch" id="c-cardbg" value="#1E282C"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#1E282C</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Border</div>
+              <input type="color" class="big-swatch" id="c-border" value="#ffffff"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#ffffff</div>
             </div>
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Card Background</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-cardbg" value="#1E282C" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-cardbg-hex" value="#1E282C" oninput="syncColor('c-cardbg','c-cardbg-hex')">
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Corner Radius</span>
+              <span class="range-badge" id="c-radius-badge">30px</span>
+            </div>
+            <input type="range" min="0" max="40" value="30" id="c-radius"
+              oninput="document.getElementById('c-radius-badge').textContent=this.value+'px'; updateClozePreview(); scheduleAutoSave()">
+          </div>
+        </div>
+
+        <!-- Text -->
+        <div class="ctrl-section">
+          <div class="section-heading">Text Colors</div>
+          <div class="swatch-grid" style="margin-bottom:14px">
+            <div class="swatch-item">
+              <div class="swatch-label">Text</div>
+              <input type="color" class="big-swatch" id="c-text" value="#E6E6E7"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#E6E6E7</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Cloze</div>
+              <input type="color" class="big-swatch" id="c-cloze" value="#3CB371"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#3CB371</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Extra / Hint</div>
+              <input type="color" class="big-swatch" id="c-extra" value="#E6E6E7"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#E6E6E7</div>
             </div>
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Border Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-border" value="#ffffff" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-border-hex" value="#ffffff" oninput="syncColor('c-border','c-border-hex')">
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Font Size</span>
+              <span class="range-badge" id="c-fontsize-badge">18px</span>
             </div>
+            <input type="range" min="12" max="28" value="18" id="c-fontsize"
+              oninput="document.getElementById('c-fontsize-badge').textContent=this.value+'px'; updateClozePreview(); scheduleAutoSave()">
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Corner Radius (px)</div>
-            <div class="ctrl-row">
-              <input type="range" min="0" max="40" value="30" id="c-radius" oninput="updateClozePreview(); this.nextElementSibling.textContent=this.value+'px'">
-              <span class="range-val">30px</span>
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Extra / Hint Size</span>
+              <span class="range-badge" id="c-extrasize-badge">14px</span>
+            </div>
+            <input type="range" min="10" max="24" value="14" id="c-extrasize"
+              oninput="document.getElementById('c-extrasize-badge').textContent=this.value+'px'; updateClozePreview(); scheduleAutoSave()">
+          </div>
+        </div>
+
+        <!-- Markup -->
+        <div class="ctrl-section">
+          <div class="section-heading">Markup Colors</div>
+          <div class="markup-row">
+            <div class="markup-item">
+              <div class="swatch-label">Bold</div>
+              <input type="color" class="big-swatch" id="c-bold" value="#EABB3D"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#EABB3D</div>
+              <div class="markup-preview-chip" id="c-bold-preview"><strong style="color:#EABB3D">B</strong></div>
+            </div>
+            <div class="markup-item">
+              <div class="swatch-label">Italic</div>
+              <input type="color" class="big-swatch" id="c-italic" value="#CD5C5C"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#CD5C5C</div>
+              <div class="markup-preview-chip" id="c-italic-preview"><em style="color:#CD5C5C">I</em></div>
+            </div>
+            <div class="markup-item">
+              <div class="swatch-label">Underline</div>
+              <input type="color" class="big-swatch" id="c-underline" value="#21B2B8"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePreview(); scheduleAutoSave()">
+              <div class="hex-badge">#21B2B8</div>
+              <div class="markup-preview-chip" id="c-underline-preview"><u style="color:#21B2B8">U</u></div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#7fb5b0,#6a9abf)"></span> Text</div>
-        <div class="ctrl-grid">
-          <div class="ctrl-item">
-            <div class="ctrl-label">Text Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-text" value="#E6E6E7" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-text-hex" value="#E6E6E7" oninput="syncColor('c-text','c-text-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Cloze Highlight</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-cloze" value="#3CB371" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-cloze-hex" value="#3CB371" oninput="syncColor('c-cloze','c-cloze-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Extra / Hint Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-extra" value="#E6E6E7" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-extra-hex" value="#E6E6E7" oninput="syncColor('c-extra','c-extra-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Font Size (px)</div>
-            <div class="ctrl-row">
-              <input type="range" min="12" max="28" value="18" id="c-fontsize" oninput="updateClozePreview(); this.nextElementSibling.textContent=this.value+'px'">
-              <span class="range-val">18px</span>
-            </div>
-          </div>
+        <!-- Save as Preset -->
+        <div class="save-preset-row">
+          <input class="save-preset-input" id="c-preset-name" type="text" placeholder="Name this preset..." maxlength="32">
+          <button class="btn-save-preset" onclick="saveNamedPreset('cloze')">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Save Preset
+          </button>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn-save-now" onclick="saveStyles('cloze')">Save Now</button>
+          <button class="btn-restore" onclick="resetStyles('cloze')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6A5 5 0 1 0 2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M1 2v2.5h2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Restore Defaults
+          </button>
+          <span class="save-badge" id="c-save-badge"></span>
         </div>
       </div>
+    </div><!-- /controls-col -->
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#7fb5b0,#6a9abf)"></span> Markup Colors</div>
-        <div class="markup-grid">
-          <div class="markup-item">
-            <div class="ctrl-label">Bold</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-bold" value="#EABB3D" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-bold-hex" value="#EABB3D" oninput="syncColor('c-bold','c-bold-hex')">
-            </div>
-            <div class="markup-preview" id="c-bold-preview"><strong>Bold text</strong></div>
-          </div>
-          <div class="markup-item">
-            <div class="ctrl-label">Italic</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-italic" value="#CD5C5C" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-italic-hex" value="#CD5C5C" oninput="syncColor('c-italic','c-italic-hex')">
-            </div>
-            <div class="markup-preview" id="c-italic-preview"><em>Italic text</em></div>
-          </div>
-          <div class="markup-item">
-            <div class="ctrl-label">Underline</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="c-underline" value="#21B2B8" oninput="updateClozePreview()">
-              <input type="text" class="ctrl-input" id="c-underline-hex" value="#21B2B8" oninput="syncColor('c-underline','c-underline-hex')">
-            </div>
-            <div class="markup-preview" id="c-underline-preview"><u>Underline text</u></div>
+    <div class="preview-col">
+      <div class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-title">Live Preview</div>
+          <div class="preview-right">
+            <span class="autosave-status" id="c-autosave-status"></span>
           </div>
         </div>
-      </div>
-
-      <!-- Live preview -->
-      <div class="panel-card" style="padding:0">
-        <div class="preview-label">Live Preview</div>
         <iframe class="preview-frame" id="c-preview-frame" title="Cloze card preview"></iframe>
       </div>
+    </div>
 
-      <div class="action-bar">
-        <button class="btn-save" onclick="saveStyles('cloze')">Save Cloze+ Style</button>
-        <button class="btn-reset" onclick="resetStyles('cloze')">Restore Defaults</button>
-        <span class="save-badge" id="c-save-badge"></span>
-      </div>
-    </div><!-- /tab-cloze -->
+  </div><!-- /tab-cloze -->
 
-    <!-- ======= CLOZE++ TAB (inherits from Cloze+ with same controls) ======= -->
-    <div class="card-tab-content" id="tab-clozep">
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#a89abf,#7fb5b0)"></span> Page Background</div>
-        <div class="ctrl-grid">
-          <div class="ctrl-item">
-            <div class="ctrl-label">BG Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-bg" value="#1F80C1" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-bg-hex" value="#1F80C1" oninput="syncColor('cp-bg','cp-bg-hex')">
+  <!-- ======= CLOZE++ TAB ======= -->
+  <div class="card-tab-content" id="tab-clozep">
+
+    <div class="controls-col">
+      <div class="glass-panel">
+
+        <!-- Presets -->
+        <div class="presets-row">
+          <div class="presets-label">Quick Presets</div>
+          <div class="presets-pills">
+            <button class="preset-pill" onclick="applyPreset('clozep','dark-default')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1F80C1"></div>
+                <div class="preset-dot" style="background:#1E282C"></div>
+                <div class="preset-dot" style="background:#3CB371"></div>
+              </div>
+              Dark Default
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','light-mode')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f0f4f8"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#27ae60"></div>
+              </div>
+              Light Mode
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','purple-haze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2d1b69"></div>
+                <div class="preset-dot" style="background:#1a0f3d"></div>
+                <div class="preset-dot" style="background:#f39c12"></div>
+              </div>
+              Purple Haze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','sunset')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#ff6b35"></div>
+                <div class="preset-dot" style="background:#2d1a0e"></div>
+                <div class="preset-dot" style="background:#ffeb3b"></div>
+              </div>
+              Sunset
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','mint-fresh')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#e8f5e9"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#00897b"></div>
+              </div>
+              Mint Fresh
+            </button>
+          </div>
+          <div id="cp-user-presets"></div>
+        </div>
+
+        <!-- Background -->
+        <div class="ctrl-section">
+          <div class="section-heading">Background &amp; Card</div>
+          <div class="swatch-grid" style="margin-bottom:14px">
+            <div class="swatch-item">
+              <div class="swatch-label">BG Color</div>
+              <input type="color" class="big-swatch" id="cp-bg" value="#1F80C1"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#1F80C1</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Card BG</div>
+              <input type="color" class="big-swatch" id="cp-cardbg" value="#1E282C"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#1E282C</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Border</div>
+              <input type="color" class="big-swatch" id="cp-border" value="#ffffff"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#ffffff</div>
             </div>
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Card Background</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-cardbg" value="#1E282C" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-cardbg-hex" value="#1E282C" oninput="syncColor('cp-cardbg','cp-cardbg-hex')">
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Corner Radius</span>
+              <span class="range-badge" id="cp-radius-badge">30px</span>
+            </div>
+            <input type="range" min="0" max="40" value="30" id="cp-radius"
+              oninput="document.getElementById('cp-radius-badge').textContent=this.value+'px'; updateClozePPreview(); scheduleAutoSave()">
+          </div>
+        </div>
+
+        <!-- Text -->
+        <div class="ctrl-section">
+          <div class="section-heading">Text Colors</div>
+          <div class="swatch-grid" style="margin-bottom:14px">
+            <div class="swatch-item">
+              <div class="swatch-label">Text</div>
+              <input type="color" class="big-swatch" id="cp-text" value="#E6E6E7"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#E6E6E7</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Cloze</div>
+              <input type="color" class="big-swatch" id="cp-cloze" value="#3CB371"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#3CB371</div>
+            </div>
+            <div class="swatch-item">
+              <div class="swatch-label">Extra / Hint</div>
+              <input type="color" class="big-swatch" id="cp-extra" value="#E6E6E7"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#E6E6E7</div>
             </div>
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Border Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-border" value="#ffffff" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-border-hex" value="#ffffff" oninput="syncColor('cp-border','cp-border-hex')">
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Font Size</span>
+              <span class="range-badge" id="cp-fontsize-badge">18px</span>
             </div>
+            <input type="range" min="12" max="28" value="18" id="cp-fontsize"
+              oninput="document.getElementById('cp-fontsize-badge').textContent=this.value+'px'; updateClozePPreview(); scheduleAutoSave()">
           </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Corner Radius (px)</div>
-            <div class="ctrl-row">
-              <input type="range" min="0" max="40" value="30" id="cp-radius" oninput="updateClozePPreview(); this.nextElementSibling.textContent=this.value+'px'">
-              <span class="range-val">30px</span>
+          <div class="range-row">
+            <div class="range-header">
+              <span class="range-lbl">Extra / Hint Size</span>
+              <span class="range-badge" id="cp-extrasize-badge">14px</span>
+            </div>
+            <input type="range" min="10" max="24" value="14" id="cp-extrasize"
+              oninput="document.getElementById('cp-extrasize-badge').textContent=this.value+'px'; updateClozePPreview(); scheduleAutoSave()">
+          </div>
+        </div>
+
+        <!-- Markup -->
+        <div class="ctrl-section">
+          <div class="section-heading">Markup Colors</div>
+          <div class="markup-row">
+            <div class="markup-item">
+              <div class="swatch-label">Bold</div>
+              <input type="color" class="big-swatch" id="cp-bold" value="#EABB3D"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#EABB3D</div>
+              <div class="markup-preview-chip"><strong style="color:#EABB3D">B</strong></div>
+            </div>
+            <div class="markup-item">
+              <div class="swatch-label">Italic</div>
+              <input type="color" class="big-swatch" id="cp-italic" value="#CD5C5C"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#CD5C5C</div>
+              <div class="markup-preview-chip"><em style="color:#CD5C5C">I</em></div>
+            </div>
+            <div class="markup-item">
+              <div class="swatch-label">Underline</div>
+              <input type="color" class="big-swatch" id="cp-underline" value="#21B2B8"
+                oninput="this.nextElementSibling.textContent=this.value; updateClozePPreview(); scheduleAutoSave()">
+              <div class="hex-badge">#21B2B8</div>
+              <div class="markup-preview-chip"><u style="color:#21B2B8">U</u></div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#a89abf,#7fb5b0)"></span> Text</div>
-        <div class="ctrl-grid">
-          <div class="ctrl-item">
-            <div class="ctrl-label">Text Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-text" value="#E6E6E7" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-text-hex" value="#E6E6E7" oninput="syncColor('cp-text','cp-text-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Cloze Highlight</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-cloze" value="#3CB371" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-cloze-hex" value="#3CB371" oninput="syncColor('cp-cloze','cp-cloze-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Extra / Hint Color</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-extra" value="#E6E6E7" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-extra-hex" value="#E6E6E7" oninput="syncColor('cp-extra','cp-extra-hex')">
-            </div>
-          </div>
-          <div class="ctrl-item">
-            <div class="ctrl-label">Font Size (px)</div>
-            <div class="ctrl-row">
-              <input type="range" min="12" max="28" value="18" id="cp-fontsize" oninput="updateClozePPreview(); this.nextElementSibling.textContent=this.value+'px'">
-              <span class="range-val">18px</span>
-            </div>
-          </div>
+        <!-- Save as Preset -->
+        <div class="save-preset-row">
+          <input class="save-preset-input" id="cp-preset-name" type="text" placeholder="Name this preset..." maxlength="32">
+          <button class="btn-save-preset" onclick="saveNamedPreset('clozep')">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Save Preset
+          </button>
+        </div>
+
+        <div class="panel-footer">
+          <button class="btn-save-now" onclick="saveStyles('clozep')">Save Now</button>
+          <button class="btn-restore" onclick="resetStyles('clozep')">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 6A5 5 0 1 0 2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M1 2v2.5h2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Restore Defaults
+          </button>
+          <span class="save-badge" id="cp-save-badge"></span>
         </div>
       </div>
+    </div><!-- /controls-col -->
 
-      <div class="panel-card">
-        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#a89abf,#7fb5b0)"></span> Markup Colors</div>
-        <div class="markup-grid">
-          <div class="markup-item">
-            <div class="ctrl-label">Bold</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-bold" value="#EABB3D" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-bold-hex" value="#EABB3D" oninput="syncColor('cp-bold','cp-bold-hex')">
-            </div>
-            <div class="markup-preview"><strong>Bold text</strong></div>
-          </div>
-          <div class="markup-item">
-            <div class="ctrl-label">Italic</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-italic" value="#CD5C5C" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-italic-hex" value="#CD5C5C" oninput="syncColor('cp-italic','cp-italic-hex')">
-            </div>
-            <div class="markup-preview"><em>Italic text</em></div>
-          </div>
-          <div class="markup-item">
-            <div class="ctrl-label">Underline</div>
-            <div class="ctrl-row">
-              <input type="color" class="ctrl-swatch" id="cp-underline" value="#21B2B8" oninput="updateClozePPreview()">
-              <input type="text" class="ctrl-input" id="cp-underline-hex" value="#21B2B8" oninput="syncColor('cp-underline','cp-underline-hex')">
-            </div>
-            <div class="markup-preview"><u>Underline text</u></div>
+    <div class="preview-col">
+      <div class="preview-panel">
+        <div class="preview-header">
+          <div class="preview-title">Live Preview</div>
+          <div class="preview-right">
+            <span class="autosave-status" id="cp-autosave-status"></span>
           </div>
         </div>
-      </div>
-
-      <!-- Live preview -->
-      <div class="panel-card" style="padding:0">
-        <div class="preview-label">Live Preview</div>
         <iframe class="preview-frame" id="cp-preview-frame" title="Cloze++ card preview"></iframe>
       </div>
+    </div>
 
-      <div class="action-bar">
-        <button class="btn-save" onclick="saveStyles('clozep')">Save Cloze++ Style</button>
-        <button class="btn-reset" onclick="resetStyles('clozep')">Restore Defaults</button>
-        <span class="save-badge" id="cp-save-badge"></span>
-      </div>
-    </div><!-- /tab-clozep -->
+  </div><!-- /tab-clozep -->
 
-  </div><!-- /editor-panel -->
 </div><!-- /page-wrap -->
 
 <div class="toast-container" id="toastContainer"></div>
@@ -856,6 +1238,7 @@ auth.onAuthStateChanged(async user => {
       : `<div class="avatar-ph">${(user.displayName||user.email||'U').charAt(0).toUpperCase()}</div>`;
     chip.innerHTML = avatarHtml + `<span style="font-size:13px;font-weight:600;color:#7a8c7b">${user.displayName || user.email}</span>`;
     await loadSavedStyles();
+    await loadNamedPresets();
   } else {
     document.getElementById('signInPrompt').style.display = '';
     document.getElementById('saveStatus').textContent = 'Sign in to save';
@@ -869,6 +1252,7 @@ const DEFAULTS = {
   basic: {
     'b-bg1': '#f5f0e8', 'b-bg2': '#ede8f5', 'b-bg3': '#e8f0ed',
     'b-cardbg': '#fffdf8', 'b-border': '#8fab87', 'b-radius': 26,
+    'b-frontsize': 21, 'b-backsize': 19,
     'b-font': 'Georgia, serif',
     'b-front-color': '#3a4a3b', 'b-back-color': '#5a7a5c',
     'b-label-color': '#8fab87', 'b-divider-color': '#8fab87',
@@ -876,12 +1260,12 @@ const DEFAULTS = {
   },
   cloze: {
     'c-bg': '#1F80C1', 'c-cardbg': '#1E282C', 'c-border': '#ffffff', 'c-radius': 30,
-    'c-text': '#E6E6E7', 'c-cloze': '#3CB371', 'c-extra': '#E6E6E7', 'c-fontsize': 18,
+    'c-text': '#E6E6E7', 'c-cloze': '#3CB371', 'c-extra': '#E6E6E7', 'c-fontsize': 18, 'c-extrasize': 14,
     'c-bold': '#EABB3D', 'c-italic': '#CD5C5C', 'c-underline': '#21B2B8'
   },
   clozep: {
     'cp-bg': '#1F80C1', 'cp-cardbg': '#1E282C', 'cp-border': '#ffffff', 'cp-radius': 30,
-    'cp-text': '#E6E6E7', 'cp-cloze': '#3CB371', 'cp-extra': '#E6E6E7', 'cp-fontsize': 18,
+    'cp-text': '#E6E6E7', 'cp-cloze': '#3CB371', 'cp-extra': '#E6E6E7', 'cp-fontsize': 18, 'cp-extrasize': 14,
     'cp-bold': '#EABB3D', 'cp-italic': '#CD5C5C', 'cp-underline': '#21B2B8'
   }
 };
@@ -891,7 +1275,7 @@ const DEFAULTS = {
 // ======================================================
 function switchTab(name, btn) {
   document.querySelectorAll('.card-tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.card-tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   btn.classList.add('active');
 }
@@ -913,12 +1297,38 @@ function v(id) { return document.getElementById(id).value; }
 function setv(id, val) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (el.type === 'range') { el.value = val; el.nextElementSibling.textContent = val + 'px'; }
-  else { el.value = val; }
-  // sync hex fields
-  const hexId = id + '-hex';
-  const hexEl = document.getElementById(hexId);
-  if (hexEl) hexEl.value = val;
+  el.value = val;
+  if (el.type === 'range') {
+    // update badge by ID (primary) or nextElementSibling (fallback)
+    const badge = document.getElementById(id + '-badge');
+    if (badge) badge.textContent = val + 'px';
+    else if (el.nextElementSibling) el.nextElementSibling.textContent = val + 'px';
+  } else {
+    // update hex badge div that follows the swatch
+    const hexBadge = el.nextElementSibling;
+    if (hexBadge && hexBadge.classList && hexBadge.classList.contains('hex-badge')) {
+      hexBadge.textContent = val;
+    }
+  }
+  // sync font pills if needed
+  if (id === 'b-font') syncFontPills('b', val);
+}
+
+// ======================================================
+// FONT PILLS
+// ======================================================
+function setFont(pfx, fontVal, pillEl) {
+  document.getElementById(pfx + '-font').value = fontVal;
+  document.querySelectorAll('#' + pfx + '-font-pills .font-pill').forEach(p => p.classList.remove('active'));
+  pillEl.classList.add('active');
+  if (pfx === 'b') { updateBasicPreview(); scheduleAutoSave(); }
+}
+
+function syncFontPills(pfx, fontVal) {
+  const pills = document.querySelectorAll('#' + pfx + '-font-pills .font-pill');
+  pills.forEach(p => {
+    p.classList.toggle('active', p.getAttribute('onclick') && p.getAttribute('onclick').includes(JSON.stringify(fontVal)));
+  });
 }
 
 // ======================================================
@@ -927,6 +1337,7 @@ function setv(id, val) {
 function buildBasicCSS() {
   const bg1 = v('b-bg1'), bg2 = v('b-bg2'), bg3 = v('b-bg3');
   const cardbg = v('b-cardbg'), border = v('b-border'), radius = v('b-radius');
+  const frontSize = v('b-frontsize') || 21, backSize = v('b-backsize') || 19;
   const font = v('b-font');
   const frontC = v('b-front-color'), backC = v('b-back-color');
   const labelC = v('b-label-color'), divC = v('b-divider-color');
@@ -937,16 +1348,19 @@ html { overflow: scroll; overflow-x: hidden; background: linear-gradient(160deg,
 .card { font-family: ${font}; font-size: 18px; text-align: center; color: ${frontC}; line-height: 1.7em; background: ${cardbg}; border: 1.5px solid ${border}44; border-radius: ${radius}px; box-shadow: 0 8px 40px rgba(100,120,100,0.13); }
 .side-label { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: ${labelC}; margin-bottom: 16px; }
 .answer-label { color: ${divC}; margin-top: 0; }
-.bfront { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: 21px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
+.bfront { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: ${frontSize}px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
 .divider { display: flex; align-items: center; justify-content: center; margin: 24px auto; }
 .divider-line { height: 1px; width: 64px; background: linear-gradient(90deg, transparent, ${divC}66, transparent); display: inline-block; }
 .divider-diamond { width: 6px; height: 6px; background: ${divC}; transform: rotate(45deg); display: inline-block; margin: 0 10px; opacity: 0.6; }
-.bback { font-family: ${font}; font-size: 19px; color: ${backC}; line-height: 1.7; padding: 0 12px 6px; font-weight: 400; }
+.bback { font-family: ${font}; font-size: ${backSize}px; color: ${backC}; line-height: 1.7; padding: 0 12px 6px; font-weight: 400; }
 .tags { color: #b8a8c8; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; letter-spacing: 1px; position: fixed; padding: 0; top: 0; right: 0; }
 .tags:hover { opacity: 1; }
-b { color: ${boldC} !important; }
-u { text-decoration: none; color: ${ulC}; }
-i { color: ${italicC}; }
+b { color: ${boldC} !important; font-weight: bold; }
+u { text-decoration: underline; color: ${ulC}; }
+i { color: ${italicC}; font-style: italic; }
+u i, i u { color: limegreen !important; font-weight: bold; }
+u b, b u { color: ${ulC} !important; }
+i b, b i { color: ${italicC} !important; font-weight: bold; }
 a { color: ${labelC} !important; text-decoration: none; font-size: 11px; }
 img { display: block; max-width: 100%; margin: 16px auto; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
 .card.nightMode { background: rgba(30,36,30,0.97); color: #d8e0d8; border-color: ${border}33; }
@@ -961,24 +1375,29 @@ img { display: block; max-width: 100%; margin: 16px auto; border-radius: 14px; b
 function buildClozeCSSFrom(pfx) {
   const bg = v(pfx+'-bg'), cardbg = v(pfx+'-cardbg'), border = v(pfx+'-border');
   const radius = v(pfx+'-radius'), textC = v(pfx+'-text'), clozeC = v(pfx+'-cloze');
-  const extraC = v(pfx+'-extra'), fs = v(pfx+'-fontsize');
+  const extraC = v(pfx+'-extra'), fs = v(pfx+'-fontsize'), extraFs = v(pfx+'-extrasize') || 14;
   const boldC = v(pfx+'-bold'), italicC = v(pfx+'-italic'), ulC = v(pfx+'-underline');
   return `
-html { overflow: scroll; overflow-x: hidden; background-color: ${bg}; }
+html, body { overflow: scroll; overflow-x: hidden; background-color: ${bg} !important; min-height: 100%; }
+body { background-color: ${bg} !important; }
 #kard { padding: 15px 10px; max-width: 800px; margin: 0 auto; word-wrap: break-word; }
 .card { font-family: Avenir; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${cardbg}; border: 2px solid ${border}; border-radius: ${radius}px; }
 .cloze, .cloze b, .cloze u, .cloze i { font-weight: bold; color: ${clozeC} !important; }
-#extra, #extra i { font-size: 15px; color: ${extraC}; font-style: italic; }
+#extra, #extra i { font-size: ${extraFs}px; color: ${extraC}; font-style: italic; }
 .tags { color: #A6ABB9; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; position: fixed; padding: 0; top: 0; right: 0; }
 .tags:hover { opacity: 1; }
-b { color: ${boldC} !important; }
-u { text-decoration: none; color: ${ulC}; }
-i { color: ${italicC}; }
+b { color: ${boldC} !important; font-weight: bold; }
+u { text-decoration: underline; color: ${ulC}; }
+i { color: ${italicC}; font-style: italic; }
+u i, i u { color: limegreen !important; font-weight: bold; }
+u b, b u { color: ${ulC} !important; }
+i b, b i { color: ${italicC} !important; font-weight: bold; }
 a { color: LightGray !important; text-decoration: none; font-size: 10px; font-style: normal; }
 img { display: block; max-width: 100%; margin: 10px auto; }
 tr { font-size: 12px; }
-.card.nightMode { color: ${textC}; background-color: ${cardbg}; }
-.mobile .card { color: ${textC}; background-color: #000000; }
+.card.nightMode { color: ${textC} !important; background-color: ${cardbg} !important; }
+.nightMode html, .nightMode body { background-color: ${bg} !important; }
+.mobile .card { color: ${textC} !important; background-color: ${cardbg} !important; }
 .mobile .tags:hover { opacity: 1; position: relative; }
   `.trim();
 }
@@ -1000,40 +1419,40 @@ function updateBasicPreview() {
   updateMarkupPreviews('b');
   const css = buildBasicCSS();
   const isFront = basicPreviewSide === 'front';
-  const html = `<!DOCTYPE html><html><head><style>${css}</style></head><body>
+  const html = `<!DOCTYPE html><html><head><style>${css}<\/style><\/head><body>
 <div id="bkard"><div class="card">
-  <div class="tags">biology</div>
-  <div class="side-label">Question</div>
-  <div class="bfront">What is the powerhouse of the cell?</div>
+  <div class="tags">biology<\/div>
+  <div class="side-label">Question<\/div>
+  <div class="bfront">What is the powerhouse of the cell?<\/div>
   ${isFront ? '' : `
-  <div class="divider"><span class="divider-line"></span><span class="divider-diamond"></span><span class="divider-line"></span></div>
-  <div class="side-label answer-label">Answer</div>
-  <div class="bback">The <b>mitochondria</b> — it produces <u>ATP</u> via <i>cellular respiration</i>.</div>`}
-</div></div></body></html>`;
+  <div class="divider"><span class="divider-line"><\/span><span class="divider-diamond"><\/span><span class="divider-line"><\/span><\/div>
+  <div class="side-label answer-label">Answer<\/div>
+  <div class="bback">The <b>mitochondria<\/b> — it produces <u>ATP<\/u> via <i>cellular respiration<\/i>.<\/div>`}
+<\/div><\/div><\/body><\/html>`;
   setFrameContent('b-preview-frame', html);
 }
 
 function updateClozePreview() {
   updateMarkupPreviews('c');
   const css = buildClozeCSSFrom('c');
-  const html = `<!DOCTYPE html><html><head><style>${css}</style></head><body>
+  const html = `<!DOCTYPE html><html><head><style>${css}<\/style><\/head><body>
 <div id="kard"><div class="card">
-  <div class="tags">biology</div>
-  The <span class="cloze">[mitochondria]</span> is responsible for producing <b>ATP</b> via <i>cellular respiration</i>.
-  <div id="extra">Also called the <u>powerhouse</u> of the cell.</div>
-</div></div></body></html>`;
+  <div class="tags">biology<\/div>
+  The <span class="cloze">[mitochondria]<\/span> is responsible for producing <b>ATP<\/b> via <i>cellular respiration<\/i>.
+  <div id="extra">Also called the <u>powerhouse<\/u> of the cell.<\/div>
+<\/div><\/div><\/body><\/html>`;
   setFrameContent('c-preview-frame', html);
 }
 
 function updateClozePPreview() {
   updateMarkupPreviews('cp');
   const css = buildClozeCSSFrom('cp');
-  const html = `<!DOCTYPE html><html><head><style>${css}</style></head><body>
+  const html = `<!DOCTYPE html><html><head><style>${css}<\/style><\/head><body>
 <div id="kard"><div class="card">
-  <div class="tags">biology</div>
-  The <span class="cloze">[krebs cycle]</span> produces <b>3 NADH</b> per turn via <i>oxidative phosphorylation</i>.
-  <div id="extra">Occurs in the mitochondrial matrix; also yields 1 FADH₂, 1 GTP, 2 CO₂ per turn.</div>
-</div></div></body></html>`;
+  <div class="tags">biology<\/div>
+  The <span class="cloze">[krebs cycle]<\/span> produces <b>3 NADH<\/b> per turn via <i>oxidative phosphorylation<\/i>.
+  <div id="extra">Occurs in the mitochondrial matrix; also yields 1 FADH&#x2082;, 1 GTP, 2 CO&#x2082; per turn.<\/div>
+<\/div><\/div><\/body><\/html>`;
   setFrameContent('cp-preview-frame', html);
 }
 
@@ -1041,9 +1460,9 @@ function updateMarkupPreviews(pfx) {
   const boldEl = document.getElementById(pfx+'-bold-preview');
   const italicEl = document.getElementById(pfx+'-italic-preview');
   const ulEl = document.getElementById(pfx+'-underline-preview');
-  if (boldEl)   boldEl.style.color = v(pfx+'-bold');
-  if (italicEl) italicEl.style.color = v(pfx+'-italic');
-  if (ulEl)     ulEl.style.color = v(pfx+'-underline');
+  if (boldEl)   { boldEl.style.color = v(pfx+'-bold');    const s = boldEl.querySelector('strong'); if(s) s.style.color = v(pfx+'-bold'); }
+  if (italicEl) { italicEl.style.color = v(pfx+'-italic'); const s = italicEl.querySelector('em'); if(s) s.style.color = v(pfx+'-italic'); }
+  if (ulEl)     { ulEl.style.color = v(pfx+'-underline'); const s = ulEl.querySelector('u'); if(s) s.style.color = v(pfx+'-underline'); }
 }
 
 function setFrameContent(frameId, html) {
@@ -1134,6 +1553,14 @@ function setStatus(msg, cls) {
   const el = document.getElementById('saveStatus');
   el.textContent = msg;
   el.className = 'save-status ' + cls;
+  // Also update autosave status indicators
+  ['b','c','cp'].forEach(pfx => {
+    const statusEl = document.getElementById(pfx + '-autosave-status');
+    if (statusEl) {
+      statusEl.textContent = msg;
+      statusEl.className = 'autosave-status ' + cls;
+    }
+  });
 }
 
 function refreshAllPreviews() {
@@ -1165,6 +1592,233 @@ window.getCardStyle = async function(noteType) {
   // Returns saved CSS for the given noteType, falling back to defaults
   return null; // main app reads from Firestore directly
 };
+
+// ======================================================
+// AUTO-SAVE DEBOUNCE
+// ======================================================
+let autoSaveTimer = null;
+function scheduleAutoSave() {
+  if (!currentUser) return;
+  clearTimeout(autoSaveTimer);
+  setStatus('Saving\u2026', 'saving');
+  autoSaveTimer = setTimeout(() => {
+    const activeTab = document.querySelector('.card-tab-content.active');
+    if (!activeTab) return;
+    const id = activeTab.id; // tab-basic, tab-cloze, tab-clozep
+    const typeMap = { 'tab-basic': 'basic', 'tab-cloze': 'cloze', 'tab-clozep': 'clozep' };
+    saveStyles(typeMap[id]);
+  }, 800);
+}
+
+// ======================================================
+// PRESET DEFINITIONS & APPLIER
+// ======================================================
+const PRESETS = {
+  basic: {
+    'warm-linen': {
+      'b-bg1':'#f5f0e8','b-bg2':'#ede8f5','b-bg3':'#e8f0ed',
+      'b-cardbg':'#fffdf8','b-border':'#8fab87','b-radius':26,'b-frontsize':21,'b-backsize':19,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#3a4a3b','b-back-color':'#5a7a5c',
+      'b-label-color':'#8fab87','b-divider-color':'#8fab87',
+      'b-bold':'#b07d2a','b-italic':'#9a6060','b-underline':'#5a9a95'
+    },
+    'midnight': {
+      'b-bg1':'#0f1117','b-bg2':'#1a1d2e','b-bg3':'#0d1520',
+      'b-cardbg':'#1e2230','b-border':'#3d5a8a','b-radius':20,'b-frontsize':22,'b-backsize':18,
+      'b-font':'Inter, system-ui, sans-serif',
+      'b-front-color':'#e8ecf4','b-back-color':'#9ab0d4',
+      'b-label-color':'#4a7abf','b-divider-color':'#3d5a8a',
+      'b-bold':'#7ab8f5','b-italic':'#f5a623','b-underline':'#5fd4c8'
+    },
+    'ocean-blue': {
+      'b-bg1':'#e8f4f8','b-bg2':'#d6eaf5','b-bg3':'#e0f0ec',
+      'b-cardbg':'#ffffff','b-border':'#2980b9','b-radius':22,'b-frontsize':21,'b-backsize':19,
+      'b-font':'Avenir, Helvetica Neue, sans-serif',
+      'b-front-color':'#1a3a5c','b-back-color':'#2d6a9f',
+      'b-label-color':'#2980b9','b-divider-color':'#2980b9',
+      'b-bold':'#e67e22','b-italic':'#8e44ad','b-underline':'#27ae60'
+    },
+    'forest': {
+      'b-bg1':'#f0f7ee','b-bg2':'#e8f5e2','b-bg3':'#f5f7f0',
+      'b-cardbg':'#fafff8','b-border':'#2e7d32','b-radius':18,'b-frontsize':20,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#1b3a1e','b-back-color':'#2e6b35',
+      'b-label-color':'#388e3c','b-divider-color':'#4caf50',
+      'b-bold':'#f57f17','b-italic':'#7b1fa2','b-underline':'#0288d1'
+    },
+    'rose-gold': {
+      'b-bg1':'#fdf0f0','b-bg2':'#f5e6ef','b-bg3':'#f8f0f4',
+      'b-cardbg':'#fffafa','b-border':'#c0697a','b-radius':28,'b-frontsize':21,'b-backsize':19,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#4a1c28','b-back-color':'#8b3a50',
+      'b-label-color':'#c0697a','b-divider-color':'#e091a0',
+      'b-bold':'#9b4dca','b-italic':'#d4792a','b-underline':'#2e8b8b'
+    }
+  },
+  cloze: {
+    'dark-default': {
+      'c-bg':'#1F80C1','c-cardbg':'#1E282C','c-border':'#ffffff','c-radius':30,
+      'c-text':'#E6E6E7','c-cloze':'#3CB371','c-extra':'#E6E6E7','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#EABB3D','c-italic':'#CD5C5C','c-underline':'#21B2B8'
+    },
+    'light-mode': {
+      'c-bg':'#f0f4f8','c-cardbg':'#ffffff','c-border':'#4a90d9','c-radius':20,
+      'c-text':'#2c3e50','c-cloze':'#27ae60','c-extra':'#7f8c8d','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e67e22','c-italic':'#8e44ad','c-underline':'#2980b9'
+    },
+    'purple-haze': {
+      'c-bg':'#2d1b69','c-cardbg':'#1a0f3d','c-border':'#9b59b6','c-radius':24,
+      'c-text':'#e8d5f5','c-cloze':'#f39c12','c-extra':'#b39ddb','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#ff6b9d','c-italic':'#64d8cb','c-underline':'#ffd54f'
+    },
+    'sunset': {
+      'c-bg':'#ff6b35','c-cardbg':'#2d1a0e','c-border':'#ffa500','c-radius':26,
+      'c-text':'#fff3e0','c-cloze':'#ffeb3b','c-extra':'#ffcc80','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#ff8a65','c-italic':'#a5d6a7','c-underline':'#81d4fa'
+    },
+    'mint-fresh': {
+      'c-bg':'#e8f5e9','c-cardbg':'#ffffff','c-border':'#26a69a','c-radius':20,
+      'c-text':'#263238','c-cloze':'#00897b','c-extra':'#546e7a','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#f57f17','c-italic':'#6a1b9a','c-underline':'#0277bd'
+    }
+  },
+  clozep: {
+    'dark-default': {
+      'cp-bg':'#1F80C1','cp-cardbg':'#1E282C','cp-border':'#ffffff','cp-radius':30,
+      'cp-text':'#E6E6E7','cp-cloze':'#3CB371','cp-extra':'#E6E6E7','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#EABB3D','cp-italic':'#CD5C5C','cp-underline':'#21B2B8'
+    },
+    'light-mode': {
+      'cp-bg':'#f0f4f8','cp-cardbg':'#ffffff','cp-border':'#4a90d9','cp-radius':20,
+      'cp-text':'#2c3e50','cp-cloze':'#27ae60','cp-extra':'#7f8c8d','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e67e22','cp-italic':'#8e44ad','cp-underline':'#2980b9'
+    },
+    'purple-haze': {
+      'cp-bg':'#2d1b69','cp-cardbg':'#1a0f3d','cp-border':'#9b59b6','cp-radius':24,
+      'cp-text':'#e8d5f5','cp-cloze':'#f39c12','cp-extra':'#b39ddb','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#ff6b9d','cp-italic':'#64d8cb','cp-underline':'#ffd54f'
+    },
+    'sunset': {
+      'cp-bg':'#ff6b35','cp-cardbg':'#2d1a0e','cp-border':'#ffa500','cp-radius':26,
+      'cp-text':'#fff3e0','cp-cloze':'#ffeb3b','cp-extra':'#ffcc80','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#ff8a65','cp-italic':'#a5d6a7','cp-underline':'#81d4fa'
+    },
+    'mint-fresh': {
+      'cp-bg':'#e8f5e9','cp-cardbg':'#ffffff','cp-border':'#26a69a','cp-radius':20,
+      'cp-text':'#263238','cp-cloze':'#00897b','cp-extra':'#546e7a','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#f57f17','cp-italic':'#6a1b9a','cp-underline':'#0277bd'
+    }
+  }
+};
+
+function applyPreset(type, preset) {
+  const data = PRESETS[type] && PRESETS[type][preset];
+  if (!data) return;
+  for (const [key, val] of Object.entries(data)) {
+    setv(key, val);
+  }
+  if (type === 'basic')  updateBasicPreview();
+  if (type === 'cloze')  updateClozePreview();
+  if (type === 'clozep') updateClozePPreview();
+  scheduleAutoSave();
+}
+
+// ======================================================
+// NAMED PRESETS
+// ======================================================
+let savedPresets = { basic: {}, cloze: {}, clozep: {} };
+
+async function loadNamedPresets() {
+  if (!currentUser) return;
+  try {
+    const doc = await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('namedPresets').get();
+    if (doc.exists) {
+      savedPresets = Object.assign({ basic:{}, cloze:{}, clozep:{} }, doc.data());
+    }
+    renderAllUserPresets();
+  } catch (e) { console.warn('loadNamedPresets failed:', e); }
+}
+
+async function saveNamedPreset(type) {
+  const nameEl = document.getElementById(type[0] + (type === 'clozep' ? 'p' : '') + '-preset-name');
+  const idMap = { basic: 'b-preset-name', cloze: 'c-preset-name', clozep: 'cp-preset-name' };
+  const inputEl = document.getElementById(idMap[type]);
+  const name = (inputEl?.value || '').trim();
+  if (!name) { inputEl?.focus(); showToast('Enter a preset name first', 'error'); return; }
+  if (!currentUser) { showToast('Sign in to save presets', 'error'); return; }
+
+  // Capture current values
+  const ids = Object.keys(DEFAULTS[type]);
+  const data = {};
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  }
+
+  if (!savedPresets[type]) savedPresets[type] = {};
+  savedPresets[type][name] = data;
+
+  try {
+    await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('namedPresets').set(
+      { [type]: savedPresets[type] }, { merge: true }
+    );
+    inputEl.value = '';
+    renderAllUserPresets();
+    showToast(`Preset "${name}" saved`, 'success');
+  } catch (e) {
+    showToast('Save failed: ' + e.message, 'error');
+  }
+}
+
+async function deleteNamedPreset(type, name) {
+  if (!currentUser) return;
+  if (!savedPresets[type]) return;
+  delete savedPresets[type][name];
+  try {
+    await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('namedPresets').set(
+      { [type]: savedPresets[type] }, { merge: true }
+    );
+    renderAllUserPresets();
+    showToast(`Preset "${name}" deleted`, 'info');
+  } catch (e) { showToast('Delete failed', 'error'); }
+}
+
+function applyNamedPreset(type, name) {
+  const data = savedPresets[type]?.[name];
+  if (!data) return;
+  for (const [key, val] of Object.entries(data)) setv(key, val);
+  if (type === 'basic')  updateBasicPreview();
+  if (type === 'cloze')  updateClozePreview();
+  if (type === 'clozep') updateClozePPreview();
+  scheduleAutoSave();
+  showToast(`Preset "${name}" applied`, 'info');
+}
+
+function renderUserPresets(type) {
+  const containerId = { basic: 'b-user-presets', cloze: 'c-user-presets', clozep: 'cp-user-presets' }[type];
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const presets = savedPresets[type] || {};
+  const names = Object.keys(presets);
+  if (!names.length) { container.innerHTML = ''; return; }
+  container.innerHTML = `
+    <div class="presets-user-label">Your Saved Presets</div>
+    <div class="presets-pills">
+      ${names.map(name => `
+        <div class="user-preset-pill">
+          <span onclick="applyNamedPreset('${type}','${name.replace(/'/g,"\\'")}')"> ${name}</span>
+          <button class="user-preset-del" onclick="deleteNamedPreset('${type}','${name.replace(/'/g,"\\'")}')">&#x2715;</button>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function renderAllUserPresets() {
+  renderUserPresets('basic');
+  renderUserPresets('cloze');
+  renderUserPresets('clozep');
+}
 </script>
 </body>
 </html>
