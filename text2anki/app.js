@@ -129,47 +129,53 @@ async function loadUserDecks() {
 
 function renderSidebarDecks() {
   const container = document.getElementById('sidebarDecks');
-  const statsEl   = document.getElementById('sidebarStats');
+  const totalCards = userDecks.reduce((s, d) => s + (d.cardCount || 0), 0);
+  document.getElementById('statDecks').textContent = userDecks.length;
+  document.getElementById('statCards').textContent = totalCards > 999 ? (totalCards/1000).toFixed(1)+'k' : totalCards;
 
   if (!userDecks.length) {
     container.innerHTML = `
       <div class="sidebar-empty">
         <div class="sidebar-empty-icon">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <rect x="3" y="5" width="18" height="14" rx="3" stroke="#9aaa9b" stroke-width="1.5" fill="none"/>
-            <path d="M3 9h18" stroke="#9aaa9b" stroke-width="1.5"/>
-            <path d="M8 5V3M16 5V3" stroke="#9aaa9b" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="3" y="5" width="18" height="14" rx="3" stroke="#8fab87" stroke-width="1.5" fill="none"/>
+            <path d="M3 9h18" stroke="#8fab87" stroke-width="1.4"/>
           </svg>
         </div>
-        No decks yet. Download your first .apkg to see it here.
+        No decks yet.<br>Download your first .apkg to see it here.
       </div>`;
-    statsEl.style.display = 'none';
+    renderFloatingPanel();
     return;
   }
 
-  statsEl.style.display = 'grid';
-  const totalCards = userDecks.reduce((s, d) => s + (d.cardCount || 0), 0);
-  document.getElementById('statDecks').textContent = userDecks.length;
-  document.getElementById('statCards').textContent = totalCards > 999 ? (totalCards/1000).toFixed(1)+'k' : totalCards;
+  function iconClass(t) {
+    if (t === 'Basic')   return 'deck-icon-basic';
+    if (t === 'Cloze++') return 'deck-icon-clozep';
+    return 'deck-icon-cloze';
+  }
+  function tagClass(t) {
+    if (t === 'Basic')   return 'basic';
+    if (t === 'Cloze++') return 'clozep';
+    return 'cloze';
+  }
 
+  const currentDeck = document.getElementById('deckName').value.trim();
   container.innerHTML = userDecks.map(deck => {
-    const initial   = (deck.name || 'D').charAt(0).toUpperCase();
+    const initial   = (deck.name || 'D').replace(/^[^a-zA-Z]*/, '').charAt(0).toUpperCase() || (deck.name||'D').charAt(0).toUpperCase();
     const cardCount = deck.cardCount || 0;
     const noteType  = deck.noteType || 'Basic';
-    const tagClass  = noteType === 'Basic' ? 'basic' : 'cloze';
     const date      = deck.lastExported?.toDate
       ? deck.lastExported.toDate().toLocaleDateString('en-US', { month:'short', day:'numeric' })
       : '';
-    const currentDeck = document.getElementById('deckName').value.trim();
     const isActive = deck.name === currentDeck;
     return `
       <div class="deck-item ${isActive ? 'active-deck' : ''}" onclick="loadDeckFromSidebar('${deck.name.replace(/'/g,"\\'")}','${noteType}')">
-        <div class="deck-icon">${initial}</div>
+        <div class="deck-icon ${iconClass(noteType)}">${initial}</div>
         <div class="deck-info">
           <div class="deck-name">${deck.name}</div>
-          <div class="deck-meta">${cardCount} card${cardCount !== 1 ? 's' : ''}${date ? ' &middot; ' + date : ''}</div>
+          <div class="deck-meta">${cardCount} card${cardCount !== 1 ? 's' : ''}${date ? '<span>·</span>' + date : ''}</div>
         </div>
-        <span class="deck-type-tag ${tagClass}">${noteType}</span>
+        <span class="deck-type-tag ${tagClass(noteType)}">${noteType}</span>
       </div>`;
   }).join('');
 

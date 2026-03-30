@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Styles — Text2Anki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<link rel="icon" type="image/png" href="Logo.png">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #faf8f3;
+  --sage: #8fab87;
+  --sage-light: #b5cdb2;
+  --sage-dark: #6d8f6a;
+  --teal: #7fb5b0;
+  --teal-dark: #5e9a95;
+  --sand: #e8dfd0;
+  --sand-dark: #d4c8b4;
+  --text: #3d4a3e;
+  --text-muted: #7a8c7b;
+  --glass: rgba(255,255,255,0.55);
+  --glass-border: rgba(184,168,200,0.3);
+  --radius: 20px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 700px 500px at 10% 20%, rgba(143,171,135,0.15) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 600px at 85% 10%, rgba(184,168,200,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 400px at 50% 80%, rgba(127,181,176,0.12) 0%, transparent 70%),
+    var(--cream);
+}
+
+/* ---- Header ---- */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250,248,243,0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 32px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.wordmark {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+}
+.logo-img { height: 36px; width: auto; display: block; }
+.wordmark-text { font-weight: 700; font-size: 20px; letter-spacing: -0.3px; }
+.wordmark-accent {
+  background: linear-gradient(135deg, #259F89 0%, #3a7bd5 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.header-right { display: flex; align-items: center; gap: 12px; }
+.btn-back-home {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 12px;
+  background: var(--sand); border: 1px solid var(--sand-dark);
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--text); cursor: pointer; text-decoration: none;
+  transition: background 0.15s, transform 0.15s;
+}
+.btn-back-home:hover { background: var(--sand-dark); transform: translateY(-1px); }
+.user-chip {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--text-muted);
+}
+.user-chip img, .user-chip .avatar-ph {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid var(--sage-light);
+}
+.avatar-ph {
+  background: linear-gradient(135deg, var(--sage), var(--teal));
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-weight: 700; font-size: 13px;
+}
+
+/* ---- Layout ---- */
+.page-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ---- Left tab nav ---- */
+.tab-nav {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 12px;
+  position: sticky;
+  top: 82px;
+}
+.tab-nav-title {
+  font-size: 10px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 6px 8px 10px;
+}
+.tab-btn {
+  width: 100%;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 13px;
+  border: 1px solid transparent;
+  background: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer; text-align: left;
+  transition: all 0.15s;
+  margin-bottom: 3px;
+}
+.tab-btn:hover { background: rgba(143,171,135,0.08); color: var(--text); }
+.tab-btn.active {
+  background: rgba(143,171,135,0.15);
+  border-color: rgba(143,171,135,0.3);
+  color: var(--sage-dark);
+}
+.tab-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-basic  { background: linear-gradient(135deg, #8fab87, #7fb5b0); }
+.dot-cloze  { background: linear-gradient(135deg, #7fb5b0, #6a9abf); }
+.dot-clozep { background: linear-gradient(135deg, #a89abf, #7fb5b0); }
+
+.tab-nav-divider {
+  height: 1px; background: var(--glass-border);
+  margin: 10px 0;
+}
+
+.save-status {
+  text-align: center;
+  font-size: 12px; font-weight: 600;
+  color: var(--text-muted);
+  padding: 6px 8px;
+  transition: color 0.3s;
+}
+.save-status.saved { color: var(--sage-dark); }
+.save-status.saving { color: var(--teal-dark); }
+
+/* ---- Right panel ---- */
+.editor-panel {
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+.card-tab-content { display: none; }
+.card-tab-content.active { display: flex; flex-direction: column; gap: 20px; }
+
+.panel-card {
+  background: rgba(255,255,255,0.58);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 24px;
+}
+.panel-card-title {
+  font-size: 13px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+.panel-card-title span {
+  display: inline-block; width: 8px; height: 8px;
+  border-radius: 50%;
+}
+
+/* ---- Control rows ---- */
+.ctrl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+.ctrl-item { display: flex; flex-direction: column; gap: 5px; }
+.ctrl-label {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.ctrl-row { display: flex; align-items: center; gap: 8px; }
+
+/* Inputs */
+.ctrl-input {
+  flex: 1;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(143,171,135,0.25);
+  border-radius: 10px;
+  padding: 8px 11px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 600;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ctrl-input:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(143,171,135,0.15); }
+
+input[type="color"].ctrl-swatch {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  border: 2px solid rgba(143,171,135,0.25);
+  padding: 2px;
+  cursor: pointer;
+  background: white;
+  flex-shrink: 0;
+}
+input[type="range"] {
+  flex: 1;
+  accent-color: var(--sage);
+}
+.range-val {
+  font-size: 12px; font-weight: 700;
+  color: var(--sage-dark);
+  min-width: 36px; text-align: right;
+}
+
+select.ctrl-input {
+  cursor: pointer;
+}
+
+.toggle-row {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(184,168,200,0.15);
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.toggle-label small { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 1px; }
+
+/* Toggle switch */
+.toggle-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer;
+  inset: 0; background: var(--sand-dark);
+  border-radius: 24px; transition: background 0.2s;
+}
+.toggle-slider::before {
+  content: ''; position: absolute;
+  width: 18px; height: 18px; left: 3px; bottom: 3px;
+  background: white; border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--sage); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+/* Accent colors strip */
+.accent-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.accent-swatch {
+  width: 28px; height: 28px; border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s;
+}
+.accent-swatch.active, .accent-swatch:hover {
+  border-color: var(--text);
+  transform: scale(1.12);
+}
+
+/* Highlight colors for bold/italic/underline */
+.markup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+.markup-item { display: flex; flex-direction: column; gap: 5px; }
+.markup-preview {
+  text-align: center;
+  font-size: 14px;
+  padding: 6px 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid var(--glass-border);
+}
+
+/* ---- Live preview ---- */
+.preview-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 20px rgba(61,74,62,0.08);
+}
+.preview-label {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.5);
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.preview-toggle { display: flex; gap: 4px; }
+.ptgl-btn {
+  padding: 4px 10px; border-radius: 8px; border: none;
+  background: none; font-family: 'Nunito', sans-serif;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  cursor: pointer; transition: all 0.15s;
+}
+.ptgl-btn.active { background: var(--sage); color: white; }
+.preview-frame {
+  width: 100%; height: 320px; border: none;
+  display: block;
+}
+
+/* ---- Action bar ---- */
+.action-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.btn-save {
+  padding: 11px 28px;
+  background: linear-gradient(135deg, var(--sage) 0%, var(--teal) 100%);
+  color: white; border: none; border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  box-shadow: 0 2px 10px rgba(143,171,135,0.35);
+}
+.btn-save:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(143,171,135,0.45); }
+.btn-reset {
+  padding: 11px 20px;
+  background: rgba(255,255,255,0.7);
+  color: var(--text-muted); border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-reset:hover { background: var(--sand); color: var(--text); }
+.save-badge {
+  font-size: 13px; font-weight: 600;
+  padding: 6px 14px; border-radius: 10px;
+  opacity: 0; transition: opacity 0.3s;
+}
+.save-badge.show { opacity: 1; }
+.save-badge.ok { background: rgba(143,171,135,0.15); color: var(--sage-dark); }
+.save-badge.err { background: rgba(192,97,90,0.12); color: #c0615a; }
+
+.sign-in-prompt {
+  text-align: center; padding: 40px 24px;
+  color: var(--text-muted); font-size: 15px; font-weight: 500;
+  background: rgba(255,255,255,0.5); border-radius: 20px;
+  border: 1px solid var(--glass-border);
+}
+.sign-in-prompt strong { color: var(--text); }
+
+/* Toast */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px; z-index: 500;
+  display: flex; flex-direction: column; gap: 10px; align-items: flex-end;
+}
+.toast {
+  padding: 11px 18px; border-radius: 14px;
+  font-size: 14px; font-weight: 600; color: white;
+  max-width: 300px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.14);
+  animation: toastIn 0.3s ease forwards;
+  transition: opacity 0.3s, transform 0.3s;
+}
+@keyframes toastIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+.toast.hiding { opacity: 0; transform: translateY(8px); }
+.toast.success { background: var(--sage-dark); }
+.toast.error   { background: #c0615a; }
+.toast.info    { background: var(--teal-dark); }
+
+/* Responsive */
+@media (max-width: 860px) {
+  .page-wrap { grid-template-columns: 1fr; }
+  .tab-nav { position: static; display: flex; flex-direction: row; flex-wrap: wrap; gap: 4px; padding: 8px; }
+  .tab-nav-title, .tab-nav-divider { display: none; }
+}
+@media (max-width: 640px) {
+  header { padding: 0 16px; }
+  .page-wrap { padding: 16px 16px 60px; }
+  .markup-grid { grid-template-columns: 1fr 1fr; }
+  .ctrl-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="wordmark" href="index.html">
+    <img src="Logo.png" alt="Text2Anki" class="logo-img">
+    <span class="wordmark-text">Text2<span class="wordmark-accent">Anki</span></span>
+  </a>
+  <div class="header-right">
+    <a class="btn-back-home" href="index.html">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M8 2L3 6.5 8 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to Home
+    </a>
+    <div class="user-chip" id="userChip" style="display:none"></div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Left: tab nav -->
+  <aside class="tab-nav">
+    <div class="tab-nav-title">Card Types</div>
+    <button class="tab-btn active" onclick="switchTab('basic',this)">
+      <span class="tab-dot dot-basic"></span> Basic
+    </button>
+    <button class="tab-btn" onclick="switchTab('cloze',this)">
+      <span class="tab-dot dot-cloze"></span> Cloze+
+    </button>
+    <button class="tab-btn" onclick="switchTab('clozep',this)">
+      <span class="tab-dot dot-clozep"></span> Cloze++
+    </button>
+    <div class="tab-nav-divider"></div>
+    <div class="save-status" id="saveStatus">All changes saved</div>
+  </aside>
+
+  <!-- Right: editor -->
+  <div class="editor-panel">
+
+    <!-- Sign-in prompt shown when logged out -->
+    <div class="sign-in-prompt" id="signInPrompt" style="display:none">
+      <strong>Sign in to save your card styles.</strong><br>
+      You can still preview changes — sign in on the main page to save them to your account.
+    </div>
+
+    <!-- ======= BASIC TAB ======= -->
+    <div class="card-tab-content active" id="tab-basic">
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Page Background</div>
+        <div class="ctrl-grid">
+          <div class="ctrl-item">
+            <div class="ctrl-label">BG Color A</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-bg1" value="#f5f0e8" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-bg1-hex" value="#f5f0e8" oninput="syncColor('b-bg1','b-bg1-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">BG Color B</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-bg2" value="#ede8f5" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-bg2-hex" value="#ede8f5" oninput="syncColor('b-bg2','b-bg2-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">BG Color C</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-bg3" value="#e8f0ed" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-bg3-hex" value="#e8f0ed" oninput="syncColor('b-bg3','b-bg3-hex')">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Card Style</div>
+        <div class="ctrl-grid">
+          <div class="ctrl-item">
+            <div class="ctrl-label">Card Background</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-cardbg" value="#fffdf8" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-cardbg-hex" value="#fffdf8" oninput="syncColor('b-cardbg','b-cardbg-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Card Border Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-border" value="#8fab87" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-border-hex" value="#8fab87" oninput="syncColor('b-border','b-border-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Corner Radius (px)</div>
+            <div class="ctrl-row">
+              <input type="range" min="0" max="40" value="26" id="b-radius" oninput="updateBasicPreview(); this.nextElementSibling.textContent=this.value+'px'">
+              <span class="range-val">26px</span>
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Font Family</div>
+            <select class="ctrl-input" id="b-font" onchange="updateBasicPreview()">
+              <option value="Georgia, serif" selected>Georgia (Serif)</option>
+              <option value="'Times New Roman', serif">Times New Roman</option>
+              <option value="Avenir, 'Helvetica Neue', sans-serif">Avenir (Sans)</option>
+              <option value="system-ui, sans-serif">System UI</option>
+              <option value="'Courier New', monospace">Courier New</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Text Colors</div>
+        <div class="ctrl-grid">
+          <div class="ctrl-item">
+            <div class="ctrl-label">Front (Question)</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-front-color" value="#3a4a3b" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-front-color-hex" value="#3a4a3b" oninput="syncColor('b-front-color','b-front-color-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Back (Answer)</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-back-color" value="#5a7a5c" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-back-color-hex" value="#5a7a5c" oninput="syncColor('b-back-color','b-back-color-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Label Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-label-color" value="#8fab87" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-label-color-hex" value="#8fab87" oninput="syncColor('b-label-color','b-label-color-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Divider Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-divider-color" value="#8fab87" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-divider-color-hex" value="#8fab87" oninput="syncColor('b-divider-color','b-divider-color-hex')">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#8fab87,#7fb5b0)"></span> Markup Colors</div>
+        <div class="markup-grid">
+          <div class="markup-item">
+            <div class="ctrl-label">Bold <strong style="color:inherit">B</strong></div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-bold" value="#b07d2a" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-bold-hex" value="#b07d2a" oninput="syncColor('b-bold','b-bold-hex')">
+            </div>
+            <div class="markup-preview" id="b-bold-preview"><strong>Bold text</strong></div>
+          </div>
+          <div class="markup-item">
+            <div class="ctrl-label">Italic <em>I</em></div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-italic" value="#9a6060" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-italic-hex" value="#9a6060" oninput="syncColor('b-italic','b-italic-hex')">
+            </div>
+            <div class="markup-preview" id="b-italic-preview"><em>Italic text</em></div>
+          </div>
+          <div class="markup-item">
+            <div class="ctrl-label">Underline <u>U</u></div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="b-underline" value="#5a9a95" oninput="updateBasicPreview()">
+              <input type="text" class="ctrl-input" id="b-underline-hex" value="#5a9a95" oninput="syncColor('b-underline','b-underline-hex')">
+            </div>
+            <div class="markup-preview" id="b-underline-preview"><u>Underline text</u></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div class="panel-card" style="padding:0">
+        <div class="preview-label">
+          Live Preview
+          <div class="preview-toggle">
+            <button class="ptgl-btn active" id="b-ptgl-front" onclick="setPreviewSide('basic','front')">Question</button>
+            <button class="ptgl-btn" id="b-ptgl-back" onclick="setPreviewSide('basic','back')">Answer</button>
+          </div>
+        </div>
+        <iframe class="preview-frame" id="b-preview-frame" title="Basic card preview"></iframe>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-bar">
+        <button class="btn-save" onclick="saveStyles('basic')">Save Basic Style</button>
+        <button class="btn-reset" onclick="resetStyles('basic')">Restore Defaults</button>
+        <span class="save-badge" id="b-save-badge"></span>
+      </div>
+    </div><!-- /tab-basic -->
+
+    <!-- ======= CLOZE+ TAB ======= -->
+    <div class="card-tab-content" id="tab-cloze">
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#7fb5b0,#6a9abf)"></span> Page Background</div>
+        <div class="ctrl-grid">
+          <div class="ctrl-item">
+            <div class="ctrl-label">BG Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-bg" value="#1F80C1" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-bg-hex" value="#1F80C1" oninput="syncColor('c-bg','c-bg-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Card Background</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-cardbg" value="#1E282C" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-cardbg-hex" value="#1E282C" oninput="syncColor('c-cardbg','c-cardbg-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Border Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-border" value="#ffffff" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-border-hex" value="#ffffff" oninput="syncColor('c-border','c-border-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Corner Radius (px)</div>
+            <div class="ctrl-row">
+              <input type="range" min="0" max="40" value="30" id="c-radius" oninput="updateClozePreview(); this.nextElementSibling.textContent=this.value+'px'">
+              <span class="range-val">30px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#7fb5b0,#6a9abf)"></span> Text</div>
+        <div class="ctrl-grid">
+          <div class="ctrl-item">
+            <div class="ctrl-label">Text Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-text" value="#E6E6E7" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-text-hex" value="#E6E6E7" oninput="syncColor('c-text','c-text-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Cloze Highlight</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-cloze" value="#3CB371" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-cloze-hex" value="#3CB371" oninput="syncColor('c-cloze','c-cloze-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Extra / Hint Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-extra" value="#E6E6E7" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-extra-hex" value="#E6E6E7" oninput="syncColor('c-extra','c-extra-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Font Size (px)</div>
+            <div class="ctrl-row">
+              <input type="range" min="12" max="28" value="18" id="c-fontsize" oninput="updateClozePreview(); this.nextElementSibling.textContent=this.value+'px'">
+              <span class="range-val">18px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#7fb5b0,#6a9abf)"></span> Markup Colors</div>
+        <div class="markup-grid">
+          <div class="markup-item">
+            <div class="ctrl-label">Bold</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-bold" value="#EABB3D" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-bold-hex" value="#EABB3D" oninput="syncColor('c-bold','c-bold-hex')">
+            </div>
+            <div class="markup-preview" id="c-bold-preview"><strong>Bold text</strong></div>
+          </div>
+          <div class="markup-item">
+            <div class="ctrl-label">Italic</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-italic" value="#CD5C5C" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-italic-hex" value="#CD5C5C" oninput="syncColor('c-italic','c-italic-hex')">
+            </div>
+            <div class="markup-preview" id="c-italic-preview"><em>Italic text</em></div>
+          </div>
+          <div class="markup-item">
+            <div class="ctrl-label">Underline</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="c-underline" value="#21B2B8" oninput="updateClozePreview()">
+              <input type="text" class="ctrl-input" id="c-underline-hex" value="#21B2B8" oninput="syncColor('c-underline','c-underline-hex')">
+            </div>
+            <div class="markup-preview" id="c-underline-preview"><u>Underline text</u></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div class="panel-card" style="padding:0">
+        <div class="preview-label">Live Preview</div>
+        <iframe class="preview-frame" id="c-preview-frame" title="Cloze card preview"></iframe>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn-save" onclick="saveStyles('cloze')">Save Cloze+ Style</button>
+        <button class="btn-reset" onclick="resetStyles('cloze')">Restore Defaults</button>
+        <span class="save-badge" id="c-save-badge"></span>
+      </div>
+    </div><!-- /tab-cloze -->
+
+    <!-- ======= CLOZE++ TAB (inherits from Cloze+ with same controls) ======= -->
+    <div class="card-tab-content" id="tab-clozep">
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#a89abf,#7fb5b0)"></span> Page Background</div>
+        <div class="ctrl-grid">
+          <div class="ctrl-item">
+            <div class="ctrl-label">BG Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-bg" value="#1F80C1" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-bg-hex" value="#1F80C1" oninput="syncColor('cp-bg','cp-bg-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Card Background</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-cardbg" value="#1E282C" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-cardbg-hex" value="#1E282C" oninput="syncColor('cp-cardbg','cp-cardbg-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Border Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-border" value="#ffffff" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-border-hex" value="#ffffff" oninput="syncColor('cp-border','cp-border-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Corner Radius (px)</div>
+            <div class="ctrl-row">
+              <input type="range" min="0" max="40" value="30" id="cp-radius" oninput="updateClozePPreview(); this.nextElementSibling.textContent=this.value+'px'">
+              <span class="range-val">30px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#a89abf,#7fb5b0)"></span> Text</div>
+        <div class="ctrl-grid">
+          <div class="ctrl-item">
+            <div class="ctrl-label">Text Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-text" value="#E6E6E7" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-text-hex" value="#E6E6E7" oninput="syncColor('cp-text','cp-text-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Cloze Highlight</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-cloze" value="#3CB371" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-cloze-hex" value="#3CB371" oninput="syncColor('cp-cloze','cp-cloze-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Extra / Hint Color</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-extra" value="#E6E6E7" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-extra-hex" value="#E6E6E7" oninput="syncColor('cp-extra','cp-extra-hex')">
+            </div>
+          </div>
+          <div class="ctrl-item">
+            <div class="ctrl-label">Font Size (px)</div>
+            <div class="ctrl-row">
+              <input type="range" min="12" max="28" value="18" id="cp-fontsize" oninput="updateClozePPreview(); this.nextElementSibling.textContent=this.value+'px'">
+              <span class="range-val">18px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-card-title"><span style="background:linear-gradient(135deg,#a89abf,#7fb5b0)"></span> Markup Colors</div>
+        <div class="markup-grid">
+          <div class="markup-item">
+            <div class="ctrl-label">Bold</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-bold" value="#EABB3D" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-bold-hex" value="#EABB3D" oninput="syncColor('cp-bold','cp-bold-hex')">
+            </div>
+            <div class="markup-preview"><strong>Bold text</strong></div>
+          </div>
+          <div class="markup-item">
+            <div class="ctrl-label">Italic</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-italic" value="#CD5C5C" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-italic-hex" value="#CD5C5C" oninput="syncColor('cp-italic','cp-italic-hex')">
+            </div>
+            <div class="markup-preview"><em>Italic text</em></div>
+          </div>
+          <div class="markup-item">
+            <div class="ctrl-label">Underline</div>
+            <div class="ctrl-row">
+              <input type="color" class="ctrl-swatch" id="cp-underline" value="#21B2B8" oninput="updateClozePPreview()">
+              <input type="text" class="ctrl-input" id="cp-underline-hex" value="#21B2B8" oninput="syncColor('cp-underline','cp-underline-hex')">
+            </div>
+            <div class="markup-preview"><u>Underline text</u></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live preview -->
+      <div class="panel-card" style="padding:0">
+        <div class="preview-label">Live Preview</div>
+        <iframe class="preview-frame" id="cp-preview-frame" title="Cloze++ card preview"></iframe>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn-save" onclick="saveStyles('clozep')">Save Cloze++ Style</button>
+        <button class="btn-reset" onclick="resetStyles('clozep')">Restore Defaults</button>
+        <span class="save-badge" id="cp-save-badge"></span>
+      </div>
+    </div><!-- /tab-clozep -->
+
+  </div><!-- /editor-panel -->
+</div><!-- /page-wrap -->
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ======================================================
+// FIREBASE
+// ======================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBoU0ikw_z5cyL8nTvBpYlrAvgRpDklZ1M",
+  authDomain: "text2anki.firebaseapp.com",
+  projectId: "text2anki",
+  storageBucket: "text2anki.firebasestorage.app",
+  messagingSenderId: "354909730446",
+  appId: "1:354909730446:web:db9f35da840871c3013bdf"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const fsDb = firebase.firestore();
+let currentUser = null;
+
+auth.onAuthStateChanged(async user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById('signInPrompt').style.display = 'none';
+    const chip = document.getElementById('userChip');
+    chip.style.display = 'flex';
+    const avatarHtml = user.photoURL
+      ? `<img src="${user.photoURL}" alt="" style="border-radius:50%;width:30px;height:30px;border:2px solid #b5cdb2">`
+      : `<div class="avatar-ph">${(user.displayName||user.email||'U').charAt(0).toUpperCase()}</div>`;
+    chip.innerHTML = avatarHtml + `<span style="font-size:13px;font-weight:600;color:#7a8c7b">${user.displayName || user.email}</span>`;
+    await loadSavedStyles();
+  } else {
+    document.getElementById('signInPrompt').style.display = '';
+    document.getElementById('saveStatus').textContent = 'Sign in to save';
+  }
+});
+
+// ======================================================
+// DEFAULTS
+// ======================================================
+const DEFAULTS = {
+  basic: {
+    'b-bg1': '#f5f0e8', 'b-bg2': '#ede8f5', 'b-bg3': '#e8f0ed',
+    'b-cardbg': '#fffdf8', 'b-border': '#8fab87', 'b-radius': 26,
+    'b-font': 'Georgia, serif',
+    'b-front-color': '#3a4a3b', 'b-back-color': '#5a7a5c',
+    'b-label-color': '#8fab87', 'b-divider-color': '#8fab87',
+    'b-bold': '#b07d2a', 'b-italic': '#9a6060', 'b-underline': '#5a9a95'
+  },
+  cloze: {
+    'c-bg': '#1F80C1', 'c-cardbg': '#1E282C', 'c-border': '#ffffff', 'c-radius': 30,
+    'c-text': '#E6E6E7', 'c-cloze': '#3CB371', 'c-extra': '#E6E6E7', 'c-fontsize': 18,
+    'c-bold': '#EABB3D', 'c-italic': '#CD5C5C', 'c-underline': '#21B2B8'
+  },
+  clozep: {
+    'cp-bg': '#1F80C1', 'cp-cardbg': '#1E282C', 'cp-border': '#ffffff', 'cp-radius': 30,
+    'cp-text': '#E6E6E7', 'cp-cloze': '#3CB371', 'cp-extra': '#E6E6E7', 'cp-fontsize': 18,
+    'cp-bold': '#EABB3D', 'cp-italic': '#CD5C5C', 'cp-underline': '#21B2B8'
+  }
+};
+
+// ======================================================
+// TABS
+// ======================================================
+function switchTab(name, btn) {
+  document.querySelectorAll('.card-tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ======================================================
+// COLOR SYNC (swatch <-> hex text)
+// ======================================================
+function syncColor(swatchId, hexId) {
+  const hex = document.getElementById(hexId).value;
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    document.getElementById(swatchId).value = hex;
+  }
+  if (swatchId.startsWith('b-')) updateBasicPreview();
+  else if (swatchId.startsWith('cp-')) updateClozePPreview();
+  else updateClozePreview();
+}
+
+function v(id) { return document.getElementById(id).value; }
+function setv(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.type === 'range') { el.value = val; el.nextElementSibling.textContent = val + 'px'; }
+  else { el.value = val; }
+  // sync hex fields
+  const hexId = id + '-hex';
+  const hexEl = document.getElementById(hexId);
+  if (hexEl) hexEl.value = val;
+}
+
+// ======================================================
+// CSS BUILDERS
+// ======================================================
+function buildBasicCSS() {
+  const bg1 = v('b-bg1'), bg2 = v('b-bg2'), bg3 = v('b-bg3');
+  const cardbg = v('b-cardbg'), border = v('b-border'), radius = v('b-radius');
+  const font = v('b-font');
+  const frontC = v('b-front-color'), backC = v('b-back-color');
+  const labelC = v('b-label-color'), divC = v('b-divider-color');
+  const boldC = v('b-bold'), italicC = v('b-italic'), ulC = v('b-underline');
+  return `
+html { overflow: scroll; overflow-x: hidden; background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%); min-height: 100%; }
+#bkard { padding: 32px 24px 28px; max-width: 720px; margin: 0 auto; word-wrap: break-word; }
+.card { font-family: ${font}; font-size: 18px; text-align: center; color: ${frontC}; line-height: 1.7em; background: ${cardbg}; border: 1.5px solid ${border}44; border-radius: ${radius}px; box-shadow: 0 8px 40px rgba(100,120,100,0.13); }
+.side-label { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: ${labelC}; margin-bottom: 16px; }
+.answer-label { color: ${divC}; margin-top: 0; }
+.bfront { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: 21px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
+.divider { display: flex; align-items: center; justify-content: center; margin: 24px auto; }
+.divider-line { height: 1px; width: 64px; background: linear-gradient(90deg, transparent, ${divC}66, transparent); display: inline-block; }
+.divider-diamond { width: 6px; height: 6px; background: ${divC}; transform: rotate(45deg); display: inline-block; margin: 0 10px; opacity: 0.6; }
+.bback { font-family: ${font}; font-size: 19px; color: ${backC}; line-height: 1.7; padding: 0 12px 6px; font-weight: 400; }
+.tags { color: #b8a8c8; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; letter-spacing: 1px; position: fixed; padding: 0; top: 0; right: 0; }
+.tags:hover { opacity: 1; }
+b { color: ${boldC} !important; }
+u { text-decoration: none; color: ${ulC}; }
+i { color: ${italicC}; }
+a { color: ${labelC} !important; text-decoration: none; font-size: 11px; }
+img { display: block; max-width: 100%; margin: 16px auto; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+.card.nightMode { background: rgba(30,36,30,0.97); color: #d8e0d8; border-color: ${border}33; }
+.nightMode .bfront { color: #dde8dd; }
+.nightMode .bback  { color: #8fab87; }
+.nightMode .side-label { color: #6d8f6a; }
+.nightMode .answer-label { color: #5e9a95; }
+.mobile .tags:hover { opacity: 1; position: relative; }
+  `.trim();
+}
+
+function buildClozeCSSFrom(pfx) {
+  const bg = v(pfx+'-bg'), cardbg = v(pfx+'-cardbg'), border = v(pfx+'-border');
+  const radius = v(pfx+'-radius'), textC = v(pfx+'-text'), clozeC = v(pfx+'-cloze');
+  const extraC = v(pfx+'-extra'), fs = v(pfx+'-fontsize');
+  const boldC = v(pfx+'-bold'), italicC = v(pfx+'-italic'), ulC = v(pfx+'-underline');
+  return `
+html { overflow: scroll; overflow-x: hidden; background-color: ${bg}; }
+#kard { padding: 15px 10px; max-width: 800px; margin: 0 auto; word-wrap: break-word; }
+.card { font-family: Avenir; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${cardbg}; border: 2px solid ${border}; border-radius: ${radius}px; }
+.cloze, .cloze b, .cloze u, .cloze i { font-weight: bold; color: ${clozeC} !important; }
+#extra, #extra i { font-size: 15px; color: ${extraC}; font-style: italic; }
+.tags { color: #A6ABB9; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; position: fixed; padding: 0; top: 0; right: 0; }
+.tags:hover { opacity: 1; }
+b { color: ${boldC} !important; }
+u { text-decoration: none; color: ${ulC}; }
+i { color: ${italicC}; }
+a { color: LightGray !important; text-decoration: none; font-size: 10px; font-style: normal; }
+img { display: block; max-width: 100%; margin: 10px auto; }
+tr { font-size: 12px; }
+.card.nightMode { color: ${textC}; background-color: ${cardbg}; }
+.mobile .card { color: ${textC}; background-color: #000000; }
+.mobile .tags:hover { opacity: 1; position: relative; }
+  `.trim();
+}
+
+// ======================================================
+// PREVIEW BUILDERS
+// ======================================================
+let basicPreviewSide = 'front';
+function setPreviewSide(type, side) {
+  if (type === 'basic') {
+    basicPreviewSide = side;
+    document.getElementById('b-ptgl-front').classList.toggle('active', side==='front');
+    document.getElementById('b-ptgl-back').classList.toggle('active', side==='back');
+    updateBasicPreview();
+  }
+}
+
+function updateBasicPreview() {
+  updateMarkupPreviews('b');
+  const css = buildBasicCSS();
+  const isFront = basicPreviewSide === 'front';
+  const html = `<!DOCTYPE html><html><head><style>${css}</style></head><body>
+<div id="bkard"><div class="card">
+  <div class="tags">biology</div>
+  <div class="side-label">Question</div>
+  <div class="bfront">What is the powerhouse of the cell?</div>
+  ${isFront ? '' : `
+  <div class="divider"><span class="divider-line"></span><span class="divider-diamond"></span><span class="divider-line"></span></div>
+  <div class="side-label answer-label">Answer</div>
+  <div class="bback">The <b>mitochondria</b> — it produces <u>ATP</u> via <i>cellular respiration</i>.</div>`}
+</div></div></body></html>`;
+  setFrameContent('b-preview-frame', html);
+}
+
+function updateClozePreview() {
+  updateMarkupPreviews('c');
+  const css = buildClozeCSSFrom('c');
+  const html = `<!DOCTYPE html><html><head><style>${css}</style></head><body>
+<div id="kard"><div class="card">
+  <div class="tags">biology</div>
+  The <span class="cloze">[mitochondria]</span> is responsible for producing <b>ATP</b> via <i>cellular respiration</i>.
+  <div id="extra">Also called the <u>powerhouse</u> of the cell.</div>
+</div></div></body></html>`;
+  setFrameContent('c-preview-frame', html);
+}
+
+function updateClozePPreview() {
+  updateMarkupPreviews('cp');
+  const css = buildClozeCSSFrom('cp');
+  const html = `<!DOCTYPE html><html><head><style>${css}</style></head><body>
+<div id="kard"><div class="card">
+  <div class="tags">biology</div>
+  The <span class="cloze">[krebs cycle]</span> produces <b>3 NADH</b> per turn via <i>oxidative phosphorylation</i>.
+  <div id="extra">Occurs in the mitochondrial matrix; also yields 1 FADH₂, 1 GTP, 2 CO₂ per turn.</div>
+</div></div></body></html>`;
+  setFrameContent('cp-preview-frame', html);
+}
+
+function updateMarkupPreviews(pfx) {
+  const boldEl = document.getElementById(pfx+'-bold-preview');
+  const italicEl = document.getElementById(pfx+'-italic-preview');
+  const ulEl = document.getElementById(pfx+'-underline-preview');
+  if (boldEl)   boldEl.style.color = v(pfx+'-bold');
+  if (italicEl) italicEl.style.color = v(pfx+'-italic');
+  if (ulEl)     ulEl.style.color = v(pfx+'-underline');
+}
+
+function setFrameContent(frameId, html) {
+  const frame = document.getElementById(frameId);
+  if (!frame) return;
+  const doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+}
+
+// ======================================================
+// LOAD / SAVE / RESET
+// ======================================================
+async function loadSavedStyles() {
+  if (!currentUser) return;
+  try {
+    const doc = await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('cardStyles').get();
+    if (!doc.exists) { refreshAllPreviews(); return; }
+    const data = doc.data();
+    applyStyleData('basic',  data.basic  || {});
+    applyStyleData('cloze',  data.cloze  || {});
+    applyStyleData('clozep', data.clozep || {});
+    refreshAllPreviews();
+    setStatus('All changes saved', 'saved');
+  } catch (e) {
+    console.warn('Load styles failed:', e);
+    refreshAllPreviews();
+  }
+}
+
+function applyStyleData(type, data) {
+  for (const [key, val] of Object.entries(data)) {
+    setv(key, val);
+  }
+}
+
+async function saveStyles(type) {
+  const badge = document.getElementById(type[0]+( type==='clozep'?'p':'') + '-save-badge');
+  // map type to prefix + key
+  const pfxMap = { basic: 'b', cloze: 'c', clozep: 'cp' };
+  const pfx = pfxMap[type];
+  const ids = Object.keys(DEFAULTS[type]);
+  const data = {};
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el) data[id] = el.value;
+  }
+
+  if (!currentUser) {
+    showSaveBadge(type, 'Sign in to save', 'err');
+    return;
+  }
+  setStatus('Saving…', 'saving');
+  try {
+    await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('cardStyles').set(
+      { [type]: data },
+      { merge: true }
+    );
+    showSaveBadge(type, 'Saved!', 'ok');
+    setStatus('All changes saved', 'saved');
+    showToast('Card style saved', 'success');
+  } catch (e) {
+    showSaveBadge(type, 'Save failed', 'err');
+    setStatus('Save failed', '');
+    showToast('Save failed: ' + e.message, 'error');
+  }
+}
+
+function showSaveBadge(type, msg, cls) {
+  const idMap = { basic: 'b-save-badge', cloze: 'c-save-badge', clozep: 'cp-save-badge' };
+  const el = document.getElementById(idMap[type]);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'save-badge show ' + cls;
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+function resetStyles(type) {
+  if (!confirm('Restore default styles for this card type?')) return;
+  const defs = DEFAULTS[type];
+  applyStyleData(type, defs);
+  if (type === 'basic')  updateBasicPreview();
+  if (type === 'cloze')  updateClozePreview();
+  if (type === 'clozep') updateClozePPreview();
+  showToast('Defaults restored', 'info');
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('saveStatus');
+  el.textContent = msg;
+  el.className = 'save-status ' + cls;
+}
+
+function refreshAllPreviews() {
+  updateBasicPreview();
+  updateClozePreview();
+  updateClozePPreview();
+}
+
+// Run on load
+refreshAllPreviews();
+
+// ======================================================
+// TOAST
+// ======================================================
+function showToast(msg, type='info') {
+  const c = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.classList.add('hiding'); setTimeout(() => t.remove(), 400); }, 3500);
+}
+
+// ======================================================
+// EXPOSE CSS BUILDERS FOR MAIN APP
+// ======================================================
+// These are called by app.js via postMessage or direct import if same origin
+window.getCardStyle = async function(noteType) {
+  // Returns saved CSS for the given noteType, falling back to defaults
+  return null; // main app reads from Firestore directly
+};
+</script>
+</body>
+</html>
