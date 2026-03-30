@@ -134,7 +134,7 @@
   /* ---- Hero ---- */
   .hero {
     text-align: center;
-    padding: 72px 24px 48px;
+    padding: 36px 24px 20px;
   }
   .hero h1 {
     font-size: clamp(32px, 5vw, 52px);
@@ -346,6 +346,14 @@
     padding-left: 8px; padding-right: 8px;
   }
   .btn-ghost:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+
+  .btn-download {
+    background: var(--teal);
+    color: white;
+    box-shadow: 0 2px 10px rgba(127,181,176,0.35);
+  }
+  .btn-download:hover { background: var(--teal-dark); box-shadow: 0 4px 16px rgba(127,181,176,0.45); transform: translateY(-1px); }
+  .btn-download:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
 
   .btn-teal {
     background: var(--teal);
@@ -597,6 +605,142 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* ---- Floating decks panel (right side) ---- */
+  #floatingDecksPanel {
+    display: none;
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 140;
+    width: 220px;
+    max-height: 70vh;
+    background: rgba(250,248,243,0.88);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(184,168,200,0.35);
+    border-radius: 20px;
+    box-shadow:
+      0 8px 40px rgba(61,74,62,0.12),
+      0 2px 8px rgba(184,168,200,0.15),
+      inset 0 1px 0 rgba(255,255,255,0.6);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideIn 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-50%) translateX(12px); }
+    to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+  }
+  #floatingDecksPanel.fdp-visible {
+    display: flex;
+  }
+  .fdp-header {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid rgba(184,168,200,0.2);
+    flex-shrink: 0;
+  }
+  .fdp-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .fdp-title-count {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sage);
+    background: rgba(143,171,135,0.12);
+    border-radius: 20px;
+    padding: 1px 8px;
+  }
+  .fdp-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(184,168,200,0.4) transparent;
+  }
+  .fdp-list::-webkit-scrollbar { width: 4px; }
+  .fdp-list::-webkit-scrollbar-thumb { background: rgba(184,168,200,0.4); border-radius: 2px; }
+  .fdp-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+  .fdp-item:hover {
+    background: rgba(143,171,135,0.1);
+    border-color: rgba(143,171,135,0.25);
+    transform: translateX(-2px);
+  }
+  .fdp-item.active {
+    background: rgba(143,171,135,0.15);
+    border-color: rgba(143,171,135,0.35);
+  }
+  .fdp-icon {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, rgba(143,171,135,0.22) 0%, rgba(127,181,176,0.18) 100%);
+    border: 1px solid rgba(143,171,135,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    color: var(--sage-dark);
+    flex-shrink: 0;
+  }
+  .fdp-info { flex: 1; min-width: 0; }
+  .fdp-name {
+    font-size: 12px; font-weight: 600;
+    color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    line-height: 1.3;
+  }
+  .fdp-meta {
+    font-size: 10px; color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .fdp-empty {
+    text-align: center;
+    padding: 24px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .fdp-footer {
+    padding: 8px;
+    border-top: 1px solid rgba(184,168,200,0.2);
+    flex-shrink: 0;
+  }
+  .fdp-new-btn {
+    width: 100%;
+    padding: 8px 12px;
+    background: var(--sage);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .fdp-new-btn:hover { background: var(--sage-dark); transform: translateY(-1px); }
+
+  /* hide floating panel on narrow screens where it'd overlap */
+  @media (max-width: 1100px) {
+    #floatingDecksPanel { display: none !important; }
+  }
+
   /* ---- Sidebar ---- */
   .sidebar-toggle {
     display: none;
@@ -821,7 +965,7 @@
   /* ---- Responsive ---- */
   @media (max-width: 640px) {
     header { padding: 0 16px; }
-    .hero { padding: 48px 16px 32px; }
+    .hero { padding: 24px 16px 12px; }
     .main-container { padding: 0 16px 36px; }
     .tool-card { padding: 20px; }
     .row-split { grid-template-columns: 1fr; gap: 12px; }
@@ -877,17 +1021,16 @@
 <!-- Hero -->
 <section class="hero">
   <h1>Turn your notes into <span>Anki cards.</span></h1>
-  <p class="hero-subtitle">Paste any text. Get a ready-to-import Anki deck.</p>
-  <div class="hero-pills">
-    <span class="hero-pill sage">Basic Q&amp;A</span>
-    <span class="hero-pill lav">Cloze+</span>
-    <span class="hero-pill teal">Cloze++</span>
-  </div>
 </section>
 
 <!-- Main tool card -->
 <div class="main-container">
   <div class="tool-card glass-panel">
+
+    <!-- AI prompt button row (top) -->
+    <div class="tool-row" style="padding-bottom:0">
+      <button class="btn btn-secondary" onclick="openAIModal()" style="width:100%;justify-content:center">Generate AI Formatting Prompt</button>
+    </div>
 
     <!-- Row 1 -->
     <div class="tool-row row-split">
@@ -925,7 +1068,7 @@
     <!-- Row 4 -->
     <div class="tool-row actions-row">
       <button class="btn btn-primary" id="btnPreview" onclick="doPreview()" disabled>Preview Cards</button>
-      <button class="btn btn-secondary" onclick="openAIModal()">AI Format Prompt</button>
+      <button class="btn btn-download" id="btnDirectDownload" onclick="doDirectDownload()" disabled>Download .apkg</button>
       <button class="btn btn-ghost" onclick="clearAll()">Clear</button>
     </div>
 
@@ -964,6 +1107,22 @@
       <div class="step-num">4</div>
       <div class="step-label">Start studying</div>
     </div>
+  </div>
+</div>
+
+<!-- Floating decks panel (right side, shown when logged in) -->
+<div id="floatingDecksPanel">
+  <div class="fdp-header">
+    <div class="fdp-title">
+      My Decks
+      <span class="fdp-title-count" id="fdpCount">0</span>
+    </div>
+  </div>
+  <div class="fdp-list" id="fdpList">
+    <div class="fdp-empty">No decks yet.<br>Download your first deck to see it here.</div>
+  </div>
+  <div class="fdp-footer">
+    <button class="fdp-new-btn" onclick="document.getElementById('deckName').focus(); document.getElementById('deckName').select()">+ New Deck</button>
   </div>
 </div>
 
@@ -1028,7 +1187,7 @@
     <!-- View 1: pick type -->
     <div id="modalView1">
       <div class="modal-title">Generate AI Formatting Prompt</div>
-      <div class="modal-subtitle">Choose a card format — the AI will first ask you to confirm before formatting your notes.</div>
+      <div class="modal-subtitle">Choose a card format, then paste the prompt + your notes into any AI. It will output only the formatted cards — ready to copy and paste.</div>
       <div class="format-cards-grid">
         <div class="format-card" onclick="selectFmt('Basic',this)">
           <div class="format-card-name">Basic</div>
@@ -1054,7 +1213,7 @@ A: The answer.</div>
     <div id="modalView2" style="display:none">
       <button class="btn-back" onclick="backToView1()">&#8592; Back</button>
       <div class="modal-title">Copy this prompt into ChatGPT or Claude</div>
-      <div class="modal-subtitle">Paste it, then share your notes when asked.</div>
+      <div class="modal-subtitle">Replace <strong>[PASTE YOUR NOTES HERE]</strong> with your notes, then paste the whole thing. The AI will output only the card text — copy it straight into Text2Anki.</div>
       <pre class="prompt-pre" id="promptText"></pre>
       <button class="btn btn-teal" style="width:100%;justify-content:center" onclick="copyPrompt()">Copy to Clipboard</button>
     </div>
@@ -1087,12 +1246,14 @@ auth.onAuthStateChanged(async user => {
     renderUserInfo(user);
     renderSidebarUser(user);
     document.getElementById('sidebarToggle').style.display = 'flex';
+    document.getElementById('floatingDecksPanel').classList.add('fdp-visible');
     await loadUserHashes();
     await loadUserDecks();
   } else {
     document.getElementById('btnSignIn').style.display = '';
     document.getElementById('userInfo').style.display  = 'none';
     document.getElementById('sidebarToggle').style.display = 'none';
+    document.getElementById('floatingDecksPanel').classList.remove('fdp-visible');
     existingHashes = new Set();
     userDecks = [];
   }
@@ -1234,6 +1395,49 @@ function renderSidebarDecks() {
         <span class="deck-type-tag ${tagClass}">${noteType}</span>
       </div>`;
   }).join('');
+
+  renderFloatingPanel();
+}
+
+function renderFloatingPanel() {
+  const list = document.getElementById('fdpList');
+  const countEl = document.getElementById('fdpCount');
+  if (!list) return;
+
+  countEl.textContent = userDecks.length;
+
+  if (!userDecks.length) {
+    list.innerHTML = `<div class="fdp-empty">No decks yet.<br>Download your first deck to see it here.</div>`;
+    return;
+  }
+
+  const currentDeck = document.getElementById('deckName').value.trim();
+  list.innerHTML = userDecks.map(deck => {
+    const initial   = (deck.name || 'D').charAt(0).toUpperCase();
+    const cardCount = deck.cardCount || 0;
+    const noteType  = deck.noteType || 'Basic';
+    const date      = deck.lastExported?.toDate
+      ? deck.lastExported.toDate().toLocaleDateString('en-US', { month:'short', day:'numeric' })
+      : '';
+    const isActive  = deck.name === currentDeck;
+    const safeName  = deck.name.replace(/'/g, "\\'");
+    return `
+      <div class="fdp-item ${isActive ? 'active' : ''}" onclick="loadDeckFromFloating('${safeName}','${noteType}')">
+        <div class="fdp-icon">${initial}</div>
+        <div class="fdp-info">
+          <div class="fdp-name">${deck.name}</div>
+          <div class="fdp-meta">${cardCount} card${cardCount !== 1 ? 's' : ''}${date ? ' · ' + date : ''}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function loadDeckFromFloating(name, noteType) {
+  document.getElementById('deckName').value = name;
+  const pill = [...document.querySelectorAll('.type-pill')].find(p => p.dataset.type === noteType);
+  if (pill) setCardType(noteType, pill);
+  renderFloatingPanel();
+  showToast(`Deck "${name}" loaded`, 'info');
 }
 
 function loadDeckFromSidebar(name, noteType) {
@@ -1357,11 +1561,13 @@ function runParse() {
   const hint   = document.getElementById('formatHint');
   const btn    = document.getElementById('btnPreview');
 
+  const btnDirect = document.getElementById('btnDirectDownload');
   if (parsedCards.length) {
     badge.textContent = parsedCards.length + (parsedCards.length===1 ? ' card' : ' cards');
     badge.classList.add('active');
     hint.innerHTML = `<span class="hint-text">Format detected:</span><span class="strategy-chip">${result.strategy}</span>`;
     btn.disabled = false;
+    btnDirect.disabled = false;
   } else {
     badge.textContent = '0 cards';
     badge.classList.remove('active');
@@ -1369,6 +1575,7 @@ function runParse() {
       ? `<span class="hint-text">No recognizable format detected. Try Q:/A: labels, tab-separated, or cloze syntax.</span>`
       : `<span class="hint-text">Paste notes above — format will be detected automatically.</span>`;
     btn.disabled = true;
+    btnDirect.disabled = true;
   }
 }
 
@@ -1456,6 +1663,20 @@ function guidFromId(id) {
 // ======================================================
 // APKG DOWNLOAD
 // ======================================================
+async function doDirectDownload() {
+  if (!parsedCards.length) { showToast('No cards detected','error'); return; }
+  previewData = parsedCards;
+  const btn = document.getElementById('btnDirectDownload');
+  btn.disabled = true;
+  btn.textContent = 'Building...';
+  try {
+    await downloadApkg();
+  } finally {
+    btn.textContent = 'Download .apkg';
+    btn.disabled = !parsedCards.length;
+  }
+}
+
 async function downloadApkg() {
   const btn = document.getElementById('btnDownload');
   btn.disabled = true;
@@ -1908,124 +2129,56 @@ async function copyPrompt() {
 // ======================================================
 const PROMPTS = {
 'Basic':
-`You are an expert Anki flashcard creator.
+`Convert the notes I will paste below into Anki flashcards using EXACTLY this format:
 
-Before you format anything, introduce yourself and ask:
-
-"I can format your study material into Anki flashcards. Before I begin, I have a few questions:
-
-1. What subject or topic are these notes about?
-2. How would you like your cards formatted?
-   - Basic: Classic question and answer cards (Q: ... / A: ...)
-   - Cloze+: Fill-in-the-blank sentences (The {{c1::answer}} is here.)
-   - Cloze++: Enhanced cloze with rich explanations and memory aids
-
-Please share your notes and confirm your preferred format, and I will produce perfectly structured Anki cards."
-
-Once the user confirms they want Basic format, reformat their notes using EXACTLY this structure:
-
-Q: [Precise, specific question]
-A: [Concise, complete answer]
+Q: [question]
+A: [answer]
 
 [blank line between every card]
 
-FORMATTING RULES:
-- One concept per card — never combine two ideas
-- Questions must be specific and unambiguous
-- Answers: 1 to 3 sentences maximum
-- For definitions: Q: What is [term]? A: [definition + context]
-- For processes: Q: What are the steps of [process]? A: Step 1... Step 2...
-- For dates: Q: When did [event] occur? A: [date + brief context]
-- For people: Q: Who was [person]? A: [role + key contribution]
-- Never use pronouns without clear antecedents in questions
-- Do not number the cards
-- Do not add headers, section titles, or commentary
+RULES:
+- Output ONLY the formatted cards — no introduction, no commentary, no confirmation, no extra text whatsoever
+- One concept per card
+- Answers: 1–3 sentences maximum
+- Do not number cards
+- Do not add headers or section titles
 - One blank line between every card, nothing else
 
-EXAMPLE OUTPUT:
-Q: What is the primary function of the mitochondria?
-A: The mitochondria produces ATP through cellular respiration, supplying energy to the cell.
-
-Q: What process do mitochondria use to generate ATP?
-A: Oxidative phosphorylation, occurring in the inner mitochondrial membrane.
-
-Q: What is the net ATP yield of cellular respiration per glucose molecule?
-A: Approximately 36 to 38 ATP molecules, depending on cell type and efficiency.`,
+Here are my notes:
+[PASTE YOUR NOTES HERE]`,
 
 'Cloze+':
-`You are an expert Anki flashcard creator.
+`Convert the notes I will paste below into Anki Cloze+ flashcards using EXACTLY this format — one card per line:
 
-Before you format anything, introduce yourself and ask:
+[Sentence with {{c1::hidden answer}} inside it] || [Optional brief context or leave blank]
 
-"I can format your study material into Anki flashcards. Before I begin, I have a few questions:
-
-1. What subject or topic are these notes about?
-2. How would you like your cards formatted?
-   - Basic: Classic question and answer cards
-   - Cloze+: Fill-in-the-blank sentences (recommended for vocabulary, facts, and definitions)
-   - Cloze++: Enhanced cloze with rich explanations and memory aids
-
-Please share your notes and confirm your preferred format."
-
-Once the user confirms Cloze+ format, reformat using EXACTLY this structure — one card per line:
-
-[Complete sentence with {{c1::hidden answer}} inside it] || [Optional extra context or blank]
-
-FORMATTING RULES:
-- Each line is exactly one card — no multi-line cards
-- Use {{c1::word or phrase}} to hide the key concept being tested
-- Use {{c2::word}} for a second important deletion in the same sentence
+RULES:
+- Output ONLY the formatted cards — no introduction, no commentary, no confirmation, no extra text whatsoever
+- Each line is exactly one card
+- Use {{c1::...}} to hide the key concept; {{c2::...}} for a second deletion if needed
 - Never hide more than two concepts per sentence
-- After || add a brief hint, category label, or leave blank — do not write lengthy text here
-- The sentence must remain grammatically complete and meaningful when the cloze is shown as [...]
-- Hide the most important testable word — never hide articles, prepositions, or common verbs
-- For definitions: [Term] is defined as {{c1::definition}} || [domain or category]
-- For cause-effect: [Cause] leads to {{c1::effect}} because {{c2::mechanism}} ||
+- After || add a brief hint or leave blank — keep it short
 - Do not add blank lines between cards
-- Do not number the cards
-- Do not add headers or section titles
+- Do not number cards or add headers
 
-EXAMPLE OUTPUT:
-The {{c1::mitochondria}} is responsible for producing ATP through cellular respiration || Also called the powerhouse of the cell
-Cellular respiration produces a net yield of {{c1::36 to 38}} ATP molecules per glucose molecule || Yield varies by organism and cell type
-The {{c1::krebs cycle}} takes place in the {{c2::mitochondrial matrix}} || Part of aerobic respiration; also called the TCA cycle
-ATP synthase uses a {{c1::proton gradient}} to drive the synthesis of ATP || Located in the inner mitochondrial membrane`,
+Here are my notes:
+[PASTE YOUR NOTES HERE]`,
 
 'Cloze++':
-`You are an expert Anki flashcard creator specializing in high-retention, deeply contextual flashcards.
+`Convert the notes I will paste below into Anki Cloze++ flashcards using EXACTLY this format — one card per line:
 
-Before you format anything, introduce yourself and ask:
+[Sentence with {{c1::answer::hint}} syntax] || [Rich context: full explanation, mnemonic, or connections to related concepts]
 
-"I can format your study material into Anki flashcards. Before I begin, I have a few questions:
-
-1. What subject or topic are these notes about?
-2. What level are you studying at (introductory, undergraduate, graduate, professional)?
-3. How would you like your cards formatted?
-   - Basic: Classic question and answer cards
-   - Cloze+: Fill-in-the-blank sentences
-   - Cloze++: Enhanced cloze with rich context, mnemonics, and deep explanations (best for complex material)
-
-Please share your notes and confirm your format."
-
-Once the user confirms Cloze++ format, use EXACTLY this structure — one card per line:
-
-[Sentence with {{c1::answer::hint}} syntax] || [Rich context: full explanation, mnemonic, clinical relevance, or connections to other concepts]
-
-FORMATTING RULES:
-- {{c1::answer::hint}} — the third field after :: is a short hint shown during the question
+RULES:
+- Output ONLY the formatted cards — no introduction, no commentary, no confirmation, no extra text whatsoever
+- {{c1::answer::hint}} — the third :: field is a short clue shown during recall
 - Use {{c2::answer::hint}} for a second deletion in the same sentence
-- After || write a genuinely rich Extra field — minimum one full sentence
-- The Extra field should include: full explanation, why it matters, a memory device if applicable, connections to related concepts
-- Prioritize depth over quantity — 10 rich cards beat 40 shallow ones
-- The sentence with cloze must be complete and testable on its own
-- The hint (third :: field) should be a brief clue, not the answer itself
+- After || write a genuinely rich Extra field (minimum one full sentence) — explanation, why it matters, memory device, related concepts
 - Do not add blank lines between cards
 - Do not add headers or section titles
 
-EXAMPLE OUTPUT:
-The {{c1::krebs cycle::TCA cycle}} produces {{c2::3 NADH::electron carrier}} per turn || Occurs in the mitochondrial matrix; each turn also yields 1 FADH2, 1 GTP, and releases 2 CO2; runs twice per glucose molecule since pyruvate produces 2 acetyl-CoA
-{{c1::Pyruvate decarboxylation::bridge reaction}} links glycolysis to the Krebs cycle by producing {{c2::acetyl-CoA::2-carbon compound}} || Also called the pyruvate oxidation step; occurs in the mitochondrial matrix; produces 1 NADH and releases 1 CO2 per pyruvate; irreversible reaction
-ATP synthase harnesses the {{c1::proton motive force::electrochemical gradient}} to synthesize ATP via {{c2::chemiosmosis::passive H+ flow}} || The H+ gradient across the inner mitochondrial membrane drives rotation of the F0 subunit; produces approximately 2.5 ATP per NADH; discovered by Peter Mitchell who received the 1978 Nobel Prize`
+Here are my notes:
+[PASTE YOUR NOTES HERE]`
 };
 
 // ======================================================
