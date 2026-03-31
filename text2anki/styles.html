@@ -634,6 +634,30 @@ select.hidden-font-select { display: none; }
               </div>
               Rose Gold
             </button>
+            <button class="preset-pill" onclick="applyPreset('basic','moonstone')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1a1a2e"></div>
+                <div class="preset-dot" style="background:#222244"></div>
+                <div class="preset-dot" style="background:#e0a0c0"></div>
+              </div>
+              Moonstone
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','honey-dusk')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fef3e2"></div>
+                <div class="preset-dot" style="background:#fff9f0"></div>
+                <div class="preset-dot" style="background:#c8956a"></div>
+              </div>
+              Honey Dusk
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','arctic-mist')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#eaf2f8"></div>
+                <div class="preset-dot" style="background:#f8fbff"></div>
+                <div class="preset-dot" style="background:#5b8fb9"></div>
+              </div>
+              Arctic Mist
+            </button>
           </div>
           <div id="b-user-presets"></div>
         </div>
@@ -875,6 +899,30 @@ select.hidden-font-select { display: none; }
               </div>
               Mint Fresh
             </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','aurora-night')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0d1117"></div>
+                <div class="preset-dot" style="background:#161b22"></div>
+                <div class="preset-dot" style="background:#58d68d"></div>
+              </div>
+              Aurora Night
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','soft-coral')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fff0f0"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#e05a5a"></div>
+              </div>
+              Soft Coral
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','forest-dew')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1a2f25"></div>
+                <div class="preset-dot" style="background:#22382c"></div>
+                <div class="preset-dot" style="background:#7dcea0"></div>
+              </div>
+              Forest Dew
+            </button>
           </div>
           <div id="c-user-presets"></div>
         </div>
@@ -1065,6 +1113,30 @@ select.hidden-font-select { display: none; }
                 <div class="preset-dot" style="background:#00897b"></div>
               </div>
               Mint Fresh
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','aurora-night')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0d1117"></div>
+                <div class="preset-dot" style="background:#161b22"></div>
+                <div class="preset-dot" style="background:#58d68d"></div>
+              </div>
+              Aurora Night
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','soft-coral')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fff0f0"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#e05a5a"></div>
+              </div>
+              Soft Coral
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','forest-dew')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1a2f25"></div>
+                <div class="preset-dot" style="background:#22382c"></div>
+                <div class="preset-dot" style="background:#7dcea0"></div>
+              </div>
+              Forest Dew
             </button>
           </div>
           <div id="cp-user-presets"></div>
@@ -1621,7 +1693,7 @@ const PRESETS = {
       'b-font':'Georgia, serif',
       'b-front-color':'#3a4a3b','b-back-color':'#5a7a5c',
       'b-label-color':'#8fab87','b-divider-color':'#8fab87',
-      'b-bold':'#b07d2a','b-italic':'#9a6060','b-underline':'#5a9a95'
+      'b-bold':'#c47a2c','b-italic':'#8a6b8a','b-underline':'#2e857a'
     },
     'midnight': {
       'b-bg1':'#0f1117','b-bg2':'#1a1d2e','b-bg3':'#0d1520',
@@ -1629,7 +1701,7 @@ const PRESETS = {
       'b-font':'Inter, system-ui, sans-serif',
       'b-front-color':'#e8ecf4','b-back-color':'#9ab0d4',
       'b-label-color':'#4a7abf','b-divider-color':'#3d5a8a',
-      'b-bold':'#7ab8f5','b-italic':'#f5a623','b-underline':'#5fd4c8'
+      'b-bold':'#f0a050','b-italic':'#7cb8f0','b-underline':'#6ee0c8'
     },
     'ocean-blue': {
       'b-bg1':'#e8f4f8','b-bg2':'#d6eaf5','b-bg3':'#e0f0ec',
@@ -1637,7 +1709,7 @@ const PRESETS = {
       'b-font':'Avenir, Helvetica Neue, sans-serif',
       'b-front-color':'#1a3a5c','b-back-color':'#2d6a9f',
       'b-label-color':'#2980b9','b-divider-color':'#2980b9',
-      'b-bold':'#e67e22','b-italic':'#8e44ad','b-underline':'#27ae60'
+      'b-bold':'#d47020','b-italic':'#7850a0','b-underline':'#1a8a6a'
     },
     'forest': {
       'b-bg1':'#f0f7ee','b-bg2':'#e8f5e2','b-bg3':'#f5f7f0',
@@ -1645,7 +1717,7 @@ const PRESETS = {
       'b-font':'Georgia, serif',
       'b-front-color':'#1b3a1e','b-back-color':'#2e6b35',
       'b-label-color':'#388e3c','b-divider-color':'#4caf50',
-      'b-bold':'#f57f17','b-italic':'#7b1fa2','b-underline':'#0288d1'
+      'b-bold':'#c87020','b-italic':'#6a5898','b-underline':'#0878b8'
     },
     'rose-gold': {
       'b-bg1':'#fdf0f0','b-bg2':'#f5e6ef','b-bg3':'#f8f0f4',
@@ -1653,61 +1725,115 @@ const PRESETS = {
       'b-font':'Georgia, serif',
       'b-front-color':'#4a1c28','b-back-color':'#8b3a50',
       'b-label-color':'#c0697a','b-divider-color':'#e091a0',
-      'b-bold':'#9b4dca','b-italic':'#d4792a','b-underline':'#2e8b8b'
+      'b-bold':'#a04898','b-italic':'#c07838','b-underline':'#2a8888'
+    },
+    'moonstone': {
+      'b-bg1':'#1a1a2e','b-bg2':'#16213e','b-bg3':'#1a1a30',
+      'b-cardbg':'#222244','b-border':'#4a4a7a','b-radius':22,'b-frontsize':21,'b-backsize':18,
+      'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
+      'b-front-color':'#e8e4f0','b-back-color':'#c0b8d8',
+      'b-label-color':'#8878b0','b-divider-color':'#6a5a9a',
+      'b-bold':'#f2b0c8','b-italic':'#7ec8e8','b-underline':'#98e0a8'
+    },
+    'honey-dusk': {
+      'b-bg1':'#fef3e2','b-bg2':'#fce8cc','b-bg3':'#fdf0d8',
+      'b-cardbg':'#fff9f0','b-border':'#c8956a','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#4a3520','b-back-color':'#6a5540',
+      'b-label-color':'#c8956a','b-divider-color':'#d4a878',
+      'b-bold':'#b85828','b-italic':'#7a5898','b-underline':'#1a8878'
+    },
+    'arctic-mist': {
+      'b-bg1':'#eaf2f8','b-bg2':'#e0eef8','b-bg3':'#e8f0f8',
+      'b-cardbg':'#f8fbff','b-border':'#5b8fb9','b-radius':20,'b-frontsize':21,'b-backsize':18,
+      'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
+      'b-front-color':'#2a3a4a','b-back-color':'#4a6070',
+      'b-label-color':'#5b8fb9','b-divider-color':'#7aaad0',
+      'b-bold':'#c06828','b-italic':'#4870a8','b-underline':'#1a8860'
     }
   },
   cloze: {
     'dark-default': {
       'c-bg':'#1F80C1','c-cardbg':'#1E282C','c-border':'#ffffff','c-radius':30,
       'c-text':'#E6E6E7','c-cloze':'#3CB371','c-extra':'#E6E6E7','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#EABB3D','c-italic':'#CD5C5C','c-underline':'#21B2B8'
+      'c-bold':'#F0C050','c-italic':'#E08080','c-underline':'#50D0D8'
     },
     'light-mode': {
       'c-bg':'#f0f4f8','c-cardbg':'#ffffff','c-border':'#4a90d9','c-radius':20,
       'c-text':'#2c3e50','c-cloze':'#27ae60','c-extra':'#7f8c8d','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#e67e22','c-italic':'#8e44ad','c-underline':'#2980b9'
+      'c-bold':'#d07020','c-italic':'#7848a0','c-underline':'#1878b0'
     },
     'purple-haze': {
       'c-bg':'#2d1b69','c-cardbg':'#1a0f3d','c-border':'#9b59b6','c-radius':24,
       'c-text':'#e8d5f5','c-cloze':'#f39c12','c-extra':'#b39ddb','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#ff6b9d','c-italic':'#64d8cb','c-underline':'#ffd54f'
+      'c-bold':'#ff80a8','c-italic':'#60e0c8','c-underline':'#f0d060'
     },
     'sunset': {
       'c-bg':'#ff6b35','c-cardbg':'#2d1a0e','c-border':'#ffa500','c-radius':26,
       'c-text':'#fff3e0','c-cloze':'#ffeb3b','c-extra':'#ffcc80','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#ff8a65','c-italic':'#a5d6a7','c-underline':'#81d4fa'
+      'c-bold':'#ffa878','c-italic':'#90e0a0','c-underline':'#78d0f8'
     },
     'mint-fresh': {
       'c-bg':'#e8f5e9','c-cardbg':'#ffffff','c-border':'#26a69a','c-radius':20,
       'c-text':'#263238','c-cloze':'#00897b','c-extra':'#546e7a','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#f57f17','c-italic':'#6a1b9a','c-underline':'#0277bd'
+      'c-bold':'#d07818','c-italic':'#6048a0','c-underline':'#0870b0'
+    },
+    'aurora-night': {
+      'c-bg':'#0d1117','c-cardbg':'#161b22','c-border':'#30363d','c-radius':20,
+      'c-text':'#e6edf3','c-cloze':'#58d68d','c-extra':'#8b949e','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#f0b878','c-italic':'#80c0f0','c-underline':'#d0a0e8'
+    },
+    'soft-coral': {
+      'c-bg':'#fff0f0','c-cardbg':'#ffffff','c-border':'#e8b0b0','c-radius':22,
+      'c-text':'#4a3035','c-cloze':'#e05a5a','c-extra':'#9a8088','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#c87838','c-italic':'#6850a8','c-underline':'#1a9080'
+    },
+    'forest-dew': {
+      'c-bg':'#1a2f25','c-cardbg':'#22382c','c-border':'#3a6b4a','c-radius':24,
+      'c-text':'#d8e8d8','c-cloze':'#7dcea0','c-extra':'#a0c0a8','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#f0c860','c-italic':'#78c8e8','c-underline':'#e8a888'
     }
   },
   clozep: {
     'dark-default': {
       'cp-bg':'#1F80C1','cp-cardbg':'#1E282C','cp-border':'#ffffff','cp-radius':30,
       'cp-text':'#E6E6E7','cp-cloze':'#3CB371','cp-extra':'#E6E6E7','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#EABB3D','cp-italic':'#CD5C5C','cp-underline':'#21B2B8'
+      'cp-bold':'#F0C050','cp-italic':'#E08080','cp-underline':'#50D0D8'
     },
     'light-mode': {
       'cp-bg':'#f0f4f8','cp-cardbg':'#ffffff','cp-border':'#4a90d9','cp-radius':20,
       'cp-text':'#2c3e50','cp-cloze':'#27ae60','cp-extra':'#7f8c8d','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#e67e22','cp-italic':'#8e44ad','cp-underline':'#2980b9'
+      'cp-bold':'#d07020','cp-italic':'#7848a0','cp-underline':'#1878b0'
     },
     'purple-haze': {
       'cp-bg':'#2d1b69','cp-cardbg':'#1a0f3d','cp-border':'#9b59b6','cp-radius':24,
       'cp-text':'#e8d5f5','cp-cloze':'#f39c12','cp-extra':'#b39ddb','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#ff6b9d','cp-italic':'#64d8cb','cp-underline':'#ffd54f'
+      'cp-bold':'#ff80a8','cp-italic':'#60e0c8','cp-underline':'#f0d060'
     },
     'sunset': {
       'cp-bg':'#ff6b35','cp-cardbg':'#2d1a0e','cp-border':'#ffa500','cp-radius':26,
       'cp-text':'#fff3e0','cp-cloze':'#ffeb3b','cp-extra':'#ffcc80','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#ff8a65','cp-italic':'#a5d6a7','cp-underline':'#81d4fa'
+      'cp-bold':'#ffa878','cp-italic':'#90e0a0','cp-underline':'#78d0f8'
     },
     'mint-fresh': {
       'cp-bg':'#e8f5e9','cp-cardbg':'#ffffff','cp-border':'#26a69a','cp-radius':20,
       'cp-text':'#263238','cp-cloze':'#00897b','cp-extra':'#546e7a','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#f57f17','cp-italic':'#6a1b9a','cp-underline':'#0277bd'
+      'cp-bold':'#d07818','cp-italic':'#6048a0','cp-underline':'#0870b0'
+    },
+    'aurora-night': {
+      'cp-bg':'#0d1117','cp-cardbg':'#161b22','cp-border':'#30363d','cp-radius':20,
+      'cp-text':'#e6edf3','cp-cloze':'#58d68d','cp-extra':'#8b949e','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#f0b878','cp-italic':'#80c0f0','cp-underline':'#d0a0e8'
+    },
+    'soft-coral': {
+      'cp-bg':'#fff0f0','cp-cardbg':'#ffffff','cp-border':'#e8b0b0','cp-radius':22,
+      'cp-text':'#4a3035','cp-cloze':'#e05a5a','cp-extra':'#9a8088','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#c87838','cp-italic':'#6850a8','cp-underline':'#1a9080'
+    },
+    'forest-dew': {
+      'cp-bg':'#1a2f25','cp-cardbg':'#22382c','cp-border':'#3a6b4a','cp-radius':24,
+      'cp-text':'#d8e8d8','cp-cloze':'#7dcea0','cp-extra':'#a0c0a8','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#f0c860','cp-italic':'#78c8e8','cp-underline':'#e8a888'
     }
   }
 };

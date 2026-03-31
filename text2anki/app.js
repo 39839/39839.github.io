@@ -776,6 +776,11 @@ function setCardType(type, btn) {
 // ======================================================
 // PARSER
 // ======================================================
+/* Strip backslash-escaped HTML tags that LLMs sometimes produce, e.g. \<b\> → <b> */
+function cleanHtmlTags(s) {
+  return s.replace(/\\<(\/?(?:b|i|u|strong|em|sub|sup|br))\\>/gi, '<$1>');
+}
+
 function parseCards(text, noteType) {
   if (!text.trim()) return { cards: [], strategy: 'none' };
   const strategies = [];
@@ -799,7 +804,7 @@ function parseCards(text, noteType) {
       if (/^(q(uestion)?|front)\s*:/i.test(line)) { front = line.replace(/^[^:]+:\s*/i,''); mode='f'; }
       else if (/^(a(nswer)?|back)\s*:/i.test(line)) { back = line.replace(/^[^:]+:\s*/i,''); mode='b'; }
       else if (mode==='f') front += ' '+line.trim();
-      else if (mode==='b') back  += ' '+line.trim();
+      else if (mode==='b') back  += (back.trim() ? '<br>' : '') + line.trim();
     }
     if (front.trim() && back.trim()) lc.push({ front: front.trim(), back: back.trim() });
   }
@@ -830,8 +835,10 @@ function parseCards(text, noteType) {
   }
 
   if (!strategies.length) return { cards: [], strategy: 'none' };
-  const best = strategies.reduce((a,b) => b.cards.length>a.cards.length ? b : a);
-  return { cards: best.cards.map(c=>({...c, noteType})), strategy: best.name };
+  // Q/A labels and Cloze syntax are explicit formats — prefer them over heuristic strategies
+  const preferred = strategies.find(s => s.name === 'Q/A labels' || s.name === 'Cloze syntax');
+  const best = preferred || strategies.reduce((a,b) => b.cards.length>a.cards.length ? b : a);
+  return { cards: best.cards.map(c=>({...c, front: cleanHtmlTags(c.front||''), back: cleanHtmlTags(c.back||''), noteType})), strategy: best.name };
 }
 
 let parseTimer = null;
@@ -936,7 +943,7 @@ function safeHtml(s) {
   return s
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/&lt;(\/?(b|i|u|strong|em))&gt;/gi, '<$1>');
+    .replace(/&lt;(\/?(b|i|u|strong|em|br))&gt;/gi, '<$1>');
 }
 function hlCloze(text) {
   return safeHtml(text).replace(/\{\{c(\d+)::([^}:]+)(?:::[^}]*)?\}\}/g,
@@ -1045,8 +1052,8 @@ async function downloadApkg() {
       id: MID_BASIC, name: 'Basic', type: 0, mod: now_s, usn: -1, sortf: 0, did: null,
       tmpls: [{ name:'Card 1', ord:0, qfmt: BASIC_QFMT, afmt: BASIC_AFMT, bqfmt:'', bafmt:'', did:null, bfont:'', bsize:0, id: Math.floor(Math.random()*1000000000) }],
       flds: [
-        { name:'Front', ord:0, sticky:false, rtl:false, font:'Avenir', size:20, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false },
-        { name:'Back',  ord:1, sticky:false, rtl:false, font:'Avenir', size:18, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false }
+        { name:'Front', ord:0, sticky:false, rtl:false, font:'Avenir', size:20, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false, media:[] },
+        { name:'Back',  ord:1, sticky:false, rtl:false, font:'Avenir', size:18, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false, media:[] }
       ],
       css: cardStyles.basicCSS,
       latexPre: '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',
@@ -1062,15 +1069,15 @@ async function downloadApkg() {
     <div class="tags" id='tags'>{{Tags}}</div>
     {{cloze:Text}}
     <div>&nbsp;</div>
-    <div id='extra'>{{Extra}}</div>
+    <div id='extra'>{{edit::Extra}}</div>
 </div>`;
 
     const clozeModel = {
       id: MID_CLOZE, name: 'Cloze++', type: 1, mod: now_s, usn: -1, sortf: 0, did: null,
       tmpls: [{ name:'Cloze', ord:0, qfmt: CLOZE_QFMT, afmt: CLOZE_AFMT, bqfmt:'', bafmt:'', did:null, bfont:'', bsize:0, id: Math.floor(Math.random()*1000000000) }],
       flds: [
-        { name:'Text',  ord:0, sticky:false, rtl:false, font:'Avenir', size:18, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false },
-        { name:'Extra', ord:1, sticky:false, rtl:false, font:'Avenir', size:15, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false }
+        { name:'Text',  ord:0, sticky:false, rtl:false, font:'Avenir', size:18, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false, media:[] },
+        { name:'Extra', ord:1, sticky:false, rtl:false, font:'Avenir', size:15, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false, media:[] }
       ],
       css: (toExport[0]?.card?.noteType === 'Cloze++') ? cardStyles.clozepCSS : cardStyles.clozeCSS,
       latexPre: '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',
@@ -1136,6 +1143,7 @@ async function downloadApkg() {
     const zip = new JSZip();
     zip.file('collection.anki21', dbData);
     zip.file('media', '{}');
+    zip.file('meta', new Uint8Array([0x08, 0x02]));
     const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
 
     const url = URL.createObjectURL(blob);
@@ -1193,10 +1201,10 @@ function buildBasicCSSFrom(d) {
   const labelC=g('b-label-color'), divC=g('b-divider-color');
   const boldC=g('b-bold'), italicC=g('b-italic'), ulC=g('b-underline');
   return `
-html, body { overflow: scroll; overflow-x: hidden; background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; min-height: 100%; margin: 0 !important; padding: 0 !important; }
-body { background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; margin: 0 !important; padding: 0 !important; }
-#bkard { padding: 32px 24px 28px; max-width: 720px; margin: 0 auto; word-wrap: break-word; }
-.card { font-family: ${font}; font-size: 18px; text-align: center; color: ${frontC}; line-height: 1.7em; background: ${cardbg}; border: 1.5px solid ${border}44; border-radius: ${radius}px; box-shadow: 0 8px 40px rgba(100,120,100,0.13); margin: 0 !important; padding-top: 0 !important; }
+html { overflow: scroll; overflow-x: hidden; background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; background-color: ${bg1} !important; }
+body { background: transparent !important; margin: 0; padding: 0; }
+.card { font-family: ${font}; font-size: 18px; text-align: center; color: ${frontC}; line-height: 1.7em; background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; border: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; min-height: 100vh; }
+#bkard { padding: 32px 24px 28px; max-width: 720px; margin: 0 auto; word-wrap: break-word; background: ${cardbg}; border: 1.5px solid ${border}44; border-radius: ${radius}px; box-shadow: 0 8px 40px rgba(100,120,100,0.13); }
 .side-label { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: ${labelC}; margin-bottom: 16px; }
 .answer-label { color: ${divC}; margin-top: 0; }
 .bfront { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: ${frontSize}px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
@@ -1214,13 +1222,14 @@ u b, b u, u strong, strong u { color: ${ulC} !important; }
 i b, b i, em strong, strong em { color: ${italicC} !important; font-weight: bold; }
 a { color: ${labelC} !important; text-decoration: none; font-size: 11px; }
 img { display: block; max-width: 100%; margin: 16px auto; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
-.card.nightMode { background: ${cardbg} !important; color: ${frontC} !important; border-color: ${border}44; }
+.card.nightMode { background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; color: ${frontC} !important; }
+.nightMode #bkard { background: ${cardbg}; border-color: ${border}44; }
 .nightMode .bfront { color: ${frontC} !important; }
 .nightMode .bback  { color: ${backC} !important; }
 .nightMode .side-label { color: ${labelC} !important; }
 .nightMode .answer-label { color: ${divC} !important; }
-.nightMode html, .nightMode body { background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; }
-.mobile .card { background: ${cardbg} !important; color: ${frontC} !important; }
+.mobile .card { background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; color: ${frontC} !important; }
+.mobile #bkard { background: ${cardbg}; }
 .mobile .bfront { color: ${frontC} !important; }
 .mobile .bback { color: ${backC} !important; }
 .mobile .tags:hover { opacity: 1; position: relative; }
@@ -1233,11 +1242,11 @@ function buildClozeCSSFrom(d, pfx) {
   const textC=p('text'), clozeC=p('cloze'), extraC=p('extra'), fs=p('fontsize'), extraFs=p('extrasize') || 14;
   const boldC=p('bold'), italicC=p('italic'), ulC=p('underline');
   return `
-html, body { overflow: scroll; overflow-x: hidden; background-color: ${bg} !important; min-height: 100%; margin: 0 !important; padding: 0 !important; }
-body { background-color: ${bg} !important; margin: 0 !important; padding: 0 !important; }
-#kard { padding: 15px 10px; max-width: 800px; margin: 0 auto; word-wrap: break-word; }
-.card { font-family: Avenir; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${cardbg}; border: 2px solid ${border}; border-radius: ${radius}px; margin: 0 !important; padding-top: 0 !important; }
-.cloze { font-weight: bold; color: ${clozeC} !important; }
+html { overflow: scroll; overflow-x: hidden; background-color: ${bg} !important; }
+body { background: transparent !important; margin: 0; padding: 0; }
+.card { font-family: Avenir; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${bg} !important; border: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; min-height: 100vh; }
+#kard { padding: 15px 10px; max-width: 800px; margin: 0 auto; word-wrap: break-word; background-color: ${cardbg}; border: 2px solid ${border}; border-radius: ${radius}px; }
+.cloze, .cloze b, .cloze u, .cloze i { font-weight: bold; color: ${clozeC} !important; }
 #extra, #extra i, #extra em { font-size: ${extraFs}px; color: ${extraC}; font-style: italic; }
 .tags { color: #A6ABB9; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; position: fixed; padding: 0; top: 0; right: 0; }
 .tags:hover { opacity: 1; }
@@ -1250,12 +1259,80 @@ i b, b i, em strong, strong em { color: ${italicC} !important; font-weight: bold
 a { color: LightGray !important; text-decoration: none; font-size: 10px; font-style: normal; }
 img { display: block; max-width: 100%; margin: 10px auto; }
 tr { font-size: 12px; }
-.card.nightMode { color: ${textC} !important; background-color: ${cardbg} !important; }
+.card.nightMode { color: ${textC} !important; background-color: ${bg} !important; }
+.nightMode #kard { background-color: ${cardbg}; }
 .nightMode html, .nightMode body { background-color: ${bg} !important; }
-.mobile .card { color: ${textC} !important; background-color: ${cardbg} !important; }
+.mobile .card { color: ${textC} !important; background-color: ${bg} !important; }
+.mobile #kard { background-color: ${cardbg}; }
 .mobile .tags:hover { opacity: 1; position: relative; }
   `.trim();
 }
+
+// ======================================================
+// BUILT-IN PRESETS
+// ======================================================
+const BUILTIN_PRESETS = {
+  basic: {
+    'Moonstone': {
+      'b-bg1':'#1a1a2e','b-bg2':'#16213e','b-bg3':'#1a1a30',
+      'b-cardbg':'#222244','b-border':'#4a4a7a','b-radius':22,'b-frontsize':21,'b-backsize':18,
+      'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
+      'b-front-color':'#e8e4f0','b-back-color':'#c0b8d8',
+      'b-label-color':'#8878b0','b-divider-color':'#6a5a9a',
+      'b-bold':'#e0a0c0','b-italic':'#80c8e0','b-underline':'#a8d8a0'
+    },
+    'Honey Dusk': {
+      'b-bg1':'#fef3e2','b-bg2':'#fce8cc','b-bg3':'#fdf0d8',
+      'b-cardbg':'#fff9f0','b-border':'#c8956a','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#4a3520','b-back-color':'#6a5540',
+      'b-label-color':'#c8956a','b-divider-color':'#d4a878',
+      'b-bold':'#c06030','b-italic':'#7a6898','b-underline':'#3a8a7a'
+    },
+    'Arctic Mist': {
+      'b-bg1':'#eaf2f8','b-bg2':'#e0eef8','b-bg3':'#e8f0f8',
+      'b-cardbg':'#f8fbff','b-border':'#5b8fb9','b-radius':20,'b-frontsize':21,'b-backsize':18,
+      'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
+      'b-front-color':'#2a3a4a','b-back-color':'#4a6070',
+      'b-label-color':'#5b8fb9','b-divider-color':'#7aaad0',
+      'b-bold':'#d07030','b-italic':'#5878a8','b-underline':'#2a8a68'
+    }
+  },
+  cloze: {
+    'Aurora Night': {
+      'c-bg':'#0d1117','c-cardbg':'#161b22','c-border':'#30363d','c-radius':20,
+      'c-text':'#e6edf3','c-cloze':'#58d68d','c-extra':'#8b949e','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#f0b27a','c-italic':'#85c1e9','c-underline':'#c39bd3'
+    },
+    'Soft Coral': {
+      'c-bg':'#fff0f0','c-cardbg':'#ffffff','c-border':'#e8b0b0','c-radius':22,
+      'c-text':'#4a3035','c-cloze':'#e05a5a','c-extra':'#9a8088','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#d08040','c-italic':'#7060a0','c-underline':'#2a9a8a'
+    },
+    'Forest Dew': {
+      'c-bg':'#1a2f25','c-cardbg':'#22382c','c-border':'#3a6b4a','c-radius':24,
+      'c-text':'#d8e8d8','c-cloze':'#7dcea0','c-extra':'#a0c0a8','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e8c060','c-italic':'#80c8e0','c-underline':'#d8a090'
+    }
+  },
+  clozep: {
+    'Aurora Night': {
+      'cp-bg':'#0d1117','cp-cardbg':'#161b22','cp-border':'#30363d','cp-radius':20,
+      'cp-text':'#e6edf3','cp-cloze':'#58d68d','cp-extra':'#8b949e','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#f0b27a','cp-italic':'#85c1e9','cp-underline':'#c39bd3'
+    },
+    'Soft Coral': {
+      'cp-bg':'#fff0f0','cp-cardbg':'#ffffff','cp-border':'#e8b0b0','cp-radius':22,
+      'cp-text':'#4a3035','cp-cloze':'#e05a5a','cp-extra':'#9a8088','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#d08040','cp-italic':'#7060a0','cp-underline':'#2a9a8a'
+    },
+    'Forest Dew': {
+      'cp-bg':'#1a2f25','cp-cardbg':'#22382c','cp-border':'#3a6b4a','cp-radius':24,
+      'cp-text':'#d8e8d8','cp-cloze':'#7dcea0','cp-extra':'#a0c0a8','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e8c060','cp-italic':'#80c8e0','cp-underline':'#d8a090'
+    }
+  }
+};
 
 // Named presets cache loaded on sign-in
 let userNamedPresets = { basic: {}, cloze: {}, clozep: {} };
@@ -1269,6 +1346,10 @@ async function loadUserNamedPresets() {
   } catch (e) { console.warn('loadUserNamedPresets failed:', e); }
 }
 
+function getAllPresets(typeKey) {
+  return { ...(BUILTIN_PRESETS[typeKey] || {}), ...(userNamedPresets[typeKey] || {}) };
+}
+
 function populateThemeSelector() {
   const sel = document.getElementById('themeSelect');
   const row = document.getElementById('themeSelectRow');
@@ -1276,7 +1357,7 @@ function populateThemeSelector() {
 
   const cardType = selectedCardType;
   const typeKey = cardType === 'Basic' ? 'basic' : cardType === 'Cloze++' ? 'clozep' : 'cloze';
-  const presets = userNamedPresets[typeKey] || {};
+  const presets = getAllPresets(typeKey);
   const names = Object.keys(presets);
 
   const savedTheme = (localStorage.getItem('t2a_theme_' + typeKey) || '');
@@ -1296,7 +1377,12 @@ function populateThemeSelector() {
     ).join('');
   }
 
-  row.style.display = (names.length && currentUser) ? '' : 'none';
+  // Always show selector since we have built-in presets
+  if (names.length) {
+    row.style.display = '';
+  } else {
+    row.style.display = 'none';
+  }
 }
 
 function toggleThemeDropdown() {
@@ -1341,18 +1427,19 @@ async function loadCardStyles(themeOverride) {
     clozeCSS: buildClozeCSSFrom({}, 'c'),
     clozepCSS: buildClozeCSSFrom({}, 'cp')
   };
-  if (!currentUser) return out;
   try {
-    const snap = await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('cardStyles').get();
-    const saved = snap.exists ? (snap.data() || {}) : {};
-    if (saved.basic)  out.basicCSS  = buildBasicCSSFrom(saved.basic);
-    if (saved.cloze)  out.clozeCSS  = buildClozeCSSFrom(saved.cloze, 'c');
-    if (saved.clozep) out.clozepCSS = buildClozeCSSFrom(saved.clozep, 'cp');
+    if (currentUser) {
+      const snap = await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('cardStyles').get();
+      const saved = snap.exists ? (snap.data() || {}) : {};
+      if (saved.basic)  out.basicCSS  = buildBasicCSSFrom(saved.basic);
+      if (saved.cloze)  out.clozeCSS  = buildClozeCSSFrom(saved.cloze, 'c');
+      if (saved.clozep) out.clozepCSS = buildClozeCSSFrom(saved.clozep, 'cp');
+    }
 
     if (themeOverride) {
       const cardType = selectedCardType;
       const typeKey = cardType === 'Basic' ? 'basic' : cardType === 'Cloze++' ? 'clozep' : 'cloze';
-      const presetData = userNamedPresets[typeKey]?.[themeOverride];
+      const presetData = getAllPresets(typeKey)[themeOverride];
       if (presetData) {
         if (typeKey === 'basic')  out.basicCSS  = buildBasicCSSFrom(presetData);
         if (typeKey === 'cloze')  out.clozeCSS  = buildClozeCSSFrom(presetData, 'c');
@@ -1417,28 +1504,40 @@ const PROMPTS = {
 `Convert the notes I will paste below into Anki flashcards using EXACTLY this format:
 
 Q: [question]
-A: [answer]
+A: [answer line 1]
+• [bullet point if needed]
+• [bullet point if needed]
 
-[blank line between every card]
+[ONE blank line between every card]
 
 RULES:
 - Output ONLY the formatted cards — no introduction, no commentary, no confirmation, no extra text whatsoever
 - One concept per card
-- Answers: 1–3 sentences maximum
+- Each card starts with "Q: " on its own line, then "A: " on the next line
+- Continuation lines of an answer (like bullet points) go on their own lines directly below "A:" with NO blank line between them
+- Separate cards from each other with exactly ONE blank line
 - Do not number cards
 - Do not add headers or section titles
-- One blank line between every card, nothing else
 
-FORMATTING — use HTML tags inside Q and A to make cards more effective:
+FORMATTING — use ONLY real HTML tags (the literal characters < and >) inside Q and A:
+- CRITICAL: use ONLY these exact tags: <b>word</b> for bold, <i>word</i> for italics, <u>word</u> for underline
+- Do NOT use backslashes, asterisks, markdown, or any other formatting syntax — only the HTML tags above
+- Do NOT escape the angle brackets — write <b> not \\<b\\>
 - Wrap the single most important word or phrase in <b>bold</b> — every card should have at least one
 - Use <i>italics</i> for technical terms, definitions, or secondary emphasis
 - Use <u>underline</u> for dates, numbers, formulas, or anything that must be memorized exactly
-- Use bullet points for list-style answers: write each item on its own line starting with a bullet (•)
-- Example well-formatted card:
-  Q: What are the <b>three stages</b> of cellular respiration?
-  A: • <b>Glycolysis</b> — occurs in the <u>cytoplasm</u>, yields <u>2 ATP</u>
-     • <b>Krebs cycle</b> — occurs in the <i>mitochondrial matrix</i>
-     • <b>Electron transport chain</b> — occurs on the <i>inner mitochondrial membrane</i>, yields most ATP
+- For list-style answers: write each bullet on its own line starting with •
+
+EXAMPLE (two cards separated by a blank line):
+
+Q: What are the <b>three stages</b> of <i>cellular respiration</i>?
+A: The three stages are:
+• <b>Glycolysis</b> — occurs in the <u>cytoplasm</u>, yields <u>2 ATP</u>
+• <b>Krebs cycle</b> — occurs in the <i>mitochondrial matrix</i>
+• <b>Electron transport chain</b> — occurs on the <i>inner mitochondrial membrane</i>, yields most ATP
+
+Q: What is the role of <b>ATP synthase</b> in cellular respiration?
+A: <b>ATP synthase</b> is an enzyme that uses the <i>proton gradient</i> across the inner mitochondrial membrane to produce <u>~34 ATP</u> molecules per glucose.
 
 Here are my notes:
 [PASTE YOUR NOTES HERE]`,
