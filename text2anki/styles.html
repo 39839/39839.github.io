@@ -291,10 +291,27 @@ input[type="color"].big-swatch:hover {
   display: flex; flex-direction: column; align-items: center; gap: 5px;
 }
 .markup-preview-chip {
-  font-size: 12px; font-weight: 600;
-  padding: 3px 10px; border-radius: 6px;
+  font-size: 14px; font-weight: 600;
+  padding: 4px 12px; border-radius: 8px;
   background: rgba(255,255,255,0.6);
   border: 1px solid var(--glass-border);
+  min-width: 36px; text-align: center;
+}
+.markup-preview-chip strong {
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+.markup-preview-chip em {
+  font-style: italic;
+  letter-spacing: 0.03em;
+}
+.markup-preview-chip u {
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 88%;
+  background-repeat: no-repeat;
+  background-size: 100% 2px;
+  padding-bottom: 1px;
 }
 
 /* ---- Range sliders ---- */
@@ -345,6 +362,22 @@ input[type="range"] {
 }
 /* hidden select to carry the actual value */
 select.hidden-font-select { display: none; }
+
+/* ---- Preset show-more ---- */
+.presets-overflow {
+  display: none; flex-wrap: wrap; gap: 8px;
+}
+.presets-overflow.expanded { display: flex; }
+.btn-show-more-presets {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 50px;
+  border: 1px dashed rgba(184,168,200,0.45);
+  background: transparent;
+  font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700;
+  color: var(--text-muted); cursor: pointer;
+  transition: all 0.15s; margin-top: 2px;
+}
+.btn-show-more-presets:hover { background: rgba(255,255,255,0.5); color: var(--text); border-color: var(--sage-light); }
 
 /* ---- Save-preset row ---- */
 .save-preset-row {
@@ -658,7 +691,173 @@ select.hidden-font-select { display: none; }
               </div>
               Arctic Mist
             </button>
-          </div>
+          </div><!-- /presets-pills -->
+          <button class="btn-show-more-presets" id="b-show-more-btn" onclick="toggleMorePresets('b')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Show more presets
+          </button>
+          <div class="presets-overflow" id="b-presets-overflow">
+            <button class="preset-pill" onclick="applyPreset('basic','midnight-ocean')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0f172a"></div>
+                <div class="preset-dot" style="background:#1e293b"></div>
+                <div class="preset-dot" style="background:#38bdf8"></div>
+              </div>
+              Midnight Ocean
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','matcha-latte')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fbf9f6"></div>
+                <div class="preset-dot" style="background:#edf2ed"></div>
+                <div class="preset-dot" style="background:#d97757"></div>
+              </div>
+              Matcha Latte
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','lavender-haze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#171520"></div>
+                <div class="preset-dot" style="background:#232136"></div>
+                <div class="preset-dot" style="background:#c4a7e7"></div>
+              </div>
+              Lavender Haze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','crimson-cell')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1a0f14"></div>
+                <div class="preset-dot" style="background:#2d1822"></div>
+                <div class="preset-dot" style="background:#ff7597"></div>
+              </div>
+              Crimson Cell
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','cafe-mocha')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2c2421"></div>
+                <div class="preset-dot" style="background:#3e322d"></div>
+                <div class="preset-dot" style="background:#e8a87c"></div>
+              </div>
+              Caf&#233; Mocha
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','nordic-winter')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#e5e9f0"></div>
+                <div class="preset-dot" style="background:#eceff4"></div>
+                <div class="preset-dot" style="background:#5e81ac"></div>
+              </div>
+              Nordic Winter
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','sunset-grove')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2a1b38"></div>
+                <div class="preset-dot" style="background:#39264a"></div>
+                <div class="preset-dot" style="background:#ff8b6a"></div>
+              </div>
+              Sunset Grove
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','cyberpunk-neon')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0a0a10"></div>
+                <div class="preset-dot" style="background:#151520"></div>
+                <div class="preset-dot" style="background:#00ff9f"></div>
+              </div>
+              Cyberpunk Neon
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','academic-parchment')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f4f1ea"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#2b6cb0"></div>
+              </div>
+              Academic Parchment
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','obsidian-gold')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#121212"></div>
+                <div class="preset-dot" style="background:#1e1e1e"></div>
+                <div class="preset-dot" style="background:#d4af37"></div>
+              </div>
+              Obsidian &amp; Gold
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','eucalyptus-breeze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1e2622"></div>
+                <div class="preset-dot" style="background:#27312c"></div>
+                <div class="preset-dot" style="background:#78a68e"></div>
+              </div>
+              Eucalyptus Breeze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','oat-milk-honey')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f7f5f0"></div>
+                <div class="preset-dot" style="background:#fffdfa"></div>
+                <div class="preset-dot" style="background:#ba8f5d"></div>
+              </div>
+              Oat Milk &amp; Honey
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','lavender-rain')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#211f26"></div>
+                <div class="preset-dot" style="background:#2b2831"></div>
+                <div class="preset-dot" style="background:#a390c4"></div>
+              </div>
+              Lavender Rain
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','rosewater')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fcf3f6"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#d47a96"></div>
+              </div>
+              Rosewater
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','cloudy-slate')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1d232a"></div>
+                <div class="preset-dot" style="background:#262d35"></div>
+                <div class="preset-dot" style="background:#6cb2eb"></div>
+              </div>
+              Cloudy Slate
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','chamomile-tea')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fbfdf5"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#a5b55e"></div>
+              </div>
+              Chamomile Tea
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','terracotta-sunset')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2b201d"></div>
+                <div class="preset-dot" style="background:#382a27"></div>
+                <div class="preset-dot" style="background:#df8c73"></div>
+              </div>
+              Terracotta Sunset
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','misty-morning')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f0f4f8"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#546e7a"></div>
+              </div>
+              Misty Morning
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','midnight-fig')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1d181e"></div>
+                <div class="preset-dot" style="background:#29232b"></div>
+                <div class="preset-dot" style="background:#b88cb5"></div>
+              </div>
+              Midnight Fig
+            </button>
+            <button class="preset-pill" onclick="applyPreset('basic','seafoam-shadow')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0f1b21"></div>
+                <div class="preset-dot" style="background:#17262d"></div>
+                <div class="preset-dot" style="background:#57a8a6"></div>
+              </div>
+              Seafoam Shadow
+            </button>
+          </div><!-- /b-presets-overflow -->
           <div id="b-user-presets"></div>
         </div>
 
@@ -738,13 +937,33 @@ select.hidden-font-select { display: none; }
               <option value="Inter, system-ui, sans-serif">Inter</option>
               <option value="system-ui, sans-serif">System UI</option>
               <option value="Courier New, monospace">Courier New</option>
+              <option value="Palatino Linotype, Palatino, serif">Palatino</option>
+              <option value="Garamond, EB Garamond, serif">Garamond</option>
+              <option value="Trebuchet MS, sans-serif">Trebuchet</option>
+              <option value="Verdana, Geneva, sans-serif">Verdana</option>
+              <option value="Didot, Bodoni MT, serif">Didot</option>
+              <option value="Futura, Century Gothic, sans-serif">Futura</option>
+              <option value="Optima, Segoe UI, sans-serif">Optima</option>
+              <option value="Baskerville, Libre Baskerville, serif">Baskerville</option>
+              <option value="Gill Sans, Gill Sans MT, sans-serif">Gill Sans</option>
+              <option value="Rockwell, Courier Bold, serif">Rockwell</option>
             </select>
             <div class="font-pills" id="b-font-pills">
               <button class="font-pill active" style="font-family:Georgia,serif" onclick="setFont('b','Georgia, serif',this)">Georgia</button>
-              <button class="font-pill" style="font-family:serif" onclick="setFont('b','Times New Roman, serif',this)">Times</button>
-              <button class="font-pill" style="font-family:sans-serif" onclick="setFont('b','Avenir, Helvetica Neue, sans-serif',this)">Avenir</button>
-              <button class="font-pill" style="font-family:system-ui,sans-serif" onclick="setFont('b','Inter, system-ui, sans-serif',this)">Inter</button>
-              <button class="font-pill" style="font-family:monospace" onclick="setFont('b','Courier New, monospace',this)">Mono</button>
+              <button class="font-pill" style="font-family:'Times New Roman',serif" onclick="setFont('b','Times New Roman, serif',this)">Times</button>
+              <button class="font-pill" style="font-family:Avenir,'Helvetica Neue',sans-serif" onclick="setFont('b','Avenir, Helvetica Neue, sans-serif',this)">Avenir</button>
+              <button class="font-pill" style="font-family:Inter,system-ui,sans-serif" onclick="setFont('b','Inter, system-ui, sans-serif',this)">Inter</button>
+              <button class="font-pill" style="font-family:'Courier New',monospace" onclick="setFont('b','Courier New, monospace',this)">Mono</button>
+              <button class="font-pill" style="font-family:'Palatino Linotype',Palatino,serif" onclick="setFont('b','Palatino Linotype, Palatino, serif',this)">Palatino</button>
+              <button class="font-pill" style="font-family:Garamond,serif" onclick="setFont('b','Garamond, EB Garamond, serif',this)">Garamond</button>
+              <button class="font-pill" style="font-family:'Trebuchet MS',sans-serif" onclick="setFont('b','Trebuchet MS, sans-serif',this)">Trebuchet</button>
+              <button class="font-pill" style="font-family:Verdana,Geneva,sans-serif" onclick="setFont('b','Verdana, Geneva, sans-serif',this)">Verdana</button>
+              <button class="font-pill" style="font-family:Didot,'Bodoni MT',serif" onclick="setFont('b','Didot, Bodoni MT, serif',this)">Didot</button>
+              <button class="font-pill" style="font-family:Futura,'Century Gothic',sans-serif" onclick="setFont('b','Futura, Century Gothic, sans-serif',this)">Futura</button>
+              <button class="font-pill" style="font-family:Optima,'Segoe UI',sans-serif" onclick="setFont('b','Optima, Segoe UI, sans-serif',this)">Optima</button>
+              <button class="font-pill" style="font-family:Baskerville,serif" onclick="setFont('b','Baskerville, Libre Baskerville, serif',this)">Baskerville</button>
+              <button class="font-pill" style="font-family:'Gill Sans','Gill Sans MT',sans-serif" onclick="setFont('b','Gill Sans, Gill Sans MT, sans-serif',this)">Gill Sans</button>
+              <button class="font-pill" style="font-family:Rockwell,serif" onclick="setFont('b','Rockwell, Courier Bold, serif',this)">Rockwell</button>
             </div>
           </div>
         </div>
@@ -777,6 +996,37 @@ select.hidden-font-select { display: none; }
                 oninput="this.nextElementSibling.textContent=this.value; updateBasicPreview(); scheduleAutoSave()">
               <div class="hex-badge">#8fab87</div>
             </div>
+          </div>
+        </div>
+
+        <!-- Divider Shape -->
+        <div class="ctrl-section">
+          <div class="section-heading">Divider Shape</div>
+          <select class="hidden-font-select" id="b-divider-shape">
+            <option value="diamond" selected>Diamond</option>
+            <option value="square">Square</option>
+            <option value="star">Star</option>
+            <option value="circle">Circle</option>
+            <option value="line-only">Line Only</option>
+            <option value="dots">Dots</option>
+            <option value="heart">Heart</option>
+          </select>
+          <div class="font-pills" id="b-divider-shape-pills">
+            <button class="font-pill active" onclick="setDividerShape('diamond',this)">&#9670; Diamond</button>
+            <button class="font-pill" onclick="setDividerShape('square',this)">&#9632; Square</button>
+            <button class="font-pill" onclick="setDividerShape('star',this)">&#9733; Star</button>
+            <button class="font-pill" onclick="setDividerShape('circle',this)">&#9679; Circle</button>
+            <button class="font-pill" onclick="setDividerShape('line-only',this)">&#8212; Line Only</button>
+            <button class="font-pill" onclick="setDividerShape('dots',this)">&#8226;&#8226;&#8226; Dots</button>
+            <button class="font-pill" onclick="setDividerShape('heart',this)">&#9829; Heart</button>
+          </div>
+          <div class="range-row" style="margin-top:14px;margin-bottom:0">
+            <div class="range-header">
+              <span class="range-lbl">Line Thickness</span>
+              <span class="range-badge" id="b-divider-thickness-badge">1px</span>
+            </div>
+            <input type="range" min="1" max="6" value="1" id="b-divider-thickness"
+              oninput="document.getElementById('b-divider-thickness-badge').textContent=this.value+'px'; updateBasicPreview(); scheduleAutoSave()">
           </div>
         </div>
 
@@ -923,7 +1173,165 @@ select.hidden-font-select { display: none; }
               </div>
               Forest Dew
             </button>
-          </div>
+          </div><!-- /presets-pills -->
+          <button class="btn-show-more-presets" id="c-show-more-btn" onclick="toggleMorePresets('c')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Show more presets
+          </button>
+          <div class="presets-overflow" id="c-presets-overflow">
+            <button class="preset-pill" onclick="applyPreset('cloze','midnight-ocean')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0f172a"></div>
+                <div class="preset-dot" style="background:#1e293b"></div>
+                <div class="preset-dot" style="background:#38bdf8"></div>
+              </div>
+              Midnight Ocean
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','matcha-latte')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fbf9f6"></div>
+                <div class="preset-dot" style="background:#edf2ed"></div>
+                <div class="preset-dot" style="background:#d97757"></div>
+              </div>
+              Matcha Latte
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','lavender-haze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#171520"></div>
+                <div class="preset-dot" style="background:#232136"></div>
+                <div class="preset-dot" style="background:#c4a7e7"></div>
+              </div>
+              Lavender Haze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','crimson-cell')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1a0f14"></div>
+                <div class="preset-dot" style="background:#2d1822"></div>
+                <div class="preset-dot" style="background:#ff7597"></div>
+              </div>
+              Crimson Cell
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','cafe-mocha')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2c2421"></div>
+                <div class="preset-dot" style="background:#3e322d"></div>
+                <div class="preset-dot" style="background:#e8a87c"></div>
+              </div>
+              Caf&#233; Mocha
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','nordic-winter')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#e5e9f0"></div>
+                <div class="preset-dot" style="background:#eceff4"></div>
+                <div class="preset-dot" style="background:#5e81ac"></div>
+              </div>
+              Nordic Winter
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','sunset-grove')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2a1b38"></div>
+                <div class="preset-dot" style="background:#39264a"></div>
+                <div class="preset-dot" style="background:#ff8b6a"></div>
+              </div>
+              Sunset Grove
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','cyberpunk-neon')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0a0a10"></div>
+                <div class="preset-dot" style="background:#151520"></div>
+                <div class="preset-dot" style="background:#00ff9f"></div>
+              </div>
+              Cyberpunk Neon
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','academic-parchment')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f4f1ea"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#2b6cb0"></div>
+              </div>
+              Academic Parchment
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','obsidian-gold')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#121212"></div>
+                <div class="preset-dot" style="background:#1e1e1e"></div>
+                <div class="preset-dot" style="background:#d4af37"></div>
+              </div>
+              Obsidian &amp; Gold
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','eucalyptus-breeze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1e2622"></div>
+                <div class="preset-dot" style="background:#27312c"></div>
+                <div class="preset-dot" style="background:#78a68e"></div>
+              </div>
+              Eucalyptus Breeze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','oat-milk-honey')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f7f5f0"></div>
+                <div class="preset-dot" style="background:#fffdfa"></div>
+                <div class="preset-dot" style="background:#ba8f5d"></div>
+              </div>
+              Oat Milk &amp; Honey
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','lavender-rain')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#211f26"></div>
+                <div class="preset-dot" style="background:#2b2831"></div>
+                <div class="preset-dot" style="background:#a390c4"></div>
+              </div>
+              Lavender Rain
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','rosewater')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fcf3f6"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#d47a96"></div>
+              </div>
+              Rosewater
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','cloudy-slate')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1d232a"></div>
+                <div class="preset-dot" style="background:#262d35"></div>
+                <div class="preset-dot" style="background:#6cb2eb"></div>
+              </div>
+              Cloudy Slate
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','chamomile-tea')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fbfdf5"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#a5b55e"></div>
+              </div>
+              Chamomile Tea
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','terracotta-sunset')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2b201d"></div>
+                <div class="preset-dot" style="background:#382a27"></div>
+                <div class="preset-dot" style="background:#df8c73"></div>
+              </div>
+              Terracotta Sunset
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','midnight-fig')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1d181e"></div>
+                <div class="preset-dot" style="background:#29232b"></div>
+                <div class="preset-dot" style="background:#b88cb5"></div>
+              </div>
+              Midnight Fig
+            </button>
+            <button class="preset-pill" onclick="applyPreset('cloze','seafoam-shadow')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0f1b21"></div>
+                <div class="preset-dot" style="background:#17262d"></div>
+                <div class="preset-dot" style="background:#57a8a6"></div>
+              </div>
+              Seafoam Shadow
+            </button>
+          </div><!-- /c-presets-overflow -->
           <div id="c-user-presets"></div>
         </div>
 
@@ -998,6 +1406,40 @@ select.hidden-font-select { display: none; }
             </div>
             <input type="range" min="10" max="24" value="14" id="c-extrasize"
               oninput="document.getElementById('c-extrasize-badge').textContent=this.value+'px'; updateClozePreview(); scheduleAutoSave()">
+          </div>
+          <!-- Font -->
+          <div style="margin-top:4px">
+            <div class="range-lbl" style="margin-bottom:8px">Font Family</div>
+            <select class="hidden-font-select" id="c-font" onchange="updateClozePreview(); scheduleAutoSave()">
+              <option value="Avenir, Helvetica Neue, sans-serif" selected>Avenir</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Inter, system-ui, sans-serif">Inter</option>
+              <option value="Times New Roman, serif">Times New Roman</option>
+              <option value="Courier New, monospace">Courier New</option>
+              <option value="Palatino Linotype, Palatino, serif">Palatino</option>
+              <option value="Garamond, EB Garamond, serif">Garamond</option>
+              <option value="Trebuchet MS, sans-serif">Trebuchet</option>
+              <option value="Verdana, Geneva, sans-serif">Verdana</option>
+              <option value="Futura, Century Gothic, sans-serif">Futura</option>
+              <option value="Optima, Segoe UI, sans-serif">Optima</option>
+              <option value="Baskerville, Libre Baskerville, serif">Baskerville</option>
+              <option value="Gill Sans, Gill Sans MT, sans-serif">Gill Sans</option>
+            </select>
+            <div class="font-pills" id="c-font-pills">
+              <button class="font-pill active" style="font-family:Avenir,'Helvetica Neue',sans-serif" onclick="setFont('c','Avenir, Helvetica Neue, sans-serif',this)">Avenir</button>
+              <button class="font-pill" style="font-family:Georgia,serif" onclick="setFont('c','Georgia, serif',this)">Georgia</button>
+              <button class="font-pill" style="font-family:Inter,system-ui,sans-serif" onclick="setFont('c','Inter, system-ui, sans-serif',this)">Inter</button>
+              <button class="font-pill" style="font-family:'Times New Roman',serif" onclick="setFont('c','Times New Roman, serif',this)">Times</button>
+              <button class="font-pill" style="font-family:'Courier New',monospace" onclick="setFont('c','Courier New, monospace',this)">Mono</button>
+              <button class="font-pill" style="font-family:'Palatino Linotype',Palatino,serif" onclick="setFont('c','Palatino Linotype, Palatino, serif',this)">Palatino</button>
+              <button class="font-pill" style="font-family:Garamond,serif" onclick="setFont('c','Garamond, EB Garamond, serif',this)">Garamond</button>
+              <button class="font-pill" style="font-family:'Trebuchet MS',sans-serif" onclick="setFont('c','Trebuchet MS, sans-serif',this)">Trebuchet</button>
+              <button class="font-pill" style="font-family:Verdana,Geneva,sans-serif" onclick="setFont('c','Verdana, Geneva, sans-serif',this)">Verdana</button>
+              <button class="font-pill" style="font-family:Futura,'Century Gothic',sans-serif" onclick="setFont('c','Futura, Century Gothic, sans-serif',this)">Futura</button>
+              <button class="font-pill" style="font-family:Optima,'Segoe UI',sans-serif" onclick="setFont('c','Optima, Segoe UI, sans-serif',this)">Optima</button>
+              <button class="font-pill" style="font-family:Baskerville,serif" onclick="setFont('c','Baskerville, Libre Baskerville, serif',this)">Baskerville</button>
+              <button class="font-pill" style="font-family:'Gill Sans','Gill Sans MT',sans-serif" onclick="setFont('c','Gill Sans, Gill Sans MT, sans-serif',this)">Gill Sans</button>
+            </div>
           </div>
         </div>
 
@@ -1138,7 +1580,165 @@ select.hidden-font-select { display: none; }
               </div>
               Forest Dew
             </button>
-          </div>
+          </div><!-- /presets-pills -->
+          <button class="btn-show-more-presets" id="cp-show-more-btn" onclick="toggleMorePresets('cp')">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Show more presets
+          </button>
+          <div class="presets-overflow" id="cp-presets-overflow">
+            <button class="preset-pill" onclick="applyPreset('clozep','midnight-ocean')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0f172a"></div>
+                <div class="preset-dot" style="background:#1e293b"></div>
+                <div class="preset-dot" style="background:#38bdf8"></div>
+              </div>
+              Midnight Ocean
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','matcha-latte')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fbf9f6"></div>
+                <div class="preset-dot" style="background:#edf2ed"></div>
+                <div class="preset-dot" style="background:#d97757"></div>
+              </div>
+              Matcha Latte
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','lavender-haze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#171520"></div>
+                <div class="preset-dot" style="background:#232136"></div>
+                <div class="preset-dot" style="background:#c4a7e7"></div>
+              </div>
+              Lavender Haze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','crimson-cell')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1a0f14"></div>
+                <div class="preset-dot" style="background:#2d1822"></div>
+                <div class="preset-dot" style="background:#ff7597"></div>
+              </div>
+              Crimson Cell
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','cafe-mocha')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2c2421"></div>
+                <div class="preset-dot" style="background:#3e322d"></div>
+                <div class="preset-dot" style="background:#e8a87c"></div>
+              </div>
+              Caf&#233; Mocha
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','nordic-winter')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#e5e9f0"></div>
+                <div class="preset-dot" style="background:#eceff4"></div>
+                <div class="preset-dot" style="background:#5e81ac"></div>
+              </div>
+              Nordic Winter
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','sunset-grove')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2a1b38"></div>
+                <div class="preset-dot" style="background:#39264a"></div>
+                <div class="preset-dot" style="background:#ff8b6a"></div>
+              </div>
+              Sunset Grove
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','cyberpunk-neon')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0a0a10"></div>
+                <div class="preset-dot" style="background:#151520"></div>
+                <div class="preset-dot" style="background:#00ff9f"></div>
+              </div>
+              Cyberpunk Neon
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','academic-parchment')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f4f1ea"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#2b6cb0"></div>
+              </div>
+              Academic Parchment
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','obsidian-gold')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#121212"></div>
+                <div class="preset-dot" style="background:#1e1e1e"></div>
+                <div class="preset-dot" style="background:#d4af37"></div>
+              </div>
+              Obsidian &amp; Gold
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','eucalyptus-breeze')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1e2622"></div>
+                <div class="preset-dot" style="background:#27312c"></div>
+                <div class="preset-dot" style="background:#78a68e"></div>
+              </div>
+              Eucalyptus Breeze
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','oat-milk-honey')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#f7f5f0"></div>
+                <div class="preset-dot" style="background:#fffdfa"></div>
+                <div class="preset-dot" style="background:#ba8f5d"></div>
+              </div>
+              Oat Milk &amp; Honey
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','lavender-rain')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#211f26"></div>
+                <div class="preset-dot" style="background:#2b2831"></div>
+                <div class="preset-dot" style="background:#a390c4"></div>
+              </div>
+              Lavender Rain
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','rosewater')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fcf3f6"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#d47a96"></div>
+              </div>
+              Rosewater
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','cloudy-slate')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1d232a"></div>
+                <div class="preset-dot" style="background:#262d35"></div>
+                <div class="preset-dot" style="background:#6cb2eb"></div>
+              </div>
+              Cloudy Slate
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','chamomile-tea')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#fbfdf5"></div>
+                <div class="preset-dot" style="background:#ffffff"></div>
+                <div class="preset-dot" style="background:#a5b55e"></div>
+              </div>
+              Chamomile Tea
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','terracotta-sunset')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#2b201d"></div>
+                <div class="preset-dot" style="background:#382a27"></div>
+                <div class="preset-dot" style="background:#df8c73"></div>
+              </div>
+              Terracotta Sunset
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','midnight-fig')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#1d181e"></div>
+                <div class="preset-dot" style="background:#29232b"></div>
+                <div class="preset-dot" style="background:#b88cb5"></div>
+              </div>
+              Midnight Fig
+            </button>
+            <button class="preset-pill" onclick="applyPreset('clozep','seafoam-shadow')">
+              <div class="preset-dots">
+                <div class="preset-dot" style="background:#0f1b21"></div>
+                <div class="preset-dot" style="background:#17262d"></div>
+                <div class="preset-dot" style="background:#57a8a6"></div>
+              </div>
+              Seafoam Shadow
+            </button>
+          </div><!-- /cp-presets-overflow -->
           <div id="cp-user-presets"></div>
         </div>
 
@@ -1213,6 +1813,40 @@ select.hidden-font-select { display: none; }
             </div>
             <input type="range" min="10" max="24" value="14" id="cp-extrasize"
               oninput="document.getElementById('cp-extrasize-badge').textContent=this.value+'px'; updateClozePPreview(); scheduleAutoSave()">
+          </div>
+          <!-- Font -->
+          <div style="margin-top:4px">
+            <div class="range-lbl" style="margin-bottom:8px">Font Family</div>
+            <select class="hidden-font-select" id="cp-font" onchange="updateClozePPreview(); scheduleAutoSave()">
+              <option value="Avenir, Helvetica Neue, sans-serif" selected>Avenir</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Inter, system-ui, sans-serif">Inter</option>
+              <option value="Times New Roman, serif">Times New Roman</option>
+              <option value="Courier New, monospace">Courier New</option>
+              <option value="Palatino Linotype, Palatino, serif">Palatino</option>
+              <option value="Garamond, EB Garamond, serif">Garamond</option>
+              <option value="Trebuchet MS, sans-serif">Trebuchet</option>
+              <option value="Verdana, Geneva, sans-serif">Verdana</option>
+              <option value="Futura, Century Gothic, sans-serif">Futura</option>
+              <option value="Optima, Segoe UI, sans-serif">Optima</option>
+              <option value="Baskerville, Libre Baskerville, serif">Baskerville</option>
+              <option value="Gill Sans, Gill Sans MT, sans-serif">Gill Sans</option>
+            </select>
+            <div class="font-pills" id="cp-font-pills">
+              <button class="font-pill active" style="font-family:Avenir,'Helvetica Neue',sans-serif" onclick="setFont('cp','Avenir, Helvetica Neue, sans-serif',this)">Avenir</button>
+              <button class="font-pill" style="font-family:Georgia,serif" onclick="setFont('cp','Georgia, serif',this)">Georgia</button>
+              <button class="font-pill" style="font-family:Inter,system-ui,sans-serif" onclick="setFont('cp','Inter, system-ui, sans-serif',this)">Inter</button>
+              <button class="font-pill" style="font-family:'Times New Roman',serif" onclick="setFont('cp','Times New Roman, serif',this)">Times</button>
+              <button class="font-pill" style="font-family:'Courier New',monospace" onclick="setFont('cp','Courier New, monospace',this)">Mono</button>
+              <button class="font-pill" style="font-family:'Palatino Linotype',Palatino,serif" onclick="setFont('cp','Palatino Linotype, Palatino, serif',this)">Palatino</button>
+              <button class="font-pill" style="font-family:Garamond,serif" onclick="setFont('cp','Garamond, EB Garamond, serif',this)">Garamond</button>
+              <button class="font-pill" style="font-family:'Trebuchet MS',sans-serif" onclick="setFont('cp','Trebuchet MS, sans-serif',this)">Trebuchet</button>
+              <button class="font-pill" style="font-family:Verdana,Geneva,sans-serif" onclick="setFont('cp','Verdana, Geneva, sans-serif',this)">Verdana</button>
+              <button class="font-pill" style="font-family:Futura,'Century Gothic',sans-serif" onclick="setFont('cp','Futura, Century Gothic, sans-serif',this)">Futura</button>
+              <button class="font-pill" style="font-family:Optima,'Segoe UI',sans-serif" onclick="setFont('cp','Optima, Segoe UI, sans-serif',this)">Optima</button>
+              <button class="font-pill" style="font-family:Baskerville,serif" onclick="setFont('cp','Baskerville, Libre Baskerville, serif',this)">Baskerville</button>
+              <button class="font-pill" style="font-family:'Gill Sans','Gill Sans MT',sans-serif" onclick="setFont('cp','Gill Sans, Gill Sans MT, sans-serif',this)">Gill Sans</button>
+            </div>
           </div>
         </div>
 
@@ -1328,17 +1962,20 @@ const DEFAULTS = {
     'b-font': 'Georgia, serif',
     'b-front-color': '#3a4a3b', 'b-back-color': '#5a7a5c',
     'b-label-color': '#8fab87', 'b-divider-color': '#8fab87',
-    'b-bold': '#b07d2a', 'b-italic': '#9a6060', 'b-underline': '#5a9a95'
+    'b-bold': '#b07d2a', 'b-italic': '#9a6060', 'b-underline': '#5a9a95',
+    'b-divider-shape': 'diamond', 'b-divider-thickness': 1
   },
   cloze: {
     'c-bg': '#1F80C1', 'c-cardbg': '#1E282C', 'c-border': '#ffffff', 'c-radius': 30,
     'c-text': '#E6E6E7', 'c-cloze': '#3CB371', 'c-extra': '#E6E6E7', 'c-fontsize': 18, 'c-extrasize': 14,
-    'c-bold': '#EABB3D', 'c-italic': '#CD5C5C', 'c-underline': '#21B2B8'
+    'c-bold': '#EABB3D', 'c-italic': '#CD5C5C', 'c-underline': '#21B2B8',
+    'c-font': 'Avenir, Helvetica Neue, sans-serif'
   },
   clozep: {
     'cp-bg': '#1F80C1', 'cp-cardbg': '#1E282C', 'cp-border': '#ffffff', 'cp-radius': 30,
     'cp-text': '#E6E6E7', 'cp-cloze': '#3CB371', 'cp-extra': '#E6E6E7', 'cp-fontsize': 18, 'cp-extrasize': 14,
-    'cp-bold': '#EABB3D', 'cp-italic': '#CD5C5C', 'cp-underline': '#21B2B8'
+    'cp-bold': '#EABB3D', 'cp-italic': '#CD5C5C', 'cp-underline': '#21B2B8',
+    'cp-font': 'Avenir, Helvetica Neue, sans-serif'
   }
 };
 
@@ -1384,6 +2021,9 @@ function setv(id, val) {
   }
   // sync font pills if needed
   if (id === 'b-font') syncFontPills('b', val);
+  if (id === 'c-font') syncFontPills('c', val);
+  if (id === 'cp-font') syncFontPills('cp', val);
+  if (id === 'b-divider-shape') syncDividerShapePills(val);
 }
 
 // ======================================================
@@ -1393,7 +2033,37 @@ function setFont(pfx, fontVal, pillEl) {
   document.getElementById(pfx + '-font').value = fontVal;
   document.querySelectorAll('#' + pfx + '-font-pills .font-pill').forEach(p => p.classList.remove('active'));
   pillEl.classList.add('active');
-  if (pfx === 'b') { updateBasicPreview(); scheduleAutoSave(); }
+  if (pfx === 'b')  updateBasicPreview();
+  if (pfx === 'c')  updateClozePreview();
+  if (pfx === 'cp') updateClozePPreview();
+  scheduleAutoSave();
+}
+
+function toggleMorePresets(pfx) {
+  const overflow = document.getElementById(pfx + '-presets-overflow');
+  const btn = document.getElementById(pfx + '-show-more-btn');
+  if (!overflow || !btn) return;
+  const expanded = overflow.classList.toggle('expanded');
+  const arrow = expanded
+    ? '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 6.5L5 3.5L8 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    : '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  btn.innerHTML = arrow + (expanded ? ' Show fewer presets' : ' Show more presets');
+}
+
+function setDividerShape(shape, pillEl) {
+  document.getElementById('b-divider-shape').value = shape;
+  document.querySelectorAll('#b-divider-shape-pills .font-pill').forEach(p => p.classList.remove('active'));
+  pillEl.classList.add('active');
+  updateBasicPreview();
+  scheduleAutoSave();
+}
+
+function syncDividerShapePills(shapeVal) {
+  const pills = document.querySelectorAll('#b-divider-shape-pills .font-pill');
+  const shapes = ['diamond','square','star','circle','line-only','dots','heart'];
+  pills.forEach((p, i) => {
+    p.classList.toggle('active', shapes[i] === shapeVal);
+  });
 }
 
 function syncFontPills(pfx, fontVal) {
@@ -1413,26 +2083,29 @@ function buildBasicCSS() {
   const font = v('b-font');
   const frontC = v('b-front-color'), backC = v('b-back-color');
   const labelC = v('b-label-color'), divC = v('b-divider-color');
+  const divThickness = v('b-divider-thickness') || 1;
   const boldC = v('b-bold'), italicC = v('b-italic'), ulC = v('b-underline');
+  const isLineOnly = (v('b-divider-shape') || 'diamond') === 'line-only';
+  const fullLineWidth = isLineOnly ? '140px' : '64px';
   return `
 html { overflow: scroll; overflow-x: hidden; background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%); min-height: 100%; }
 #bkard { padding: 32px 24px 28px; max-width: 720px; margin: 0 auto; word-wrap: break-word; }
 .card { font-family: ${font}; font-size: 18px; text-align: center; color: ${frontC}; line-height: 1.7em; background: ${cardbg}; border: 1.5px solid ${border}44; border-radius: ${radius}px; box-shadow: 0 8px 40px rgba(100,120,100,0.13); }
-.side-label { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: ${labelC}; margin-bottom: 16px; }
+.side-label { font-family: ${font}; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: ${labelC}; margin-bottom: 16px; }
 .answer-label { color: ${divC}; margin-top: 0; }
-.bfront { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: ${frontSize}px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
+.bfront { font-family: ${font}; font-size: ${frontSize}px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
 .divider { display: flex; align-items: center; justify-content: center; margin: 24px auto; }
-.divider-line { height: 1px; width: 64px; background: linear-gradient(90deg, transparent, ${divC}66, transparent); display: inline-block; }
-.divider-diamond { width: 6px; height: 6px; background: ${divC}; transform: rotate(45deg); display: inline-block; margin: 0 10px; opacity: 0.6; }
+.divider-line { height: ${divThickness}px; width: ${fullLineWidth}; background: linear-gradient(90deg, transparent, ${divC}88, transparent); display: inline-block; }
+.divider-shape { display: inline-flex; align-items: center; justify-content: center; margin: 0 10px; opacity: 0.65; color: ${divC}; font-size: 10px; line-height: 1; }
 .bback { font-family: ${font}; font-size: ${backSize}px; color: ${backC}; line-height: 1.7; padding: 0 12px 6px; font-weight: 400; }
 .tags { color: #b8a8c8; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; letter-spacing: 1px; position: fixed; padding: 0; top: 0; right: 0; }
 .tags:hover { opacity: 1; }
-b { color: ${boldC} !important; font-weight: bold; }
-u { text-decoration: underline; color: ${ulC}; }
-i { color: ${italicC}; font-style: italic; }
-u i, i u { color: limegreen !important; font-weight: bold; }
-u b, b u { color: ${ulC} !important; }
-i b, b i { color: ${italicC} !important; font-weight: bold; }
+b { color: ${boldC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${boldC}44; letter-spacing: 0.01em; }
+u { text-decoration: none; color: ${ulC}; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; padding-bottom: 1px; }
+i { color: ${italicC}; font-style: italic; letter-spacing: 0.02em; }
+u i, i u { color: limegreen !important; font-weight: bold; background-image: linear-gradient(limegreen, limegreen); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+u b, b u { color: ${ulC} !important; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+i b, b i { color: ${italicC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${italicC}44; }
 a { color: ${labelC} !important; text-decoration: none; font-size: 11px; }
 img { display: block; max-width: 100%; margin: 16px auto; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
 .card.nightMode { background: rgba(30,36,30,0.97); color: #d8e0d8; border-color: ${border}33; }
@@ -1449,21 +2122,23 @@ function buildClozeCSSFrom(pfx) {
   const radius = v(pfx+'-radius'), textC = v(pfx+'-text'), clozeC = v(pfx+'-cloze');
   const extraC = v(pfx+'-extra'), fs = v(pfx+'-fontsize'), extraFs = v(pfx+'-extrasize') || 14;
   const boldC = v(pfx+'-bold'), italicC = v(pfx+'-italic'), ulC = v(pfx+'-underline');
+  const fontEl = document.getElementById(pfx+'-font');
+  const font = fontEl ? fontEl.value : 'Avenir, Helvetica Neue, sans-serif';
   return `
 html, body { overflow: scroll; overflow-x: hidden; background-color: ${bg} !important; min-height: 100%; }
 body { background-color: ${bg} !important; }
 #kard { padding: 15px 10px; max-width: 800px; margin: 0 auto; word-wrap: break-word; }
-.card { font-family: Avenir; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${cardbg}; border: 2px solid ${border}; border-radius: ${radius}px; }
+.card { font-family: ${font}; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${cardbg}; border: 2px solid ${border}; border-radius: ${radius}px; }
 .cloze, .cloze b, .cloze u, .cloze i { font-weight: bold; color: ${clozeC} !important; }
 #extra, #extra i { font-size: ${extraFs}px; color: ${extraC}; font-style: italic; }
 .tags { color: #A6ABB9; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; position: fixed; padding: 0; top: 0; right: 0; }
 .tags:hover { opacity: 1; }
-b { color: ${boldC} !important; font-weight: bold; }
-u { text-decoration: underline; color: ${ulC}; }
-i { color: ${italicC}; font-style: italic; }
-u i, i u { color: limegreen !important; font-weight: bold; }
-u b, b u { color: ${ulC} !important; }
-i b, b i { color: ${italicC} !important; font-weight: bold; }
+b { color: ${boldC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${boldC}44; letter-spacing: 0.01em; }
+u { text-decoration: none; color: ${ulC}; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; padding-bottom: 1px; }
+i { color: ${italicC}; font-style: italic; letter-spacing: 0.02em; }
+u i, i u { color: limegreen !important; font-weight: bold; background-image: linear-gradient(limegreen, limegreen); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+u b, b u { color: ${ulC} !important; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+i b, b i { color: ${italicC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${italicC}44; }
 a { color: LightGray !important; text-decoration: none; font-size: 10px; font-style: normal; }
 img { display: block; max-width: 100%; margin: 10px auto; }
 tr { font-size: 12px; }
@@ -1487,17 +2162,36 @@ function setPreviewSide(type, side) {
   }
 }
 
+function buildDividerHTML() {
+  const shape = v('b-divider-shape') || 'diamond';
+  if (shape === 'line-only') {
+    // Single full-width line, no gap, no center element
+    return '<div class="divider"><span class="divider-line"><\/span><\/div>';
+  }
+  const shapeMap = {
+    'diamond': '<span class="divider-shape">&#9670;<\/span>',
+    'square':  '<span class="divider-shape">&#9632;<\/span>',
+    'star':    '<span class="divider-shape">&#9733;<\/span>',
+    'circle':  '<span class="divider-shape">&#9679;<\/span>',
+    'dots':    '<span class="divider-shape" style="letter-spacing:4px;font-size:8px">&#8226;&#8226;&#8226;<\/span>',
+    'heart':   '<span class="divider-shape">&#9829;<\/span>'
+  };
+  const inner = shapeMap[shape] || shapeMap['diamond'];
+  return `<div class="divider"><span class="divider-line"><\/span>${inner}<span class="divider-line"><\/span><\/div>`;
+}
+
 function updateBasicPreview() {
   updateMarkupPreviews('b');
   const css = buildBasicCSS();
   const isFront = basicPreviewSide === 'front';
+  const dividerHtml = buildDividerHTML();
   const html = `<!DOCTYPE html><html><head><style>${css}<\/style><\/head><body>
 <div id="bkard"><div class="card">
   <div class="tags">biology<\/div>
   <div class="side-label">Question<\/div>
   <div class="bfront">What is the powerhouse of the cell?<\/div>
   ${isFront ? '' : `
-  <div class="divider"><span class="divider-line"><\/span><span class="divider-diamond"><\/span><span class="divider-line"><\/span><\/div>
+  ${dividerHtml}
   <div class="side-label answer-label">Answer<\/div>
   <div class="bback">The <b>mitochondria<\/b> — it produces <u>ATP<\/u> via <i>cellular respiration<\/i>.<\/div>`}
 <\/div><\/div><\/body><\/html>`;
@@ -1750,6 +2444,166 @@ const PRESETS = {
       'b-front-color':'#2a3a4a','b-back-color':'#4a6070',
       'b-label-color':'#5b8fb9','b-divider-color':'#7aaad0',
       'b-bold':'#c06828','b-italic':'#4870a8','b-underline':'#1a8860'
+    },
+    'midnight-ocean': {
+      'b-bg1':'#0f172a','b-bg2':'#0d1525','b-bg3':'#101a2e',
+      'b-cardbg':'#1e293b','b-border':'#334155','b-radius':20,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Inter, system-ui, sans-serif',
+      'b-front-color':'#f8fafc','b-back-color':'#94a3b8',
+      'b-label-color':'#38bdf8','b-divider-color':'#334155',
+      'b-bold':'#fbbf24','b-italic':'#a78bfa','b-underline':'#f472b6'
+    },
+    'matcha-latte': {
+      'b-bg1':'#fbf9f6','b-bg2':'#f5f3ee','b-bg3':'#f8f6f2',
+      'b-cardbg':'#edf2ed','b-border':'#c8d6c8','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#2c3e2e','b-back-color':'#4a5e4c',
+      'b-label-color':'#7a8b7a','b-divider-color':'#c8d6c8',
+      'b-bold':'#b58900','b-italic':'#5a8a89','b-underline':'#cc6666'
+    },
+    'lavender-haze': {
+      'b-bg1':'#171520','b-bg2':'#1a1828','b-bg3':'#15131e',
+      'b-cardbg':'#232136','b-border':'#393552','b-radius':16,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Inter, system-ui, sans-serif',
+      'b-front-color':'#e0def4','b-back-color':'#908caa',
+      'b-label-color':'#c4a7e7','b-divider-color':'#393552',
+      'b-bold':'#f6c177','b-italic':'#ea9a97','b-underline':'#3e8fb0'
+    },
+    'crimson-cell': {
+      'b-bg1':'#1a0f14','b-bg2':'#1e1018','b-bg3':'#180e12',
+      'b-cardbg':'#2d1822','b-border':'#4a2535','b-radius':18,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#fae8ee','b-back-color':'#b58d9c',
+      'b-label-color':'#ff7597','b-divider-color':'#4a2535',
+      'b-bold':'#ffb86c','b-italic':'#8be9fd','b-underline':'#bd93f9'
+    },
+    'cafe-mocha': {
+      'b-bg1':'#2c2421','b-bg2':'#302624','b-bg3':'#2a2220',
+      'b-cardbg':'#3e322d','b-border':'#5c4b43','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#f4ece6','b-back-color':'#a89f91',
+      'b-label-color':'#e8a87c','b-divider-color':'#5c4b43',
+      'b-bold':'#e27d60','b-italic':'#85cdca','b-underline':'#c38d9e'
+    },
+    'nordic-winter': {
+      'b-bg1':'#e5e9f0','b-bg2':'#dfe3ec','b-bg3':'#e8ecf2',
+      'b-cardbg':'#eceff4','b-border':'#d8dee9','b-radius':12,'b-frontsize':21,'b-backsize':18,
+      'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
+      'b-front-color':'#2e3440','b-back-color':'#4c566a',
+      'b-label-color':'#5e81ac','b-divider-color':'#d8dee9',
+      'b-bold':'#bf616a','b-italic':'#d08770','b-underline':'#b48ead'
+    },
+    'sunset-grove': {
+      'b-bg1':'#2a1b38','b-bg2':'#2e1e3c','b-bg3':'#281a36',
+      'b-cardbg':'#39264a','b-border':'#5b3e75','b-radius':20,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Inter, system-ui, sans-serif',
+      'b-front-color':'#fceee9','b-back-color':'#b8a6c4',
+      'b-label-color':'#ff8b6a','b-divider-color':'#5b3e75',
+      'b-bold':'#ffd166','b-italic':'#06d6a0','b-underline':'#ef476f'
+    },
+    'cyberpunk-neon': {
+      'b-bg1':'#0a0a10','b-bg2':'#0c0c14','b-bg3':'#08080e',
+      'b-cardbg':'#151520','b-border':'#2d2d44','b-radius':8,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Courier New, monospace',
+      'b-front-color':'#e0e0e0','b-back-color':'#7e7e99',
+      'b-label-color':'#00ff9f','b-divider-color':'#2d2d44',
+      'b-bold':'#ffe600','b-italic':'#00b8ff','b-underline':'#ff007f'
+    },
+    'academic-parchment': {
+      'b-bg1':'#f4f1ea','b-bg2':'#f0ede4','b-bg3':'#f2efe8',
+      'b-cardbg':'#ffffff','b-border':'#e2ddd0','b-radius':16,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#383428','b-back-color':'#5a5548',
+      'b-label-color':'#8f8a78','b-divider-color':'#e2ddd0',
+      'b-bold':'#c53030','b-italic':'#2f855a','b-underline':'#d69e2e'
+    },
+    'obsidian-gold': {
+      'b-bg1':'#121212','b-bg2':'#161616','b-bg3':'#101010',
+      'b-cardbg':'#1e1e1e','b-border':'#333333','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Inter, system-ui, sans-serif',
+      'b-front-color':'#dfdfdf','b-back-color':'#888888',
+      'b-label-color':'#d4af37','b-divider-color':'#333333',
+      'b-bold':'#ff6b6b','b-italic':'#4ecdc4','b-underline':'#c7f464'
+    },
+    'eucalyptus-breeze': {
+      'b-bg1':'#1e2622','b-bg2':'#202824','b-bg3':'#1c2420',
+      'b-cardbg':'#27312c','b-border':'#37453e','b-radius':20,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#dce4e0','b-back-color':'#8a9e94',
+      'b-label-color':'#78a68e','b-divider-color':'#37453e',
+      'b-bold':'#e0ab79','b-italic':'#8fb8c2','b-underline':'#d68d8b'
+    },
+    'oat-milk-honey': {
+      'b-bg1':'#f7f5f0','b-bg2':'#f4f2ec','b-bg3':'#f5f3ee',
+      'b-cardbg':'#fffdfa','b-border':'#e8e4d8','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#4a463d','b-back-color':'#6a665d',
+      'b-label-color':'#a39c8e','b-divider-color':'#e8e4d8',
+      'b-bold':'#d17762','b-italic':'#6b8e88','b-underline':'#cfa063'
+    },
+    'lavender-rain': {
+      'b-bg1':'#211f26','b-bg2':'#242228','b-bg3':'#1f1d24',
+      'b-cardbg':'#2b2831','b-border':'#3f3a47','b-radius':16,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Inter, system-ui, sans-serif',
+      'b-front-color':'#e3e1e8','b-back-color':'#8b8796',
+      'b-label-color':'#a390c4','b-divider-color':'#3f3a47',
+      'b-bold':'#c98bb9','b-italic':'#8bb2c9','b-underline':'#dbad7f'
+    },
+    'rosewater': {
+      'b-bg1':'#fcf3f6','b-bg2':'#faf0f4','b-bg3':'#fdf5f8',
+      'b-cardbg':'#ffffff','b-border':'#f3e0e7','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#5a4a52','b-back-color':'#7a6a72',
+      'b-label-color':'#d47a96','b-divider-color':'#f3e0e7',
+      'b-bold':'#b56a73','b-italic':'#7c9082','b-underline':'#e3a076'
+    },
+    'cloudy-slate': {
+      'b-bg1':'#1d232a','b-bg2':'#1f252c','b-bg3':'#1b2128',
+      'b-cardbg':'#262d35','b-border':'#3a4450','b-radius':12,'b-frontsize':21,'b-backsize':18,
+      'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
+      'b-front-color':'#cbd4e1','b-back-color':'#8392a5',
+      'b-label-color':'#6cb2eb','b-divider-color':'#3a4450',
+      'b-bold':'#f6993f','b-italic':'#38c172','b-underline':'#f27276'
+    },
+    'chamomile-tea': {
+      'b-bg1':'#fbfdf5','b-bg2':'#f8faf2','b-bg3':'#fafcf4',
+      'b-cardbg':'#ffffff','b-border':'#e9f0d1','b-radius':20,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#3d4035','b-back-color':'#5d6055',
+      'b-label-color':'#99a187','b-divider-color':'#e9f0d1',
+      'b-bold':'#e89f65','b-italic':'#659fb5','b-underline':'#d67882'
+    },
+    'terracotta-sunset': {
+      'b-bg1':'#2b201d','b-bg2':'#2e2320','b-bg3':'#291e1b',
+      'b-cardbg':'#382a27','b-border':'#4f3c38','b-radius':16,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#eee5e2','b-back-color':'#a3918d',
+      'b-label-color':'#df8c73','b-divider-color':'#4f3c38',
+      'b-bold':'#e3b15e','b-italic':'#7ebda8','b-underline':'#cc6f7a'
+    },
+    'misty-morning': {
+      'b-bg1':'#f0f4f8','b-bg2':'#eaf0f6','b-bg3':'#eef2f6',
+      'b-cardbg':'#ffffff','b-border':'#d9e2ec','b-radius':12,'b-frontsize':21,'b-backsize':18,
+      'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
+      'b-front-color':'#334e68','b-back-color':'#486581',
+      'b-label-color':'#829ab1','b-divider-color':'#d9e2ec',
+      'b-bold':'#d64545','b-italic':'#486581','b-underline':'#f0ad4e'
+    },
+    'midnight-fig': {
+      'b-bg1':'#1d181e','b-bg2':'#201a22','b-bg3':'#1b161c',
+      'b-cardbg':'#29232b','b-border':'#3f3642','b-radius':24,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Georgia, serif',
+      'b-front-color':'#e6dfe8','b-back-color':'#948b96',
+      'b-label-color':'#b88cb5','b-divider-color':'#3f3642',
+      'b-bold':'#e3a874','b-italic':'#82b09e','b-underline':'#c77381'
+    },
+    'seafoam-shadow': {
+      'b-bg1':'#0f1b21','b-bg2':'#111d24','b-bg3':'#0d191f',
+      'b-cardbg':'#17262d','b-border':'#243b45','b-radius':18,'b-frontsize':21,'b-backsize':18,
+      'b-font':'Inter, system-ui, sans-serif',
+      'b-front-color':'#d2e3e8','b-back-color':'#6e8996',
+      'b-label-color':'#57a8a6','b-divider-color':'#243b45',
+      'b-bold':'#e8b274','b-italic':'#95d1cc','b-underline':'#d48c94'
     }
   },
   cloze: {
@@ -1792,6 +2646,101 @@ const PRESETS = {
       'c-bg':'#1a2f25','c-cardbg':'#22382c','c-border':'#3a6b4a','c-radius':24,
       'c-text':'#d8e8d8','c-cloze':'#7dcea0','c-extra':'#a0c0a8','c-fontsize':18,'c-extrasize':14,
       'c-bold':'#f0c860','c-italic':'#78c8e8','c-underline':'#e8a888'
+    },
+    'midnight-ocean': {
+      'c-bg':'#0f172a','c-cardbg':'#1e293b','c-border':'#334155','c-radius':20,
+      'c-text':'#f8fafc','c-cloze':'#38bdf8','c-extra':'#94a3b8','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#fbbf24','c-italic':'#a78bfa','c-underline':'#f472b6'
+    },
+    'matcha-latte': {
+      'c-bg':'#fbf9f6','c-cardbg':'#edf2ed','c-border':'#c8d6c8','c-radius':24,
+      'c-text':'#2c3e2e','c-cloze':'#d97757','c-extra':'#7a8b7a','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#b58900','c-italic':'#5a8a89','c-underline':'#cc6666'
+    },
+    'lavender-haze': {
+      'c-bg':'#171520','c-cardbg':'#232136','c-border':'#393552','c-radius':16,
+      'c-text':'#e0def4','c-cloze':'#c4a7e7','c-extra':'#908caa','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#f6c177','c-italic':'#ea9a97','c-underline':'#3e8fb0'
+    },
+    'crimson-cell': {
+      'c-bg':'#1a0f14','c-cardbg':'#2d1822','c-border':'#4a2535','c-radius':18,
+      'c-text':'#fae8ee','c-cloze':'#ff7597','c-extra':'#b58d9c','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#ffb86c','c-italic':'#8be9fd','c-underline':'#bd93f9'
+    },
+    'cafe-mocha': {
+      'c-bg':'#2c2421','c-cardbg':'#3e322d','c-border':'#5c4b43','c-radius':24,
+      'c-text':'#f4ece6','c-cloze':'#e8a87c','c-extra':'#a89f91','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e27d60','c-italic':'#85cdca','c-underline':'#c38d9e'
+    },
+    'nordic-winter': {
+      'c-bg':'#e5e9f0','c-cardbg':'#eceff4','c-border':'#d8dee9','c-radius':12,
+      'c-text':'#2e3440','c-cloze':'#5e81ac','c-extra':'#4c566a','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#bf616a','c-italic':'#d08770','c-underline':'#b48ead'
+    },
+    'sunset-grove': {
+      'c-bg':'#2a1b38','c-cardbg':'#39264a','c-border':'#5b3e75','c-radius':20,
+      'c-text':'#fceee9','c-cloze':'#ff8b6a','c-extra':'#b8a6c4','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#ffd166','c-italic':'#06d6a0','c-underline':'#ef476f'
+    },
+    'cyberpunk-neon': {
+      'c-bg':'#0a0a10','c-cardbg':'#151520','c-border':'#2d2d44','c-radius':8,
+      'c-text':'#e0e0e0','c-cloze':'#00ff9f','c-extra':'#7e7e99','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#ffe600','c-italic':'#00b8ff','c-underline':'#ff007f'
+    },
+    'academic-parchment': {
+      'c-bg':'#f4f1ea','c-cardbg':'#ffffff','c-border':'#e2ddd0','c-radius':16,
+      'c-text':'#383428','c-cloze':'#2b6cb0','c-extra':'#8f8a78','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#c53030','c-italic':'#2f855a','c-underline':'#d69e2e'
+    },
+    'obsidian-gold': {
+      'c-bg':'#121212','c-cardbg':'#1e1e1e','c-border':'#333333','c-radius':24,
+      'c-text':'#dfdfdf','c-cloze':'#d4af37','c-extra':'#888888','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#ff6b6b','c-italic':'#4ecdc4','c-underline':'#c7f464'
+    },
+    'eucalyptus-breeze': {
+      'c-bg':'#1e2622','c-cardbg':'#27312c','c-border':'#37453e','c-radius':20,
+      'c-text':'#dce4e0','c-cloze':'#78a68e','c-extra':'#8a9e94','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e0ab79','c-italic':'#8fb8c2','c-underline':'#d68d8b'
+    },
+    'oat-milk-honey': {
+      'c-bg':'#f7f5f0','c-cardbg':'#fffdfa','c-border':'#e8e4d8','c-radius':24,
+      'c-text':'#4a463d','c-cloze':'#ba8f5d','c-extra':'#a39c8e','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#d17762','c-italic':'#6b8e88','c-underline':'#cfa063'
+    },
+    'lavender-rain': {
+      'c-bg':'#211f26','c-cardbg':'#2b2831','c-border':'#3f3a47','c-radius':16,
+      'c-text':'#e3e1e8','c-cloze':'#a390c4','c-extra':'#8b8796','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#c98bb9','c-italic':'#8bb2c9','c-underline':'#dbad7f'
+    },
+    'rosewater': {
+      'c-bg':'#fcf3f6','c-cardbg':'#ffffff','c-border':'#f3e0e7','c-radius':24,
+      'c-text':'#5a4a52','c-cloze':'#d47a96','c-extra':'#a8929c','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#b56a73','c-italic':'#7c9082','c-underline':'#e3a076'
+    },
+    'cloudy-slate': {
+      'c-bg':'#1d232a','c-cardbg':'#262d35','c-border':'#3a4450','c-radius':12,
+      'c-text':'#cbd4e1','c-cloze':'#6cb2eb','c-extra':'#8392a5','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#f6993f','c-italic':'#38c172','c-underline':'#f27276'
+    },
+    'chamomile-tea': {
+      'c-bg':'#fbfdf5','c-cardbg':'#ffffff','c-border':'#e9f0d1','c-radius':20,
+      'c-text':'#3d4035','c-cloze':'#a5b55e','c-extra':'#99a187','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e89f65','c-italic':'#659fb5','c-underline':'#d67882'
+    },
+    'terracotta-sunset': {
+      'c-bg':'#2b201d','c-cardbg':'#382a27','c-border':'#4f3c38','c-radius':16,
+      'c-text':'#eee5e2','c-cloze':'#df8c73','c-extra':'#a3918d','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e3b15e','c-italic':'#7ebda8','c-underline':'#cc6f7a'
+    },
+    'midnight-fig': {
+      'c-bg':'#1d181e','c-cardbg':'#29232b','c-border':'#3f3642','c-radius':24,
+      'c-text':'#e6dfe8','c-cloze':'#b88cb5','c-extra':'#948b96','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e3a874','c-italic':'#82b09e','c-underline':'#c77381'
+    },
+    'seafoam-shadow': {
+      'c-bg':'#0f1b21','c-cardbg':'#17262d','c-border':'#243b45','c-radius':18,
+      'c-text':'#d2e3e8','c-cloze':'#57a8a6','c-extra':'#6e8996','c-fontsize':18,'c-extrasize':14,
+      'c-bold':'#e8b274','c-italic':'#95d1cc','c-underline':'#d48c94'
     }
   },
   clozep: {
@@ -1834,6 +2783,101 @@ const PRESETS = {
       'cp-bg':'#1a2f25','cp-cardbg':'#22382c','cp-border':'#3a6b4a','cp-radius':24,
       'cp-text':'#d8e8d8','cp-cloze':'#7dcea0','cp-extra':'#a0c0a8','cp-fontsize':18,'cp-extrasize':14,
       'cp-bold':'#f0c860','cp-italic':'#78c8e8','cp-underline':'#e8a888'
+    },
+    'midnight-ocean': {
+      'cp-bg':'#0f172a','cp-cardbg':'#1e293b','cp-border':'#334155','cp-radius':20,
+      'cp-text':'#f8fafc','cp-cloze':'#38bdf8','cp-extra':'#94a3b8','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#fbbf24','cp-italic':'#a78bfa','cp-underline':'#f472b6'
+    },
+    'matcha-latte': {
+      'cp-bg':'#fbf9f6','cp-cardbg':'#edf2ed','cp-border':'#c8d6c8','cp-radius':24,
+      'cp-text':'#2c3e2e','cp-cloze':'#d97757','cp-extra':'#7a8b7a','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#b58900','cp-italic':'#5a8a89','cp-underline':'#cc6666'
+    },
+    'lavender-haze': {
+      'cp-bg':'#171520','cp-cardbg':'#232136','cp-border':'#393552','cp-radius':16,
+      'cp-text':'#e0def4','cp-cloze':'#c4a7e7','cp-extra':'#908caa','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#f6c177','cp-italic':'#ea9a97','cp-underline':'#3e8fb0'
+    },
+    'crimson-cell': {
+      'cp-bg':'#1a0f14','cp-cardbg':'#2d1822','cp-border':'#4a2535','cp-radius':18,
+      'cp-text':'#fae8ee','cp-cloze':'#ff7597','cp-extra':'#b58d9c','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#ffb86c','cp-italic':'#8be9fd','cp-underline':'#bd93f9'
+    },
+    'cafe-mocha': {
+      'cp-bg':'#2c2421','cp-cardbg':'#3e322d','cp-border':'#5c4b43','cp-radius':24,
+      'cp-text':'#f4ece6','cp-cloze':'#e8a87c','cp-extra':'#a89f91','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e27d60','cp-italic':'#85cdca','cp-underline':'#c38d9e'
+    },
+    'nordic-winter': {
+      'cp-bg':'#e5e9f0','cp-cardbg':'#eceff4','cp-border':'#d8dee9','cp-radius':12,
+      'cp-text':'#2e3440','cp-cloze':'#5e81ac','cp-extra':'#4c566a','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#bf616a','cp-italic':'#d08770','cp-underline':'#b48ead'
+    },
+    'sunset-grove': {
+      'cp-bg':'#2a1b38','cp-cardbg':'#39264a','cp-border':'#5b3e75','cp-radius':20,
+      'cp-text':'#fceee9','cp-cloze':'#ff8b6a','cp-extra':'#b8a6c4','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#ffd166','cp-italic':'#06d6a0','cp-underline':'#ef476f'
+    },
+    'cyberpunk-neon': {
+      'cp-bg':'#0a0a10','cp-cardbg':'#151520','cp-border':'#2d2d44','cp-radius':8,
+      'cp-text':'#e0e0e0','cp-cloze':'#00ff9f','cp-extra':'#7e7e99','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#ffe600','cp-italic':'#00b8ff','cp-underline':'#ff007f'
+    },
+    'academic-parchment': {
+      'cp-bg':'#f4f1ea','cp-cardbg':'#ffffff','cp-border':'#e2ddd0','cp-radius':16,
+      'cp-text':'#383428','cp-cloze':'#2b6cb0','cp-extra':'#8f8a78','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#c53030','cp-italic':'#2f855a','cp-underline':'#d69e2e'
+    },
+    'obsidian-gold': {
+      'cp-bg':'#121212','cp-cardbg':'#1e1e1e','cp-border':'#333333','cp-radius':24,
+      'cp-text':'#dfdfdf','cp-cloze':'#d4af37','cp-extra':'#888888','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#ff6b6b','cp-italic':'#4ecdc4','cp-underline':'#c7f464'
+    },
+    'eucalyptus-breeze': {
+      'cp-bg':'#1e2622','cp-cardbg':'#27312c','cp-border':'#37453e','cp-radius':20,
+      'cp-text':'#dce4e0','cp-cloze':'#78a68e','cp-extra':'#8a9e94','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e0ab79','cp-italic':'#8fb8c2','cp-underline':'#d68d8b'
+    },
+    'oat-milk-honey': {
+      'cp-bg':'#f7f5f0','cp-cardbg':'#fffdfa','cp-border':'#e8e4d8','cp-radius':24,
+      'cp-text':'#4a463d','cp-cloze':'#ba8f5d','cp-extra':'#a39c8e','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#d17762','cp-italic':'#6b8e88','cp-underline':'#cfa063'
+    },
+    'lavender-rain': {
+      'cp-bg':'#211f26','cp-cardbg':'#2b2831','cp-border':'#3f3a47','cp-radius':16,
+      'cp-text':'#e3e1e8','cp-cloze':'#a390c4','cp-extra':'#8b8796','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#c98bb9','cp-italic':'#8bb2c9','cp-underline':'#dbad7f'
+    },
+    'rosewater': {
+      'cp-bg':'#fcf3f6','cp-cardbg':'#ffffff','cp-border':'#f3e0e7','cp-radius':24,
+      'cp-text':'#5a4a52','cp-cloze':'#d47a96','cp-extra':'#a8929c','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#b56a73','cp-italic':'#7c9082','cp-underline':'#e3a076'
+    },
+    'cloudy-slate': {
+      'cp-bg':'#1d232a','cp-cardbg':'#262d35','cp-border':'#3a4450','cp-radius':12,
+      'cp-text':'#cbd4e1','cp-cloze':'#6cb2eb','cp-extra':'#8392a5','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#f6993f','cp-italic':'#38c172','cp-underline':'#f27276'
+    },
+    'chamomile-tea': {
+      'cp-bg':'#fbfdf5','cp-cardbg':'#ffffff','cp-border':'#e9f0d1','cp-radius':20,
+      'cp-text':'#3d4035','cp-cloze':'#a5b55e','cp-extra':'#99a187','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e89f65','cp-italic':'#659fb5','cp-underline':'#d67882'
+    },
+    'terracotta-sunset': {
+      'cp-bg':'#2b201d','cp-cardbg':'#382a27','cp-border':'#4f3c38','cp-radius':16,
+      'cp-text':'#eee5e2','cp-cloze':'#df8c73','cp-extra':'#a3918d','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e3b15e','cp-italic':'#7ebda8','cp-underline':'#cc6f7a'
+    },
+    'midnight-fig': {
+      'cp-bg':'#1d181e','cp-cardbg':'#29232b','cp-border':'#3f3642','cp-radius':24,
+      'cp-text':'#e6dfe8','cp-cloze':'#b88cb5','cp-extra':'#948b96','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e3a874','cp-italic':'#82b09e','cp-underline':'#c77381'
+    },
+    'seafoam-shadow': {
+      'cp-bg':'#0f1b21','cp-cardbg':'#17262d','cp-border':'#243b45','cp-radius':18,
+      'cp-text':'#d2e3e8','cp-cloze':'#57a8a6','cp-extra':'#6e8996','cp-fontsize':18,'cp-extrasize':14,
+      'cp-bold':'#e8b274','cp-italic':'#95d1cc','cp-underline':'#d48c94'
     }
   }
 };

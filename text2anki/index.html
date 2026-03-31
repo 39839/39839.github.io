@@ -295,14 +295,20 @@
   </div>
 
   <div class="fdp-footer">
-    <button class="fdp-action-btn fdp-create-class-btn" onclick="fdpStartCreateClass()">
-      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      Create Class
-    </button>
-    <button class="fdp-action-btn fdp-create-deck-btn" onclick="fdpStartCreateDeck(null)">
-      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
-      New Deck
-    </button>
+    <div class="fdp-footer-actions">
+      <button class="fdp-action-btn fdp-create-class-btn" onclick="fdpStartCreateClass()">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Create Class
+      </button>
+      <button class="fdp-action-btn fdp-create-deck-btn" onclick="fdpStartCreateDeck(null)">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+        New Deck
+      </button>
+    </div>
+    <a class="fdp-themes-btn" href="styles.html">
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 1.5v.8M5.5 8.7v.8M1.5 5.5h.8M8.7 5.5h.8M2.9 2.9l.57.57M7.53 7.53l.57.57M2.9 8.1l.57-.57M7.53 3.47l.57-.57" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>
+      Customize Card Themes
+    </a>
   </div>
 </div>
 
@@ -314,36 +320,41 @@
 
   <!-- Header -->
   <div class="sb-header">
-    <div class="sb-header-row">
-      <div class="sb-title">My Library</div>
+    <div class="sb-header-top">
+      <div class="sb-brand">
+        <div class="sb-brand-icon">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect x="1.5" y="2.5" width="13" height="10" rx="2.5" stroke="white" stroke-width="1.4" fill="none"/>
+            <path d="M1.5 6h13" stroke="white" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="sb-title">My Library</div>
+      </div>
       <button class="sb-close" onclick="closeSidebar()" title="Close">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 2l9 9M11 2L2 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       </button>
     </div>
+
     <div class="sb-user" id="sidebarUser"></div>
+
     <div class="sb-stats-row">
-      <div class="sb-stat"><span class="sb-stat-num" id="statDecks">0</span><span class="sb-stat-lbl">Decks</span></div>
+      <div class="sb-stat">
+        <span class="sb-stat-num" id="statDecks">0</span>
+        <span class="sb-stat-lbl">Decks</span>
+      </div>
       <div class="sb-stat-div"></div>
-      <div class="sb-stat"><span class="sb-stat-num" id="statCards">0</span><span class="sb-stat-lbl">Cards</span></div>
+      <div class="sb-stat">
+        <span class="sb-stat-num" id="statCards">0</span>
+        <span class="sb-stat-lbl">Cards</span>
+      </div>
     </div>
   </div>
 
   <!-- Search -->
   <div class="sb-search-wrap">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="sb-search-icon"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 9.5l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" class="sb-search-icon"><circle cx="5.5" cy="5.5" r="4" stroke="currentColor" stroke-width="1.4"/><path d="M9 9l2.5 2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
     <input class="sb-search" id="sidebarSearch" type="text" placeholder="Search decks..." oninput="renderSidebarDecks()">
   </div>
-
-  <!-- Card Styles promo banner -->
-  <a class="sb-styles-banner" href="styles.html">
-    <div class="sb-styles-banner-icon">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3.5" fill="white" opacity="0.9"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
-    </div>
-    <div class="sb-styles-banner-text">
-      <div class="sb-styles-banner-title">Customize Card Styles</div>
-      <div class="sb-styles-banner-sub">Change colors, fonts & themes →</div>
-    </div>
-  </a>
 
   <!-- Decks list -->
   <div class="sb-section-label">Your Decks</div>
@@ -361,8 +372,12 @@
 
   <!-- Footer -->
   <div class="sb-footer">
+    <a class="sb-themes-btn" href="styles.html">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 1.5v1.2M6.5 10.3v1.2M1.5 6.5h1.2M10.3 6.5h1.2M3.2 3.2l.85.85M9 8.95l.85.85M3.2 9.8l.85-.85M9 4.05l.85-.85" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Customize Card Themes
+    </a>
     <button class="sb-new-btn" onclick="closeSidebar(); document.getElementById('deckName').focus()">
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="white" stroke-width="1.9" stroke-linecap="round"/></svg>
       New Deck
     </button>
   </div>

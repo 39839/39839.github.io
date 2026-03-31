@@ -1039,11 +1039,12 @@ async function downloadApkg() {
   <div class="bfront">{{Front}}</div>
 </div>`;
 
+    const dividerHtml = getDividerHTML(cardStyles.basicData);
     const BASIC_AFMT = `<div id="bkard">
   <div class="tags">{{Tags}}</div>
   <div class="side-label">Question</div>
   <div class="bfront">{{Front}}</div>
-  <div class="divider"><span class="divider-line"></span><span class="divider-diamond"></span><span class="divider-line"></span></div>
+  ${dividerHtml}
   <div class="side-label answer-label">Answer</div>
   <div class="bback">{{Back}}</div>
 </div>`;
@@ -1178,17 +1179,20 @@ const STYLE_DEFAULTS = {
     'b-font': 'Georgia, serif',
     'b-front-color': '#3a4a3b', 'b-back-color': '#5a7a5c',
     'b-label-color': '#8fab87', 'b-divider-color': '#8fab87',
-    'b-bold': '#b07d2a', 'b-italic': '#9a6060', 'b-underline': '#5a9a95'
+    'b-bold': '#b07d2a', 'b-italic': '#9a6060', 'b-underline': '#5a9a95',
+    'b-divider-shape': 'diamond', 'b-divider-thickness': 1
   },
   cloze: {
     'c-bg': '#1F80C1', 'c-cardbg': '#1E282C', 'c-border': '#ffffff', 'c-radius': 30,
     'c-text': '#E6E6E7', 'c-cloze': '#3CB371', 'c-extra': '#E6E6E7', 'c-fontsize': 18, 'c-extrasize': 14,
-    'c-bold': '#EABB3D', 'c-italic': '#CD5C5C', 'c-underline': '#21B2B8'
+    'c-bold': '#EABB3D', 'c-italic': '#CD5C5C', 'c-underline': '#21B2B8',
+    'c-font': 'Avenir, Helvetica Neue, sans-serif'
   },
   clozep: {
     'cp-bg': '#1F80C1', 'cp-cardbg': '#1E282C', 'cp-border': '#ffffff', 'cp-radius': 30,
     'cp-text': '#E6E6E7', 'cp-cloze': '#3CB371', 'cp-extra': '#E6E6E7', 'cp-fontsize': 18, 'cp-extrasize': 14,
-    'cp-bold': '#EABB3D', 'cp-italic': '#CD5C5C', 'cp-underline': '#21B2B8'
+    'cp-bold': '#EABB3D', 'cp-italic': '#CD5C5C', 'cp-underline': '#21B2B8',
+    'cp-font': 'Avenir, Helvetica Neue, sans-serif'
   }
 };
 
@@ -1199,27 +1203,32 @@ function buildBasicCSSFrom(d) {
   const frontSize=g('b-frontsize'), backSize=g('b-backsize');
   const font=g('b-font'), frontC=g('b-front-color'), backC=g('b-back-color');
   const labelC=g('b-label-color'), divC=g('b-divider-color');
+  const divThickness=g('b-divider-thickness') || 1;
+  const divShape=g('b-divider-shape') || 'diamond';
+  const isLineOnly = divShape === 'line-only';
+  const lineWidth = isLineOnly ? '140px' : '64px';
   const boldC=g('b-bold'), italicC=g('b-italic'), ulC=g('b-underline');
   return `
 html { overflow: scroll; overflow-x: hidden; background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; background-color: ${bg1} !important; }
 body { background: transparent !important; margin: 0; padding: 0; }
 .card { font-family: ${font}; font-size: 18px; text-align: center; color: ${frontC}; line-height: 1.7em; background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; border: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; min-height: 100vh; }
 #bkard { padding: 32px 24px 28px; max-width: 720px; margin: 0 auto; word-wrap: break-word; background: ${cardbg}; border: 1.5px solid ${border}44; border-radius: ${radius}px; box-shadow: 0 8px 40px rgba(100,120,100,0.13); }
-.side-label { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: ${labelC}; margin-bottom: 16px; }
+.side-label { font-family: ${font}; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; color: ${labelC}; margin-bottom: 16px; }
 .answer-label { color: ${divC}; margin-top: 0; }
-.bfront { font-family: 'Avenir','Helvetica Neue',sans-serif; font-size: ${frontSize}px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
+.bfront { font-family: ${font}; font-size: ${frontSize}px; font-weight: 600; color: ${frontC}; line-height: 1.5; padding: 0 12px; letter-spacing: -0.2px; }
 .divider { display: flex; align-items: center; justify-content: center; margin: 24px auto; }
-.divider-line { height: 1px; width: 64px; background: linear-gradient(90deg, transparent, ${divC}66, transparent); display: inline-block; }
-.divider-diamond { width: 6px; height: 6px; background: ${divC}; transform: rotate(45deg); display: inline-block; margin: 0 10px; opacity: 0.6; }
+.divider-line { height: ${divThickness}px; width: ${lineWidth}; background: linear-gradient(90deg, transparent, ${divC}88, transparent); display: inline-block; }
+.divider-shape { display: inline-flex; align-items: center; justify-content: center; margin: 0 10px; opacity: 0.65; color: ${divC}; font-size: 10px; line-height: 1; }
+.divider-diamond { display: none; }
 .bback { font-family: ${font}; font-size: ${backSize}px; color: ${backC}; line-height: 1.7; padding: 0 12px 6px; font-weight: 400; }
 .tags { color: #b8a8c8; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; letter-spacing: 1px; position: fixed; padding: 0; top: 0; right: 0; }
 .tags:hover { opacity: 1; }
-b, strong { color: ${boldC} !important; font-weight: bold; }
-u { text-decoration: underline; color: ${ulC}; }
-i, em { color: ${italicC}; font-style: italic; }
-u i, i u, u em, em u { color: limegreen !important; font-weight: bold; }
-u b, b u, u strong, strong u { color: ${ulC} !important; }
-i b, b i, em strong, strong em { color: ${italicC} !important; font-weight: bold; }
+b, strong { color: ${boldC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${boldC}44; letter-spacing: 0.01em; }
+u { text-decoration: none; color: ${ulC}; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; padding-bottom: 1px; }
+i, em { color: ${italicC}; font-style: italic; letter-spacing: 0.02em; }
+u i, i u, u em, em u { color: limegreen !important; font-weight: bold; background-image: linear-gradient(limegreen, limegreen); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+u b, b u, u strong, strong u { color: ${ulC} !important; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+i b, b i, em strong, strong em { color: ${italicC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${italicC}44; }
 a { color: ${labelC} !important; text-decoration: none; font-size: 11px; }
 img { display: block; max-width: 100%; margin: 16px auto; border-radius: 14px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
 .card.nightMode { background: linear-gradient(160deg, ${bg1} 0%, ${bg2} 50%, ${bg3} 100%) !important; color: ${frontC} !important; }
@@ -1236,26 +1245,45 @@ img { display: block; max-width: 100%; margin: 16px auto; border-radius: 14px; b
   `.trim();
 }
 
+function getDividerHTML(d) {
+  const shape = (d && d['b-divider-shape']) || STYLE_DEFAULTS.basic['b-divider-shape'] || 'diamond';
+  if (shape === 'line-only') {
+    return '<div class="divider"><span class="divider-line"></span></div>';
+  }
+  const shapeMap = {
+    'diamond': '&#9670;',
+    'square':  '&#9632;',
+    'star':    '&#9733;',
+    'circle':  '&#9679;',
+    'dots':    '&#8226;&#8226;&#8226;',
+    'heart':   '&#9829;'
+  };
+  const entity = shapeMap[shape] || shapeMap['diamond'];
+  const extraStyle = shape === 'dots' ? ' style="letter-spacing:4px;font-size:8px"' : '';
+  return `<div class="divider"><span class="divider-line"></span><span class="divider-shape"${extraStyle}>${entity}</span><span class="divider-line"></span></div>`;
+}
+
 function buildClozeCSSFrom(d, pfx) {
   const p = k => d[pfx+'-'+k] ?? STYLE_DEFAULTS[pfx === 'c' ? 'cloze' : 'clozep'][pfx+'-'+k];
   const bg=p('bg'), cardbg=p('cardbg'), border=p('border'), radius=p('radius');
   const textC=p('text'), clozeC=p('cloze'), extraC=p('extra'), fs=p('fontsize'), extraFs=p('extrasize') || 14;
   const boldC=p('bold'), italicC=p('italic'), ulC=p('underline');
+  const font=p('font') || 'Avenir, Helvetica Neue, sans-serif';
   return `
 html { overflow: scroll; overflow-x: hidden; background-color: ${bg} !important; }
 body { background: transparent !important; margin: 0; padding: 0; }
-.card { font-family: Avenir; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${bg} !important; border: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; min-height: 100vh; }
+.card { font-family: ${font}; font-size: ${fs}px; text-align: center; color: ${textC}; line-height: 1.6em; background-color: ${bg} !important; border: none !important; border-radius: 0 !important; margin: 0 !important; padding: 0 !important; min-height: 100vh; }
 #kard { padding: 15px 10px; max-width: 800px; margin: 0 auto; word-wrap: break-word; background-color: ${cardbg}; border: 2px solid ${border}; border-radius: ${radius}px; }
 .cloze, .cloze b, .cloze u, .cloze i { font-weight: bold; color: ${clozeC} !important; }
 #extra, #extra i, #extra em { font-size: ${extraFs}px; color: ${extraC}; font-style: italic; }
 .tags { color: #A6ABB9; opacity: 0; font-size: 10px; width: 100%; text-align: center; text-transform: uppercase; position: fixed; padding: 0; top: 0; right: 0; }
 .tags:hover { opacity: 1; }
-b, strong { color: ${boldC} !important; font-weight: bold; }
-u { text-decoration: underline; color: ${ulC}; }
-i, em { color: ${italicC}; font-style: italic; }
-u i, i u, u em, em u { color: limegreen !important; font-weight: bold; }
-u b, b u, u strong, strong u { color: ${ulC} !important; }
-i b, b i, em strong, strong em { color: ${italicC} !important; font-weight: bold; }
+b, strong { color: ${boldC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${boldC}44; letter-spacing: 0.01em; }
+u { text-decoration: none; color: ${ulC}; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; padding-bottom: 1px; }
+i, em { color: ${italicC}; font-style: italic; letter-spacing: 0.02em; }
+u i, i u, u em, em u { color: limegreen !important; font-weight: bold; background-image: linear-gradient(limegreen, limegreen); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+u b, b u, u strong, strong u { color: ${ulC} !important; background-image: linear-gradient(${ulC}, ${ulC}); background-position: 0 88%; background-repeat: no-repeat; background-size: 100% 2px; }
+i b, b i, em strong, strong em { color: ${italicC} !important; font-weight: 700; text-shadow: 0 0 0.5px ${italicC}44; }
 a { color: LightGray !important; text-decoration: none; font-size: 10px; font-style: normal; }
 img { display: block; max-width: 100%; margin: 10px auto; }
 tr { font-size: 12px; }
@@ -1279,7 +1307,7 @@ const BUILTIN_PRESETS = {
       'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
       'b-front-color':'#e8e4f0','b-back-color':'#c0b8d8',
       'b-label-color':'#8878b0','b-divider-color':'#6a5a9a',
-      'b-bold':'#e0a0c0','b-italic':'#80c8e0','b-underline':'#a8d8a0'
+      'b-bold':'#f2b0c8','b-italic':'#7ec8e8','b-underline':'#98e0a8'
     },
     'Honey Dusk': {
       'b-bg1':'#fef3e2','b-bg2':'#fce8cc','b-bg3':'#fdf0d8',
@@ -1287,7 +1315,7 @@ const BUILTIN_PRESETS = {
       'b-font':'Georgia, serif',
       'b-front-color':'#4a3520','b-back-color':'#6a5540',
       'b-label-color':'#c8956a','b-divider-color':'#d4a878',
-      'b-bold':'#c06030','b-italic':'#7a6898','b-underline':'#3a8a7a'
+      'b-bold':'#b85828','b-italic':'#7a5898','b-underline':'#1a8878'
     },
     'Arctic Mist': {
       'b-bg1':'#eaf2f8','b-bg2':'#e0eef8','b-bg3':'#e8f0f8',
@@ -1295,41 +1323,41 @@ const BUILTIN_PRESETS = {
       'b-font':"'Avenir', 'Helvetica Neue', sans-serif",
       'b-front-color':'#2a3a4a','b-back-color':'#4a6070',
       'b-label-color':'#5b8fb9','b-divider-color':'#7aaad0',
-      'b-bold':'#d07030','b-italic':'#5878a8','b-underline':'#2a8a68'
+      'b-bold':'#c06828','b-italic':'#4870a8','b-underline':'#1a8860'
     }
   },
   cloze: {
     'Aurora Night': {
       'c-bg':'#0d1117','c-cardbg':'#161b22','c-border':'#30363d','c-radius':20,
       'c-text':'#e6edf3','c-cloze':'#58d68d','c-extra':'#8b949e','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#f0b27a','c-italic':'#85c1e9','c-underline':'#c39bd3'
+      'c-bold':'#f0b878','c-italic':'#80c0f0','c-underline':'#d0a0e8'
     },
     'Soft Coral': {
       'c-bg':'#fff0f0','c-cardbg':'#ffffff','c-border':'#e8b0b0','c-radius':22,
       'c-text':'#4a3035','c-cloze':'#e05a5a','c-extra':'#9a8088','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#d08040','c-italic':'#7060a0','c-underline':'#2a9a8a'
+      'c-bold':'#c87838','c-italic':'#6850a8','c-underline':'#1a9080'
     },
     'Forest Dew': {
       'c-bg':'#1a2f25','c-cardbg':'#22382c','c-border':'#3a6b4a','c-radius':24,
       'c-text':'#d8e8d8','c-cloze':'#7dcea0','c-extra':'#a0c0a8','c-fontsize':18,'c-extrasize':14,
-      'c-bold':'#e8c060','c-italic':'#80c8e0','c-underline':'#d8a090'
+      'c-bold':'#f0c860','c-italic':'#78c8e8','c-underline':'#e8a888'
     }
   },
   clozep: {
     'Aurora Night': {
       'cp-bg':'#0d1117','cp-cardbg':'#161b22','cp-border':'#30363d','cp-radius':20,
       'cp-text':'#e6edf3','cp-cloze':'#58d68d','cp-extra':'#8b949e','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#f0b27a','cp-italic':'#85c1e9','cp-underline':'#c39bd3'
+      'cp-bold':'#f0b878','cp-italic':'#80c0f0','cp-underline':'#d0a0e8'
     },
     'Soft Coral': {
       'cp-bg':'#fff0f0','cp-cardbg':'#ffffff','cp-border':'#e8b0b0','cp-radius':22,
       'cp-text':'#4a3035','cp-cloze':'#e05a5a','cp-extra':'#9a8088','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#d08040','cp-italic':'#7060a0','cp-underline':'#2a9a8a'
+      'cp-bold':'#c87838','cp-italic':'#6850a8','cp-underline':'#1a9080'
     },
     'Forest Dew': {
       'cp-bg':'#1a2f25','cp-cardbg':'#22382c','cp-border':'#3a6b4a','cp-radius':24,
       'cp-text':'#d8e8d8','cp-cloze':'#7dcea0','cp-extra':'#a0c0a8','cp-fontsize':18,'cp-extrasize':14,
-      'cp-bold':'#e8c060','cp-italic':'#80c8e0','cp-underline':'#d8a090'
+      'cp-bold':'#f0c860','cp-italic':'#78c8e8','cp-underline':'#e8a888'
     }
   }
 };
@@ -1357,8 +1385,9 @@ function populateThemeSelector() {
 
   const cardType = selectedCardType;
   const typeKey = cardType === 'Basic' ? 'basic' : cardType === 'Cloze++' ? 'clozep' : 'cloze';
-  const presets = getAllPresets(typeKey);
-  const names = Object.keys(presets);
+  // Only show user's own saved presets + Default
+  const userPresets = userNamedPresets[typeKey] || {};
+  const names = Object.keys(userPresets);
 
   const savedTheme = (localStorage.getItem('t2a_theme_' + typeKey) || '');
   const activeTheme = names.includes(savedTheme) ? savedTheme : '';
@@ -1377,12 +1406,8 @@ function populateThemeSelector() {
     ).join('');
   }
 
-  // Always show selector since we have built-in presets
-  if (names.length) {
-    row.style.display = '';
-  } else {
-    row.style.display = 'none';
-  }
+  // Always show the selector row
+  row.style.display = '';
 }
 
 function toggleThemeDropdown() {
@@ -1425,13 +1450,14 @@ async function loadCardStyles(themeOverride) {
   const out = {
     basicCSS: buildBasicCSSFrom({}),
     clozeCSS: buildClozeCSSFrom({}, 'c'),
-    clozepCSS: buildClozeCSSFrom({}, 'cp')
+    clozepCSS: buildClozeCSSFrom({}, 'cp'),
+    basicData: {}
   };
   try {
     if (currentUser) {
       const snap = await fsDb.collection('users').doc(currentUser.uid).collection('settings').doc('cardStyles').get();
       const saved = snap.exists ? (snap.data() || {}) : {};
-      if (saved.basic)  out.basicCSS  = buildBasicCSSFrom(saved.basic);
+      if (saved.basic)  { out.basicCSS  = buildBasicCSSFrom(saved.basic);  out.basicData = saved.basic; }
       if (saved.cloze)  out.clozeCSS  = buildClozeCSSFrom(saved.cloze, 'c');
       if (saved.clozep) out.clozepCSS = buildClozeCSSFrom(saved.clozep, 'cp');
     }
@@ -1441,7 +1467,7 @@ async function loadCardStyles(themeOverride) {
       const typeKey = cardType === 'Basic' ? 'basic' : cardType === 'Cloze++' ? 'clozep' : 'cloze';
       const presetData = getAllPresets(typeKey)[themeOverride];
       if (presetData) {
-        if (typeKey === 'basic')  out.basicCSS  = buildBasicCSSFrom(presetData);
+        if (typeKey === 'basic')  { out.basicCSS  = buildBasicCSSFrom(presetData); out.basicData = presetData; }
         if (typeKey === 'cloze')  out.clozeCSS  = buildClozeCSSFrom(presetData, 'c');
         if (typeKey === 'clozep') out.clozepCSS = buildClozeCSSFrom(presetData, 'cp');
       }
