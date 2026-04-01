@@ -780,6 +780,119 @@ function setCardType(type, btn) {
 function cleanHtmlTags(s) {
   return s.replace(/\\<(\/?(?:b|i|u|strong|em|sub|sup|br))\\>/gi, '<$1>');
 }
+function normalizeLatex(s) {
+  // Step 1: Fix already-present but double-escaped delimiters: \\( → \(
+  let out = s.replace(/\\\\(\(|\)|\[|\])/g, '\\$1');
+
+  // Step 2: Detect bare-paren equations and wrap in \( \)
+  // Match (...) that contains LaTeX commands (\\cmd or \cmd) or math syntax (^, {}, =)
+  // Detect if parenthesized content is a math equation
+  const hasLatexCmd = t => /\\\\?[a-zA-Z]{2,}/.test(t) || /\\(frac|sqrt|int|sum|prod|lim|infty|partial|nabla|Delta|alpha|beta|gamma|mu|pi|sigma|rho|epsilon|hbar|hat|mathbf|text|ge|le|ne|cdot|times|rightarrow|leftarrow|Psi|psi|phi|Phi|lambda|Lambda|theta|omega)/.test(t);
+  const hasMathSyntax = t => /[_^]\{/.test(t) || /[_^]\w/.test(t) || (/\{/.test(t) && /\}/.test(t));
+  // Simple equation pattern: single letters/short tokens around = sign, like F = ma, E = hf, E = mc^2
+  const isSimpleEquation = t => /^[A-Za-z0-9\s^_=+\-*\/().]+$/.test(t.trim()) && /[A-Za-z]\s*=\s*[A-Za-z0-9]/.test(t) && t.trim().length <= 30;
+  const isMath = t => hasLatexCmd(t) || hasMathSyntax(t) || isSimpleEquation(t);
+
+  // Step 1.5: Fix cloze hint placement and missing braces
+  // Case A: AI writes }}::hint} but should be }::hint}} (hint placed after cloze close)
+  out = out.replace(/(\{\{c\d+::[\s\S]*?)\}\}::([^}]+)\}/g, '$1}::$2}}');
+  // Case B: AI writes {{cN::...}::hint} with only one } — add missing }
+  // Match {{cN:: ... }::hint} where there's no }} (cloze needs two })
+  out = out.replace(/(\{\{c\d+::[^}]*(?:\{[^}]*\}[^}]*)*?)(\}::([^}]+))\}(?!\})/g, '$1$2}}');
+
+  // Process from right to left so index positions stay stable
+  // Find outermost ( ... ) groups that are NOT preceded by a backslash
+  // Track brace depth; skip cloze markers {{cN:: and }} to avoid miscounting
+  const matches = [];
+  let depth = 0, start = -1, braceD = 0;
+  for (let i = 0; i < out.length; i++) {
+    // Skip cloze openers {{cN:: — don't count their {{ as brace opens
+    const clozeOpen = out.substring(i).match(/^\{\{c\d+::/);
+    if (clozeOpen) { i += clozeOpen[0].length - 1; continue; }
+    // Skip cloze closers }} — don't count as brace closes
+    if (out[i] === '}' && out[i+1] === '}') {
+      // Check if this looks like a cloze closer (preceded by non-brace content)
+      // Simple heuristic: if braceD would go negative or is 0, it's a cloze closer
+      if (braceD <= 1) { i++; continue; }
+    }
+    if (out[i] === '{') { braceD++; continue; }
+    if (out[i] === '}') { if (braceD > 0) braceD--; continue; }
+    if (braceD > 0) continue; // skip chars inside braces
+    if (out[i] === '(' && (i === 0 || out[i-1] !== '\\')) {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (out[i] === ')' && depth > 0) {
+      depth--;
+      if (depth === 0) {
+        matches.push([start, i]);
+      }
+    }
+  }
+
+  // Process matches in reverse to preserve indices
+  for (let k = matches.length - 1; k >= 0; k--) {
+    const [a, b] = matches[k];
+    const inner = out.substring(a + 1, b);
+    if (isMath(inner)) {
+      let cleaned = inner.replace(/\\\\/g, '\\').replace(/\\_/g, '_');
+      out = out.substring(0, a) + '\\(' + cleaned + '\\)' + out.substring(b + 1);
+    }
+  }
+
+  // Step 3: Fix internals of any \(...\) or \[...\] blocks
+  function fixLatexInternals(m) {
+    return m.replace(/\\\\/g, '\\').replace(/\\_/g, '_');
+  }
+  out = out.replace(/\\\([\s\S]*?\\\)/g, fixLatexInternals);
+  out = out.replace(/\\\[[\s\S]*?\\\]/g, fixLatexInternals);
+
+  // Step 4: Fix }} inside cloze content that would prematurely close the cloze.
+  // Strategy: for each cloze, find ALL }} positions. The last }} is the true
+  // cloze closer; fix all earlier }} by replacing with }\ }.
+  // We must be careful with multiple clozes: only look up to the next {{cN::.
+  let result = '';
+  let i = 0;
+  while (i < out.length) {
+    const clozeMatch = out.substring(i).match(/^\{\{c\d+::/);
+    if (clozeMatch) {
+      result += clozeMatch[0];
+      i += clozeMatch[0].length;
+      // Find the boundary: next {{cN:: or end of string
+      const nextCloze = out.substring(i).search(/\{\{c\d+::/);
+      const boundary = nextCloze >= 0 ? i + nextCloze : out.length;
+      // Find all }} positions within [i, boundary)
+      // Don't skip overlapping matches — }}} has }} at both pos N and N+1
+      const ddPositions = [];
+      for (let j = i; j < boundary - 1; j++) {
+        if (out[j] === '}' && out[j+1] === '}') {
+          ddPositions.push(j);
+        }
+      }
+      if (ddPositions.length === 0) {
+        // No }} — broken cloze, emit content up to boundary as-is
+        result += out.substring(i, boundary);
+        i = boundary;
+        continue;
+      }
+      // Last }} is the cloze closer; fix all earlier }}
+      const closerPos = ddPositions[ddPositions.length - 1];
+      let content = out.substring(i, closerPos);
+      content = content.replace(/\}\}/g, '}\\ }');
+      // If content ends with }, it would merge with the cloze-closing }}
+      // to form }}} — Anki would see }} prematurely. Insert \ to separate.
+      if (content.endsWith('}')) {
+        content += '\\ ';
+      }
+      result += content + '}}';
+      i = closerPos + 2;
+    } else {
+      result += out[i];
+      i++;
+    }
+  }
+  out = result;
+  return out;
+}
 
 function parseCards(text, noteType) {
   if (!text.trim()) return { cards: [], strategy: 'none' };
@@ -838,7 +951,7 @@ function parseCards(text, noteType) {
   // Q/A labels and Cloze syntax are explicit formats — prefer them over heuristic strategies
   const preferred = strategies.find(s => s.name === 'Q/A labels' || s.name === 'Cloze syntax');
   const best = preferred || strategies.reduce((a,b) => b.cards.length>a.cards.length ? b : a);
-  return { cards: best.cards.map(c=>({...c, front: cleanHtmlTags(c.front||''), back: cleanHtmlTags(c.back||''), noteType})), strategy: best.name };
+  return { cards: best.cards.map(c=>({...c, front: normalizeLatex(cleanHtmlTags(c.front||'')), back: normalizeLatex(cleanHtmlTags(c.back||'')), noteType})), strategy: best.name };
 }
 
 let parseTimer = null;
@@ -928,6 +1041,11 @@ function doPreview() {
   const sec = document.getElementById('previewSection');
   sec.classList.add('visible');
   setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+
+  // Render MathJax equations in preview
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([list]).catch(() => {});
+  }
 }
 
 function toggleCardBack(btn) {
@@ -937,17 +1055,52 @@ function toggleCardBack(btn) {
   btn.innerHTML = isHidden
     ? `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 2l7 7M9 2L2 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Hide back`
     : `<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 3v2.5l1.5 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> Show back`;
+  // Typeset newly revealed back content
+  if (isHidden && window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([extra]).catch(() => {});
+  }
 }
 
 function safeHtml(s) {
-  return s
+  // Protect LaTeX/MathJax delimiters before escaping HTML
+  let out = s;
+  const latexBlocks = [];
+  out = out.replace(/\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g, (m) => {
+    latexBlocks.push(m);
+    return `%%SH_LATEX_${latexBlocks.length - 1}%%`;
+  });
+  out = out
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/&lt;(\/?(b|i|u|strong|em|br))&gt;/gi, '<$1>');
+    .replace(/&lt;(\/?(b|i|u|strong|em|sub|sup|br))&gt;/gi, '<$1>');
+  out = out.replace(/%%SH_LATEX_(\d+)%%/g, (_, idx) => {
+    const latex = latexBlocks[parseInt(idx)];
+    if (!latex) return '';
+    // Strip cloze syntax inside LaTeX so MathJax can render it
+    let clean = latex.replace(/\{\{c\d+::([\s\S]*?)(?:::[^}]*)?\}\}/g, '$1');
+    return clean.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  });
+  return out;
 }
 function hlCloze(text) {
-  return safeHtml(text).replace(/\{\{c(\d+)::([^}:]+)(?:::[^}]*)?\}\}/g,
+  // Protect LaTeX blocks from being mangled by cloze regex
+  const latexBlocks = [];
+  let safe = text.replace(/\\\[([\s\S]*?)\\\]|\\\(([\s\S]*?)\\\)/g, (m) => {
+    latexBlocks.push(m);
+    return `%%HL_LATEX_${latexBlocks.length - 1}%%`;
+  });
+  safe = safeHtml(safe);
+  safe = safe.replace(/\{\{c(\d+)::([^}:]+)(?:::[^}]*)?\}\}/g,
     (_, n, ans) => `<span class="cloze-mark">{{c${n}::${ans}}}</span>`);
+  safe = safe.replace(/%%HL_LATEX_(\d+)%%/g, (_, idx) => {
+    const latex = latexBlocks[parseInt(idx)];
+    if (!latex) return '';
+    // Strip cloze syntax inside LaTeX so MathJax can render it.
+    // Replace {{cN::answer::hint}} or {{cN::answer}} with just the answer.
+    let clean = latex.replace(/\{\{c\d+::([\s\S]*?)(?:::[^}]*)?\}\}/g, '$1');
+    return clean.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  });
+  return safe;
 }
 function esc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -1057,7 +1210,7 @@ async function downloadApkg() {
         { name:'Back',  ord:1, sticky:false, rtl:false, font:'Avenir', size:18, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false, media:[] }
       ],
       css: cardStyles.basicCSS,
-      latexPre: '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',
+      latexPre: '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\usepackage[version=4]{mhchem}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',
       latexPost: '\\end{document}', vers:[], tags:[], req:[[0,'any',[0]]]
     };
 
@@ -1081,7 +1234,7 @@ async function downloadApkg() {
         { name:'Extra', ord:1, sticky:false, rtl:false, font:'Avenir', size:15, description:'', plainText:false, collapsed:false, excludeFromSearch:false, id: Math.floor(Math.random()*1000000000), tag:null, preventDeletion:false, media:[] }
       ],
       css: (toExport[0]?.card?.noteType === 'Cloze++') ? cardStyles.clozepCSS : cardStyles.clozeCSS,
-      latexPre: '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',
+      latexPre: '\\documentclass[12pt]{article}\n\\special{papersize=3in,5in}\n\\usepackage[utf8]{inputenc}\n\\usepackage{amssymb,amsmath}\n\\usepackage[version=4]{mhchem}\n\\pagestyle{empty}\n\\setlength{\\parindent}{0in}\n\\begin{document}\n',
       latexPost: '\\end{document}', vers:[], tags:[], req:[[0,'any',[0]]]
     };
 
@@ -1544,15 +1697,35 @@ RULES:
 - Separate cards from each other with exactly ONE blank line
 - Do not number cards
 - Do not add headers or section titles
+- Do NOT include images, image links, or any media references
 
 FORMATTING — use ONLY real HTML tags (the literal characters < and >) inside Q and A:
 - CRITICAL: use ONLY these exact tags: <b>word</b> for bold, <i>word</i> for italics, <u>word</u> for underline
-- Do NOT use backslashes, asterisks, markdown, or any other formatting syntax — only the HTML tags above
+- Do NOT use asterisks, markdown, or any other formatting syntax — only the HTML tags above (exception: LaTeX math — see MATH section below)
 - Do NOT escape the angle brackets — write <b> not \\<b\\>
 - Wrap the single most important word or phrase in <b>bold</b> — every card should have at least one
 - Use <i>italics</i> for technical terms, definitions, or secondary emphasis
 - Use <u>underline</u> for dates, numbers, formulas, or anything that must be memorized exactly
 - For list-style answers: write each bullet on its own line starting with •
+- For chemical formulas use <sub> and <sup> tags: H<sub>2</sub>O, Ca<sup>2+</sup>, CO<sub>2</sub>
+
+MATH & SCIENCE — use Anki-native MathJax for equations:
+- CRITICAL: Anki uses MathJax. You MUST wrap math in \\( and \\) for inline or \\[ and \\] for display blocks
+- Use SINGLE backslashes only. Write \\( not \\\\(. Write \\frac not \\\\frac
+- Do NOT use dollar signs ($..$ or $$..$$) — Anki only recognizes \\( \\) and \\[ \\]
+- Inline example: \\(E = mc^2\\)
+- Display example: \\[\\int_0^\\infty e^{-x}\\,dx = 1\\]
+- Use LaTeX for ALL math: fractions \\(\\frac{a}{b}\\), roots \\(\\sqrt{x}\\), Greek letters \\(\\alpha\\), sums \\(\\sum\\), integrals \\(\\int\\), etc.
+- Simple chemical formulas can use HTML: H<sub>2</sub>O, Ca<sup>2+</sup>
+- NEVER wrap LaTeX in <b>, <i>, or <u> tags — keep them separate
+
+CHEMISTRY — for reactions, use LaTeX with \\xrightarrow for reagents above/below the arrow:
+- Basic reaction: \\(\\text{A} + \\text{B} \\rightarrow \\text{C}\\)
+- Reaction with reagent over arrow: \\(\\text{CH}_3\\text{CH}_2\\text{Br} \\xrightarrow{\\text{NaOH}} \\text{CH}_3\\text{CH}_2\\text{OH}\\)
+- Reaction with reagent above and conditions below: \\(\\text{R-Br} \\xrightarrow[\\Delta]{\\text{KOH/EtOH}} \\text{R=R'}\\)
+- Use \\text{} for chemical names and formulas: \\text{CH}_3, \\text{OH}, \\text{NaOH}
+- For structural notation: use \\text{CH}_3\\text{COOH} or \\text{R-OH}
+- Organic groups: \\text{-OH} (hydroxyl), \\text{-COOH} (carboxyl), \\text{-NH}_2 (amino)
 
 EXAMPLE (two cards separated by a blank line):
 
@@ -1561,6 +1734,12 @@ A: The three stages are:
 • <b>Glycolysis</b> — occurs in the <u>cytoplasm</u>, yields <u>2 ATP</u>
 • <b>Krebs cycle</b> — occurs in the <i>mitochondrial matrix</i>
 • <b>Electron transport chain</b> — occurs on the <i>inner mitochondrial membrane</i>, yields most ATP
+
+Q: What is the <b>quadratic formula</b>?
+A: For \\(ax^2 + bx + c = 0\\), the solutions are: \\[x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\\]
+
+Q: What product forms when <b>ethanol</b> is oxidized?
+A: \\(\\text{CH}_3\\text{CH}_2\\text{OH} \\xrightarrow{\\text{KMnO}_4} \\text{CH}_3\\text{COOH}\\) — <i>ethanol</i> is oxidized to <b>acetic acid</b> (ethanoic acid)
 
 Q: What is the role of <b>ATP synthase</b> in cellular respiration?
 A: <b>ATP synthase</b> is an enzyme that uses the <i>proton gradient</i> across the inner mitochondrial membrane to produce <u>~34 ATP</u> molecules per glucose.
@@ -1581,16 +1760,42 @@ RULES:
 - After || add a brief hint or leave blank — keep it short
 - Do not add blank lines between cards
 - Do not number cards or add headers
+- Do NOT include images, image links, or any media references
+- HINTS must NOT give away the answer — use a category, context, or direction instead. BAD: {{c1::mitochondria::powerhouse of the cell}} GOOD: {{c1::mitochondria::organelle}}. BAD: {{c1::1776::year of independence}} GOOD: {{c1::1776::year}}. The hint should jog memory, not make the answer obvious
+- Equations do NOT always have to be inside the cloze — if the equation is given context, it can appear outside and the cloze can hide a fact about it
 
 FORMATTING — use real HTML tags (the literal characters < and >) to highlight important words:
 - CRITICAL: use ONLY these exact tags: <b>word</b> for bold, <i>word</i> for italics, <u>word</u> for underline
-- Do NOT use backslashes, asterisks, markdown, or any other syntax — only the HTML tags above
+- Do NOT use asterisks, markdown, or any other formatting syntax — only HTML tags (exception: LaTeX math — see below)
 - Wrap key terms outside the cloze in <b>bold</b> — every card should have at least one <b> tag
 - Use <i>italics</i> for technical terms, categories, or proper names
 - Use <u>underline</u> for numbers, dates, or values that must be memorized exactly
 - You MAY wrap the cloze deletion itself in bold: <b>{{c1::answer}}</b>
-- Example well-formatted card:
-  Many <i>Religious Zionist</i> congregations recite the full <b>{{c1::Hallel}}</b> (Psalms <u>113–118</u>) to thank G-d || Same as on <b>Passover</b> and <b>Sukkot</b>
+- For chemical formulas use <sub> and <sup> tags: H<sub>2</sub>O, Ca<sup>2+</sup>
+
+MATH & SCIENCE — use Anki-native MathJax for equations:
+- CRITICAL: Anki uses MathJax. You MUST wrap math in \\( and \\) for inline or \\[ and \\] for display
+- Use SINGLE backslashes only. Write \\( not \\\\(. Write \\frac not \\\\frac
+- Do NOT use dollar signs ($..$ or $$..$$) — Anki only recognizes \\( \\) and \\[ \\]
+- DANGER: inside a cloze {{c1::...}}, LaTeX closing braces }} will break the cloze! Always insert \\ (backslash-space) between consecutive closing braces: write }\\ } not }}. Example: \\(\\frac{\\partial \\mathbf{B}\\ }{\\partial t}\\) NOT \\(\\frac{\\partial \\mathbf{B}}{\\partial t}\\)
+- HINT PLACEMENT: the ::hint MUST come BEFORE the closing }}. Write {{c1::answer::hint}} NOT {{c1::answer}}::hint}. For LaTeX answers ending in }, place the hint after the last }: {{c1:\\text{NaOH}::reagent}}
+- Equations can be INSIDE or OUTSIDE the cloze depending on what should be memorized
+- To hide the equation: {{c1::\\(E = mc^2\\)}}
+- To show the equation and hide a fact about it: \\(a^2 + b^2 = c^2\\) is the {{c1::Pythagorean theorem}}
+- NEVER wrap LaTeX in <b>, <i>, or <u> tags
+
+CHEMISTRY — for reactions, use LaTeX with \\xrightarrow for reagents above/below the arrow:
+- Reaction with reagent over arrow: \\(\\text{R-Br} \\xrightarrow{\\text{NaOH}} \\text{R-OH}\\)
+- Reagent above + conditions below: \\(\\text{R-Br} \\xrightarrow[\\Delta]{\\text{KOH/EtOH}} \\text{R=R'}\\)
+- Use \\text{} for chemical names: \\text{CH}_3, \\text{OH}, \\text{NaOH}
+- To hide a reagent in cloze: \\(\\text{R-Br} \\xrightarrow{ {{c1::\\text{NaOH} }} } \\text{R-OH}\\)
+- To hide a product: \\(\\text{CH}_3\\text{OH} \\xrightarrow{\\text{H}^+} {{c1::\\text{CH}_3\\text{OCH}_3}}\\)
+
+EXAMPLE:
+The <b>derivative</b> of \\(x^n\\) is {{c1::\\(nx^{n-1}\\)}} || <b>Power rule</b>
+\\(a^2 + b^2 = c^2\\) is the {{c1::Pythagorean theorem::geometry}} || Relates the sides of a <b>right triangle</b>
+<b>Ethanol</b> undergoes <i>elimination</i> via \\(\\text{CH}_3\\text{CH}_2\\text{OH} \\xrightarrow{ {{c1::\\text{H}_2\\text{SO}_4}} } \\text{CH}_2\\text{=CH}_2 + \\text{H}_2\\text{O}\\) || <b>Dehydration</b> reaction
+Many <i>Religious Zionist</i> congregations recite the full <b>{{c1::Hallel}}</b> (Psalms <u>113–118</u>) to thank G-d || Same as on <b>Passover</b> and <b>Sukkot</b>
 
 Here are my notes:
 [PASTE YOUR NOTES HERE]`,
@@ -1607,17 +1812,44 @@ RULES:
 - After || write a genuinely rich Extra field (minimum one full sentence) — explanation, why it matters, memory device, related concepts
 - Do not add blank lines between cards
 - Do not add headers or section titles
+- Do NOT include images, image links, or any media references
+- HINTS must NOT give away the answer — use a category, context, or direction instead. BAD: {{c1::mitochondria::powerhouse of the cell}} GOOD: {{c1::mitochondria::organelle}}. BAD: {{c1::1776::year of independence}} GOOD: {{c1::1776::year}}. The hint should jog memory, not make the answer obvious
+- Equations do NOT always have to be inside the cloze — if the equation is given context, it can appear outside and the cloze can hide a fact about it
 
 FORMATTING — use real HTML tags (the literal characters < and >) to highlight important words:
 - CRITICAL: use ONLY these exact tags: <b>word</b> for bold, <i>word</i> for italics, <u>word</u> for underline
-- Do NOT use backslashes, asterisks, markdown, or any other syntax — only the HTML tags above
+- Do NOT use asterisks, markdown, or any other formatting syntax — only HTML tags (exception: LaTeX math — see below)
 - Wrap the most important non-cloze word in <b>bold</b> — every card needs at least one
 - Use <i>italics</i> for technical terms, synonyms, or proper names
 - Use <u>underline</u> for numbers, dates, or exact values that must be memorized
 - You MAY bold the cloze itself: <b>{{c1::answer::hint}}</b>
 - In the Extra field after ||, bold the single key takeaway
-- Example well-formatted card:
-  The <b>{{c1::Krebs cycle::TCA cycle}}</b> produces <u>3 NADH</u> and <u>1 FADH₂</u> per turn || Occurs in the <i>mitochondrial matrix</i>; also yields <u>1 GTP</u> and <u>2 CO₂</u> per turn — <b>net energy capture step</b> of aerobic respiration
+- For chemical formulas use <sub> and <sup> tags: H<sub>2</sub>O, Ca<sup>2+</sup>
+
+MATH & SCIENCE — use Anki-native MathJax for equations:
+- CRITICAL: Anki uses MathJax. You MUST wrap math in \\( and \\) for inline or \\[ and \\] for display
+- Use SINGLE backslashes only. Write \\( not \\\\(. Write \\frac not \\\\frac
+- Do NOT use dollar signs ($..$ or $$..$$) — Anki only recognizes \\( \\) and \\[ \\]
+- DANGER: inside a cloze {{c1::...}}, LaTeX closing braces }} will break the cloze! Always insert \\ (backslash-space) between consecutive closing braces: write }\\ } not }}. Example: \\(\\frac{\\partial \\mathbf{B}\\ }{\\partial t}\\) NOT \\(\\frac{\\partial \\mathbf{B}}{\\partial t}\\)
+- HINT PLACEMENT: the ::hint MUST come BEFORE the closing }}. Write {{c1::answer::hint}} NOT {{c1::answer}}::hint}. For LaTeX answers ending in }, place the hint after the last }: {{c1:\\text{NaOH}::reagent}}
+- Equations can be INSIDE or OUTSIDE the cloze depending on what should be memorized
+- To hide the equation: {{c1::\\(E = mc^2\\)::energy equation}}
+- To show the equation and hide a fact: \\(a^2 + b^2 = c^2\\) is the {{c1::Pythagorean theorem::geometry}}
+- NEVER wrap LaTeX in <b>, <i>, or <u> tags
+
+CHEMISTRY — for reactions, use LaTeX with \\xrightarrow for reagents above/below the arrow:
+- Reaction with reagent over arrow: \\(\\text{R-Br} \\xrightarrow{\\text{NaOH}} \\text{R-OH}\\)
+- Reagent above + conditions below: \\(\\text{R-Br} \\xrightarrow[\\Delta]{\\text{KOH/EtOH}} \\text{R=R'}\\)
+- Use \\text{} for chemical names: \\text{CH}_3, \\text{OH}, \\text{NaOH}
+- To hide a reagent in cloze: \\(\\text{R-Br} \\xrightarrow{ {{c1::\\text{NaOH}::reagent}} } \\text{R-OH}\\)
+- To hide a product: \\(\\text{CH}_3\\text{OH} \\xrightarrow{\\text{H}^+} {{c1::\\text{CH}_3\\text{OCH}_3::ether product}}\\)
+
+EXAMPLES:
+The <b>{{c1::Krebs cycle::TCA cycle}}</b> produces <u>3 NADH</u> and <u>1 FADH₂</u> per turn || Occurs in the <i>mitochondrial matrix</i>; also yields <u>1 GTP</u> and <u>2 CO₂</u> per turn — <b>net energy capture step</b> of aerobic respiration
+\\(a^2 + b^2 = c^2\\) is called the <b>{{c1::Pythagorean theorem::geometry}}</b> || Relates the three sides of a <b>right triangle</b>; one of the oldest known mathematical results
+In <b>organic chemistry</b>, \\(\\text{CH}_3\\text{CH}_2\\text{Br} \\xrightarrow{ {{c1::\\text{NaOH}::strong base}} } \\text{CH}_3\\text{CH}_2\\text{OH}\\) is an {{c2::S<sub>N</sub>2 reaction::substitution}} || The <b>hydroxide ion</b> attacks the carbon bearing the leaving group in a single concerted step
+The <b>quadratic formula</b> states that for \\(ax^2 + bx + c = 0\\), the roots are {{c1::\\(x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}\\ }{2a}\\)::solve for x}} || Derived by <b>completing the square</b>; the discriminant \\(b^2 - 4ac\\) determines whether roots are real or complex
+In the <b>ideal gas law</b>, {{c1::\\(PV = nRT\\)::gas equation}}, <i>R</i> is the {{c2::universal gas constant::8.314 J/(mol·K)}} || Combines <b>Boyle's</b>, <b>Charles's</b>, and <b>Avogadro's</b> laws into one expression
 
 Here are my notes:
 [PASTE YOUR NOTES HERE]`
