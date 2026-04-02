@@ -846,6 +846,12 @@ function normalizeLatex(s) {
   out = out.replace(/\\\([\s\S]*?\\\)/g, fixLatexInternals);
   out = out.replace(/\\\[[\s\S]*?\\\]/g, fixLatexInternals);
 
+  // Step 3.5: Fix missing subscript underscores inside LaTeX — }2 → }_2 (AI writes \text{H}2 instead of \text{H}_2)
+  out = out.replace(/\\\([\s\S]*?\\\)/g, m => m.replace(/\}(\d)/g, '}_$1'));
+  out = out.replace(/\\\[[\s\S]*?\\\]/g, m => m.replace(/\}(\d)/g, '}_$1'));
+  // Also fix in bare text that contains \text{} patterns (before Step 2 wraps in \(...\))
+  out = out.replace(/(\\text\{[^}]*\})(\d)/g, '$1_$2');
+
   // Step 4: Fix }} inside cloze content that would prematurely close the cloze.
   // Strategy: for each cloze, find ALL }} positions. The last }} is the true
   // cloze closer; fix all earlier }} by replacing with }\ }.
@@ -1724,6 +1730,8 @@ CHEMISTRY — for reactions, use LaTeX with \\xrightarrow for reagents above/bel
 - Reaction with reagent over arrow: \\(\\text{CH}_3\\text{CH}_2\\text{Br} \\xrightarrow{\\text{NaOH}} \\text{CH}_3\\text{CH}_2\\text{OH}\\)
 - Reaction with reagent above and conditions below: \\(\\text{R-Br} \\xrightarrow[\\Delta]{\\text{KOH/EtOH}} \\text{R=R'}\\)
 - Use \\text{} for chemical names and formulas: \\text{CH}_3, \\text{OH}, \\text{NaOH}
+- CRITICAL: subscripts MUST use underscore _. Write \\text{H}_2\\text{O} NOT \\text{H}2\\text{O}. The _ is required for subscript numbers in LaTeX
+- Common compounds: \\text{H}_2\\text{O} (water), \\text{CO}_2 (carbon dioxide), \\text{H}_2\\text{SO}_4 (sulfuric acid), \\text{NaBH}_4 (sodium borohydride), \\text{LiAlH}_4 (lithium aluminum hydride)
 - For structural notation: use \\text{CH}_3\\text{COOH} or \\text{R-OH}
 - Organic groups: \\text{-OH} (hydroxyl), \\text{-COOH} (carboxyl), \\text{-NH}_2 (amino)
 
@@ -1788,6 +1796,8 @@ CHEMISTRY — for reactions, use LaTeX with \\xrightarrow for reagents above/bel
 - Reaction with reagent over arrow: \\(\\text{R-Br} \\xrightarrow{\\text{NaOH}} \\text{R-OH}\\)
 - Reagent above + conditions below: \\(\\text{R-Br} \\xrightarrow[\\Delta]{\\text{KOH/EtOH}} \\text{R=R'}\\)
 - Use \\text{} for chemical names: \\text{CH}_3, \\text{OH}, \\text{NaOH}
+- CRITICAL: subscripts MUST use underscore _. Write \\text{H}_2\\text{O} NOT \\text{H}2\\text{O}. The _ is required for subscript numbers in LaTeX
+- Common compounds: \\text{H}_2\\text{O} (water), \\text{CO}_2, \\text{H}_2\\text{SO}_4, \\text{NaBH}_4, \\text{LiAlH}_4
 - To hide a reagent in cloze: \\(\\text{R-Br} \\xrightarrow{ {{c1::\\text{NaOH} }} } \\text{R-OH}\\)
 - To hide a product: \\(\\text{CH}_3\\text{OH} \\xrightarrow{\\text{H}^+} {{c1::\\text{CH}_3\\text{OCH}_3}}\\)
 
@@ -1841,6 +1851,8 @@ CHEMISTRY — for reactions, use LaTeX with \\xrightarrow for reagents above/bel
 - Reaction with reagent over arrow: \\(\\text{R-Br} \\xrightarrow{\\text{NaOH}} \\text{R-OH}\\)
 - Reagent above + conditions below: \\(\\text{R-Br} \\xrightarrow[\\Delta]{\\text{KOH/EtOH}} \\text{R=R'}\\)
 - Use \\text{} for chemical names: \\text{CH}_3, \\text{OH}, \\text{NaOH}
+- CRITICAL: subscripts MUST use underscore _. Write \\text{H}_2\\text{O} NOT \\text{H}2\\text{O}. The _ is required for subscript numbers in LaTeX
+- Common compounds: \\text{H}_2\\text{O} (water), \\text{CO}_2, \\text{H}_2\\text{SO}_4, \\text{NaBH}_4, \\text{LiAlH}_4
 - To hide a reagent in cloze: \\(\\text{R-Br} \\xrightarrow{ {{c1::\\text{NaOH}::reagent}} } \\text{R-OH}\\)
 - To hide a product: \\(\\text{CH}_3\\text{OH} \\xrightarrow{\\text{H}^+} {{c1::\\text{CH}_3\\text{OCH}_3::ether product}}\\)
 
