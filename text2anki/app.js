@@ -1306,10 +1306,22 @@ async function downloadApkg() {
     zip.file('meta', new Uint8Array([0x08, 0x02]));
     const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE' });
 
-    const url = URL.createObjectURL(blob);
-    const a   = Object.assign(document.createElement('a'), { href: url, download: (deckName.replace(/[^a-z0-9_\-]/gi,'_')||'deck') + '.apkg' });
+    const fileName = (deckName.replace(/[^a-z0-9_\-]/gi,'_')||'deck') + '.apkg';
+    // Safari-compatible download: anchor must be in the DOM, and we re-wrap
+    // the blob with an explicit MIME type so Safari doesn't try to render it.
+    const typedBlob = new Blob([blob], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(typedBlob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
     a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 6000);
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      if (a.parentNode) a.parentNode.removeChild(a);
+    }, 6000);
 
     if (currentUser) {
       const newH = toExport.map(x => x.hash);
